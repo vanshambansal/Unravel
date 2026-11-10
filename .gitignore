@@ -1,0 +1,17 @@
+# Local secrets
+.env*
+!.env.example
+
+# Future generated artifacts
+node_modules/
+.next/
+dist/
+build/
+.cache/
+.playwright-mcp/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+*.log
+*.blend[0-9]

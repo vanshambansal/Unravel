@@ -1,0 +1,13 @@
+{
+  "blender": "4.2.1 LTS",
+  "seconds": 157.92,
+  "vertices": 1760,
+  "polygons": 1762,
+  "materials": 6,
+  "bakes": [
+    "indirect-light.png",
+    "ambient-occlusion.png"
+  ],
+  "output": "prototypes/landing-motion/public/architecture/atrium.glb",
+  "scope": "Opening and atrium asset study; browser integration requires visual verification"
+}

@@ -1,0 +1,40 @@
+{
+  "sourceHash": "7e03c6bf56ef38338d8b5810c82269b015595ac93473ba9b64564784ac7ce864",
+  "sources": [
+    "apps/web/src/features/landing/motion/scene.ts",
+    "apps/web/src/features/landing/motion/asset-scene.ts",
+    "apps/web/src/features/landing/motion/architecture.ts",
+    "apps/web/src/features/landing/motion/framing.ts",
+    "apps/web/src/features/landing/motion/choreography.ts",
+    "apps/web/src/features/landing/SceneCapture.tsx",
+    "apps/web/package.json",
+    "pnpm-lock.yaml",
+    "apps/web/public/landing/architecture/atrium.glb",
+    "apps/web/public/landing/architecture/indirect-light.png",
+    "apps/web/public/landing/architecture/ambient-occlusion.png"
+  ],
+  "assets": {
+    "scene-start-desktop.png": {
+      "sha256": "84da35afbbc12c97427720eab189d48f82c8c7b5dc71281e69e79bd00a819abc",
+      "width": 1440,
+      "height": 900
+    },
+    "scene-hero-desktop.png": {
+      "sha256": "d7d66f2db7883631820ae37957f94d62eed37da14394a9fafb52cfeaeb347cb4",
+      "width": 1440,
+      "height": 900
+    },
+    "scene-start-mobile.png": {
+      "sha256": "3b7f681822af9da54d58be02ff462dc98cc1b6b810699d375c3ac8901447b56d",
+      "width": 390,
+      "height": 844
+    },
+    "scene-hero-mobile.png": {
+      "sha256": "60f5570b804a49771d314746fdb6c04fdc375ad3d7b9825e494c4ff68792627a",
+      "width": 390,
+      "height": 844
+    }
+  },
+  "ambientTime": 0,
+  "capturedWith": "Next.js /motion-capture; Chromium; DPR1; desktop 1440x900 and mobile 390x844"
+}

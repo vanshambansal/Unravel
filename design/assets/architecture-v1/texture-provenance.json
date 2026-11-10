@@ -1,0 +1,55 @@
+{
+  "license": "CC0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "resolution": "1k",
+  "assets": [
+    {
+      "asset": "concrete_wall_006",
+      "map": "Diffuse",
+      "file": "textures/concrete_wall_006-Diffuse.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_006/concrete_wall_006_diff_1k.jpg",
+      "md5": "62ac61307a3321ecec26e1abd045f2ab",
+      "bytes": 769415
+    },
+    {
+      "asset": "concrete_wall_006",
+      "map": "nor_gl",
+      "file": "textures/concrete_wall_006-nor_gl.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_006/concrete_wall_006_nor_gl_1k.jpg",
+      "md5": "337cf8d33598e1ecd036ef3727a4b36d",
+      "bytes": 1195078
+    },
+    {
+      "asset": "concrete_wall_006",
+      "map": "Rough",
+      "file": "textures/concrete_wall_006-Rough.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_006/concrete_wall_006_rough_1k.jpg",
+      "md5": "660e38696f8c92d1585b17b7cc01cc06",
+      "bytes": 255004
+    },
+    {
+      "asset": "concrete_floor_worn_02",
+      "map": "Diffuse",
+      "file": "textures/concrete_floor_worn_02-Diffuse.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_02/concrete_floor_worn_02_diff_1k.jpg",
+      "md5": "ccd9c2b165411c6aec1270fc6226d335",
+      "bytes": 708284
+    },
+    {
+      "asset": "concrete_floor_worn_02",
+      "map": "nor_gl",
+      "file": "textures/concrete_floor_worn_02-nor_gl.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_02/concrete_floor_worn_02_nor_gl_1k.jpg",
+      "md5": "4fb1700c31672f2c1d50553238035d41",
+      "bytes": 1163338
+    },
+    {
+      "asset": "concrete_floor_worn_02",
+      "map": "Rough",
+      "file": "textures/concrete_floor_worn_02-Rough.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_worn_02/concrete_floor_worn_02_rough_1k.jpg",
+      "md5": "579be67d20f4362704ff7f575462214b",
+      "bytes": 253558
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Question desk · Unravel test website</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Unravel integration fixture</p>
+        <h1>Question desk</h1>
+        <p>A small website for testing browser recording, diagnostics, and regression tests. Use synthetic data only.</p>
+      </header>
+      <section aria-labelledby="question-title">
+        <h2 id="question-title">Ask a question</h2>
+        <p id="demo-note" class="notice">Submission intentionally returns HTTP 500. Nothing is saved. The Unravel SDK is not installed yet.</p>
+        <form id="question-form" aria-label="Question submission" aria-describedby="demo-note">
+          <label for="category">Category</label>
+          <select id="category" name="category" data-testid="category">
+            <option value="general">General</option>
+            <option value="account">Account</option>
+            <option value="technical">Technical</option>
+          </select>
+
+          <label for="question">Your question</label>
+          <textarea id="question" name="question" data-testid="question" rows="4" maxlength="2000" required placeholder="Example: Why does submitting this form fail?"></textarea>
+
+          <label for="private-value">Private test value <span>(optional)</span></label>
+          <input id="private-value" data-testid="private-value" type="password" autocomplete="off" aria-describedby="private-help">
+          <p id="private-help" class="help">Dummy values only. This field is never included in the submission. It is a future SDK masking test, not a login field.</p>
+
+          <button id="submit-question" type="submit" data-testid="submit-question">Submit question</button>
+          <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+        </form>
+      </section>
+      <details>
+        <summary>Additional diagnostic check</summary>
+        <p>The button below intentionally throws a JavaScript error. This is separate from an HTTP failure.</p>
+        <button id="trigger-error" type="button" class="secondary">Trigger test error</button>
+      </details>
+      <footer>Local test target · no accounts, storage, analytics, or external services</footer>
+    </main>
+  </body>
+</html>
