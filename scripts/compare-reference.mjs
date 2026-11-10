@@ -41,7 +41,7 @@ const directory = '.playwright-mcp/migration-parity'; await mkdir(directory, { r
 const results = [];
 try {
   for (const [device,width,height] of [['desktop',1440,900],['mobile',390,844]]) {
-    for (const [name,base] of [['reference','http://127.0.0.1:4174'],['next','http://127.0.0.1:3000']]) {
+    for (const [name,base] of [['reference','http://127.0.0.1:4174'],['next','http://localhost:3000']]) {
       const context = await browser.newContext({ viewport: {width,height}, deviceScaleFactor: 1 });
       let release; const gate = new Promise(resolve => { release = resolve; });
       await context.route('**/architecture/atrium.glb', async route => { await gate; await route.continue(); });

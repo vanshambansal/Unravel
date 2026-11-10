@@ -1,0 +1,11 @@
+{
+  "name": "@unravel/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -p tsconfig.json && node scripts/build.mjs", "typecheck": "tsc -p tsconfig.json --noEmit" },
+  "dependencies": { "@unravel/contracts": "workspace:*", "@rrweb/record": "2.2.2", "@rrweb/types": "2.2.2" },
+  "devDependencies": { "esbuild": "0.28.2" }
+}

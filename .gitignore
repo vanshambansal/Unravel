@@ -15,3 +15,5 @@ test-results/
 *.tsbuildinfo
 *.log
 *.blend[0-9]
+.clerk/
+playwright/.auth/

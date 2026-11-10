@@ -18,7 +18,7 @@ async function scroll(page: Page, progress: number) {
   await expect.poll(async () => (await state(page)).progress).toBeCloseTo(progress, 2);
 }
 
-test('server HTML, scene-before-text ordering, keyboard skip, pause and reverse', async ({ page, request }) => {
+test('server HTML, scene-before-text ordering and keyboard skip', async ({ page, request }) => {
   const html = await (await request.get('/')).text();
   expect(html).toContain('Every bug'); expect(html).toContain('scene-hero-desktop.png');
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
@@ -32,6 +32,17 @@ test('server HTML, scene-before-text ordering, keyboard skip, pause and reverse'
   await scroll(page, 0);
   await page.getByRole('button', { name: 'Skip Intro' }).focus(); await page.keyboard.press('Enter');
   await expect(page.locator('#hero-title')).toBeFocused();
+  await expect.poll(async () => (await state(page)).progress).toBe(1);
+  expect(errors).toEqual([]);
+});
+
+test('hero ambient pointer response, pause and reverse scrolling', async ({ page }) => {
+  // Many renderer checkpoints take multi-second calls under Windows software WebGL.
+  // This is a behavior check, not a frame-rate benchmark; keep every assertion.
+  test.setTimeout(240000);
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/'); await ready(page);
+  await page.getByRole('button', { name: 'Skip Intro' }).click();
   await expect.poll(async () => (await state(page)).progress).toBe(1);
   const before = await state(page);
   await page.waitForTimeout(250);
@@ -129,20 +140,20 @@ test('client navigation repeatedly cleans up render loops and scoped state', asy
   });
   await page.goto('/'); await ready(page);
   for (let i = 0; i < 3; i++) {
-    await page.getByRole('link', { name: 'Open application shell' }).click();
-    await expect(page).toHaveURL(/\/app$/);
+    await page.getByRole('link', { name: 'Open workspace' }).click();
+    await expect(page).toHaveURL(/\/sign-in/);
     expect(await page.evaluate(() => typeof window.__unravelStudy)).toBe('undefined');
     expect(await page.evaluate(() => window.__landingPendingFrames!())).toBe(0);
     expect(await page.evaluate(() => document.documentElement.style.getPropertyValue('--hero-shade'))).toBe('');
-    await expect(page.locator('h1')).toHaveCSS('font-family', 'Arial, sans-serif');
+    await expect(page.getByRole('heading', { name: 'Welcome to Unravel' })).toBeVisible();
     await page.getByRole('link', { name: 'Return to Unravel' }).click(); await ready(page);
     expect(await page.evaluate(() => window.__landingPendingFrames!())).toBeLessThanOrEqual(1);
   }
 });
 
-test('cold application route downloads no landing assets', async ({ page }) => {
-  const assets: string[] = []; page.on('request', req => { if (req.url().includes('/landing/')) assets.push(req.url()); });
-  await page.goto('/app'); await expect(page.getByRole('heading', { name: 'Your Unravel workspace' })).toBeVisible();
+test('cold application route downloads no landing graphics', async ({ page }) => {
+  const assets: string[] = []; page.on('request', req => { if (/\/landing\/(architecture|artwork)\//.test(req.url())) assets.push(req.url()); });
+  await page.goto('/app'); await expect(page.getByRole('heading', { name: 'Welcome to Unravel' })).toBeVisible();
   expect(assets).toEqual([]); expect(await page.locator('canvas').count()).toBe(0);
 });
 
@@ -152,7 +163,7 @@ test('navigation during pending initialization disposes the stale mount', async 
   try {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => !!window.__unravelStudy);
-    await page.getByRole('link', { name: 'Open application shell' }).click(); await expect(page).toHaveURL(/\/app$/);
+    await page.getByRole('link', { name: 'Open workspace' }).click(); await expect(page).toHaveURL(/\/sign-in/);
     release(); await page.waitForTimeout(300);
     expect(await page.evaluate(() => typeof window.__unravelStudy)).toBe('undefined');
     await page.unroute('**/landing/architecture/atrium.glb');

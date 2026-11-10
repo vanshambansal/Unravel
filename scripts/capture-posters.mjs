@@ -7,7 +7,7 @@ try {
   for (const [device,width,height] of [['desktop',1440,900],['mobile',390,844]]) {
     await page.setViewportSize({ width, height });
     for (const frame of ['start','hero']) {
-      const response = await page.goto(`${process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3000'}/motion-capture?frame=${frame}`);
+      const response = await page.goto(`${process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000'}/motion-capture?frame=${frame}`);
       if (!response?.ok()) throw new Error(`Capture route returned HTTP ${response?.status()}`);
       await page.waitForFunction(() => !!document.querySelector('canvas')?.getAttribute('data-capture-ready') || !!document.querySelector('canvas')?.getAttribute('data-capture-error'));
       const error = await page.locator('canvas').getAttribute('data-capture-error');

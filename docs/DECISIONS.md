@@ -14,11 +14,11 @@ Updated 2026-11-10. Earlier rationale and superseded experiments are preserved u
 
 **Why:** A new rendering abstraction adds rewrite risk without solving a current requirement. Root scoping, async cancellation, proper disposal and route-isolation tests address the real integration work. The original Vite study remains unchanged as the comparison reference; retirement requires a later explicit decision and asset-pipeline migration.
 
-## Managed services - approved for later, not provisioned
+## Managed services - configured for Milestone 2
 
-**Decision:** Clerk for developer authentication and Neon PostgreSQL with Drizzle/node-postgres. No provider dependency, account or database setup in Milestone 1.
+**Decision:** Clerk for developer authentication and Neon PostgreSQL with Drizzle/node-postgres. The user created the development provider projects; Milestone 2 connects them and applies reviewed schema migrations. No Docker or agent-provisioned provider project.
 
-**Why:** User selected managed services to prioritize completion. The application still owns authorization, validation, privacy and anonymous-ingestion protections. Review provider limits/costs and credentials locally before Milestone 2.
+**Why:** User selected managed services to prioritize completion. The application still owns authorization, validation, privacy and anonymous-ingestion protections. Keep credentials local and review provider limits/costs before any upgrade or deployment.
 
 ## Testing and supported tooling
 
@@ -31,6 +31,24 @@ Updated 2026-11-10. Earlier rationale and superseded experiments are preserved u
 **Decision:** Preserve explicit visitor recording, masking by default and an editable framework-independent JSON plan. Deterministic generation initially; Playwright is the first export. Preserve the approved Interior Architecture and UI ray treatment. Core product milestones precede full marketing completion.
 
 **Why:** The internship portfolio needs an end-to-end regression proof. A recording supplies evidence, not intended behavior or guaranteed root cause. Figma covers consequential compositions; browser code proves motion. No LLM keys, hosted execution or new design exploration is needed now.
+
+## Developer sign-in - 2026-11-10
+
+**Decision:** Email verification codes and Google through the existing user-created Clerk development application. Visitors remain account-free. Use maintained Clerk components inside the approved application layout, rather than a custom authentication state machine.
+
+**Why:** The user selected passwordless email and Google. Provider components handle verification/resend/OAuth states while Unravel owns server-side authorization. Do not run accountless setup or create a duplicate application. Development Google uses shared provider credentials; production setup is a separate release task. See SERVICE_SETUP.md. Reject copied masked/mixed-environment keys before Clerk handshakes. Live verification outcomes are recorded in PROJECT_STATUS.md.
+
+## Project onboarding and persistence - 2026-11-10
+
+**Decision:** Start with one owner and one registered origin per project; derive ownership from the verified Clerk subject. Store no duplicate user email/password records. Use stable Drizzle 0.45.4 / Drizzle Kit 0.31.11 with node-postgres 8.23.1, avoiding release candidates for this bounded schema. Clerk Next.js 7.9.25 satisfies the installed Next/React/Node peer ranges.
+
+**Why:** A private project workspace does not need teams, role systems, user-sync webhooks or an independent website entity yet. Atomic owner/origin uniqueness handles concurrent duplicate submissions. The beginner-friendly form previews a normalized origin before submission and leads straight to SDK setup; it never invents SDK availability. Authentication/migrations require local configuration, with no Docker or automatic provisioning.
+
+## Canonical local origin - 2026-11-10
+
+**Decision:** Bind the Next.js development/production preview to localhost and use http://localhost:3000 consistently in tests/capture tools and instructions. Preserve the independent Vite reference address.
+
+**Why:** With valid keys, the 127.0.0.1 preview stalled while Next forwarded requests to localhost. The same sign-in route and real-session tests work with matching localhost origins. Avoid framework upgrades or custom authentication rewrites when a consistent local origin solves the observed problem. This does not choose a deployment domain.
 
 ## Entry template
 

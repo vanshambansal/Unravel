@@ -1,6 +1,6 @@
 # Development plan
 
-Approved direction: Next.js + TypeScript, pnpm workspaces, retained vanilla Three.js, core-product priority, Clerk + Neon/Drizzle later. Each milestone is a separate authorized implementation task.
+Approved direction: Next.js + TypeScript, pnpm workspaces, retained vanilla Three.js, core-product priority, Clerk + Neon/Drizzle for developer access and metadata. Each milestone is a separate authorized implementation task.
 
 ## 1. Application foundation and motion migration - complete (2026-11-10)
 
@@ -9,11 +9,13 @@ Approved direction: Next.js + TypeScript, pnpm workspaces, retained vanilla Thre
 - Keep the Vite reference/fixture unchanged. No services, authentication, SDK or remaining landing sections.
 - Verification recorded in PROJECT_STATUS.md. Visual parity and production smoke passed; no commit/push.
 
-## 2. Developer access and onboarding - planned
+## 2. Developer access and onboarding - complete (2026-11-10)
 
-- Explicitly provision approved Clerk/Neon development projects, reviewed Drizzle migrations, developer sign-in and project/website setup.
-- Verify signed-out and cross-owner access denial at service/API boundaries. Clerk identity alone is not authorization.
-- Provider limits/costs and local environment handling discussed first; no keys in chat or Git.
+- Email-code and Google sign-in using the user's existing Clerk application; both manually confirmed by the user.
+- Approved desktop/mobile auth/project/registration UI implemented, with private project APIs and direct SDK setup.
+- Reviewed migrations applied to the empty development/test Neon databases. Actual PostgreSQL and two-user auth/ownership browser tests passed, including production mode and restart persistence.
+- Two explicitly approved synthetic Clerk users and their E2E-labelled project rows remain for repeatable tests. No Docker, paid upgrade, commit or push. Recording SDK and later landing sections remain out of scope.
+- Commands and detailed actual verification/limitations are owned by README.md and PROJECT_STATUS.md.
 
 ## 3. Standalone recording SDK - planned
 

@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "corepack pnpm --filter @unravel/web dev",
     "start": "corepack pnpm --filter @unravel/web start",
-    "lint": "eslint apps/web/src tests playwright.config.ts",
+    "lint": "eslint apps/web/src apps/web/tests apps/web/drizzle.config.ts apps/web/playwright.auth.config.ts tests playwright.config.ts",
     "typecheck": "corepack pnpm --filter @unravel/web typecheck && tsc -p tests/tsconfig.json",
     "test": "node --experimental-strip-types --test tests/unit/*.test.ts",
     "build": "corepack pnpm posters:check && corepack pnpm --filter @unravel/web build",
@@ -19,7 +19,12 @@
     "posters:stamp": "node scripts/check-posters.mjs --stamp",
     "reference:check": "node scripts/check-reference.mjs",
     "browsers:install": "node scripts/install-browser.mjs",
-    "parity:reference": "node scripts/compare-reference.mjs"
+    "parity:reference": "node scripts/compare-reference.mjs",
+    "db:generate": "corepack pnpm --filter @unravel/web db:generate",
+    "db:check": "corepack pnpm --filter @unravel/web db:check",
+    "db:migrate": "corepack pnpm --filter @unravel/web db:migrate",
+    "test:integration": "corepack pnpm --filter @unravel/web test:integration",
+    "test:auth": "corepack pnpm --filter @unravel/web test:auth"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",

@@ -46,7 +46,7 @@ export function Landing() {
             <p className="eyebrow reveal" id="hero-eyebrow">FROM THE MOMENT IT BREAKS</p>
             <h1 className="reveal" id="hero-title" tabIndex={-1}>Every bug<br />has a story.</h1>
             <p className="hero-description reveal" id="hero-description">Untangle the sequence behind bugs.<br /><span>Record. Replay. Review. Export a regression test.</span></p>
-            <div className="actions reveal" id="hero-actions"><a className="button light" href="#study">Get started <span aria-hidden="true">↗</span></a><a className="button quiet" href="#study">See the workflow</a></div>
+            <div className="actions reveal" id="hero-actions"><a className="button light" href="/app">Get started <span aria-hidden="true">↗</span></a><a className="button quiet" href="#study">See the workflow</a></div>
           </div>
           <ol className="workflow reveal" id="workflow" aria-label="Unravel workflow"><li><span>01</span> Record</li><li><span>02</span> Replay</li><li><span>03</span> Review</li><li><span>04</span> Export</li></ol>
           <p className="scene-caption">UNRAVEL / ARCHITECTURAL MOTION STUDY</p>
@@ -56,9 +56,9 @@ export function Landing() {
       <section className="study" id="study" tabIndex={-1}>
         <p className="eyebrow">THE NEXT CHAPTER</p>
         <h2>Keep the story.<br />Protect the fix.</h2>
-        <p>This is Unravel's visual foundation. Account access, recording and the diagnostic workflow are not available yet.</p>
+        <p>Your developer workspace is ready. Recording, replay and test generation are still in development.</p>
         <button id="replay" className="button quiet" type="button">Return to entrance ↑</button>
-      <p><Link href="/app">Open application shell</Link></p></section>
+      <p><Link href="/app">Open workspace</Link></p></section>
     </main>
 
     <noscript><style>{`.unravel-landing .poster{background-image:url(/landing/artwork/scene-hero-desktop.png)}.unravel-landing .entrance,.unravel-landing #skip,.unravel-landing #ambient{display:none}.unravel-landing .hero,.unravel-landing .reveal{opacity:1!important;visibility:visible!important;transform:none!important}.unravel-landing .stage{position:relative}.unravel-landing #journey{height:100svh}.unravel-landing .workflow{transform:translateX(-50%)!important}@media(max-width:700px){.unravel-landing .poster{background-image:url(/landing/artwork/scene-hero-mobile.png)}}`}</style></noscript>

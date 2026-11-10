@@ -3,22 +3,35 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 127.0.0.1 --port 3000",
+    "dev": "next dev --hostname localhost --port 3000",
     "build": "next build",
-    "start": "next start --hostname 127.0.0.1 --port 3000",
-    "typecheck": "next typegen && tsc --noEmit"
+    "start": "next start --hostname localhost --port 3000",
+    "typecheck": "next typegen && tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:check": "node scripts/database.mjs check",
+    "db:migrate": "node scripts/database.mjs migrate",
+    "test:integration": "node --experimental-strip-types --test tests/integration/*.test.ts",
+    "test:auth": "playwright test --config playwright.auth.config.ts --project=chromium"
   },
   "dependencies": {
+    "@clerk/nextjs": "7.9.25",
+    "drizzle-orm": "0.45.4",
+    "gsap": "3.15.1",
     "next": "16.4.6",
+    "pg": "8.23.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "gsap": "3.15.1",
+    "server-only": "0.0.1",
     "three": "0.187.0"
   },
   "devDependencies": {
+    "@clerk/testing": "2.2.55",
+    "@next/env": "16.4.6",
+    "@types/pg": "8.23.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "@types/three": "0.183.1"
+    "@types/three": "0.183.1",
+    "drizzle-kit": "0.31.11"
   },
   "type": "module"
 }

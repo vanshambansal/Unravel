@@ -28,3 +28,14 @@ Use the existing [Figma file](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u
 User references under design/references and original concept studies are retained, not deployed as full-UI screenshots. Current runtime assets are the Blender GLB, PBR/bake data, local fonts/mark and renderer-derived fallback captures. Source/licenses are preserved. Active application paths and maintenance procedures are in ARCHITECTURE.md and README.md.
 
 The Vite reference remains unchanged. Its successful historical checks are not proof of Next.js parity or performance; current evidence belongs in PROJECT_STATUS.md. No changes to Figma or Blender assets are required for Milestone 1.
+
+## Product access and onboarding - approved direction, 2026-11-10
+
+The user authorized Milestone 2 with email-code and Google sign-in. Four native editable concepts are on the new page **02 - Product access & onboarding** in the existing Figma file; the accepted landing frames were not changed:
+
+- [Sign-in](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-63): restrained split composition, Google and passwordless email; auth internals use Clerk components.
+- [Projects / empty desktop](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-93): project-first navigation and useful empty state without invented activity.
+- [Website registration](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-131): name/origin fields and a clear next step.
+- [Projects / mobile](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-168): single-column content and large controls.
+
+All four were visually inspected; clipped rows/input fields and wrapped button labels were fixed. Existing buttons, color/spacing variables and text styles are reused; missing field/navigation primitives are local components. Fonts verified as Manrope, Inter and IBM Plex Mono. No complete-UI raster or paid/AI-generated asset was used. The user approved this direction. Implementation adds a restrained architectural trace on sign-in, visual Register / Integrate SDK / Investigate steps, and beginner-friendly URL normalization/validation with immediate SDK-setup routing. Actual provider component internals follow Clerk capabilities; actual Clerk UI and authenticated projects/registration/setup were inspected at desktop and mobile sizes without horizontal overflow. Google and email-code sign-in were confirmed by the user. State is in design/figma/onboarding-state.json. No 3D scene belongs in the dashboard.

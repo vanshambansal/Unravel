@@ -2,18 +2,18 @@
 
 A browser bug-reporting, session-replay and regression-test generation project for an SDE portfolio.
 
-**Current:** Next.js application foundation with the approved cinematic entrance/hero. Account access, SDK recording, report persistence, replay and test generation are not implemented yet. Clerk + Neon are approved for a later milestone; no service has been provisioned.
+**Current:** Approved cinematic landing plus Milestone 2 authentication/project-onboarding implementation. Email-code/Google authentication and private project onboarding are verified against Clerk/Neon; configure your own development services locally before using them. Recording SDK, reports, replay and test generation are not implemented.
 
 ## Development
 
-Use Node 22.18.0 (see .node-version) and the pinned pnpm 10.34.9 through Corepack. No Docker, database or API key is needed for this milestone.
+Use Node 22.18.0 (see .node-version) and the pinned pnpm 10.34.9 through Corepack. The landing page needs no services. Authentication/project features need the local Clerk/Neon configuration in [SERVICE_SETUP.md](docs/SERVICE_SETUP.md). No Docker is used.
 
 ```powershell
 corepack pnpm install --frozen-lockfile
 corepack pnpm dev
 ```
 
-Open http://127.0.0.1:3000. The /app route is an honest foundation shell, not an authenticated dashboard. The original Vite study remains unchanged at prototypes/landing-motion, independently runnable with its existing npm commands. The Question Submission fixture remains independent under fixtures/test-site.
+Open http://localhost:3000. Use this address consistently: the 127.0.0.1 binding caused an observed authentication rewrite failure in Next.js. The /app route redirects to the protected project workspace. Without configured Clerk keys, it redirects to the honest sign-in setup-pending screen. The original Vite study remains unchanged at prototypes/landing-motion, independently runnable with its existing npm commands. The Question Submission fixture remains independent under fixtures/test-site.
 
 ## Checks
 
@@ -31,6 +31,19 @@ Playwright starts a local development server if port 3000 is free. Set PLAYWRIGH
 
 For a production preview, stop the development server before running start on the same port. /motion-capture is development-only unless explicitly enabled with MOTION_CAPTURE=1; it returns 404 in normal production.
 
+## Authentication and project persistence
+
+Configure apps/web/.env.local using apps/web/.env.example and [SERVICE_SETUP.md](docs/SERVICE_SETUP.md). Never paste or commit secrets. Review generated SQL in apps/web/drizzle before applying it.
+
+```powershell
+corepack pnpm db:check
+corepack pnpm db:migrate
+corepack pnpm test:integration
+corepack pnpm test:auth
+```
+
+The database and real-session suites fail explicitly when required configuration is absent. Integration tests require a separate test database; auth tests require two existing synthetic Clerk development users and leave E2E-labelled project rows. Auth traces/storage files are disabled. These sessions test authorization; actual email-code delivery and Google OAuth still need separate user-assisted verification. No automatic database creation/migration occurs at app startup. Use db:generate only after an intentional schema change.
+
 ## Poster and parity maintenance
 
 The existing architecture, shaders, fonts and cameras are preserved. Application assets live under apps/web/public/landing. After renderer/asset/dependency changes, with the development server running:
@@ -47,6 +60,7 @@ An optional local comparison runs node scripts/compare-reference.mjs with both t
 
 ## Documentation
 
+- [Service setup](docs/SERVICE_SETUP.md): Milestone 2 local Clerk/Neon configuration.
 - [Agent guidelines](AGENTS.md): starting context and engineering rules.
 - [Project status](docs/PROJECT_STATUS.md): actual state, verification and blockers.
 - [Project brief](docs/PROJECT_BRIEF.md): users, product requirements and boundaries.

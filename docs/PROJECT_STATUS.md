@@ -2,49 +2,55 @@
 
 Last updated: 2026-11-10
 
-## Overview and current milestone
+## Current phase
 
-Unravel is a browser bug-reporting, session-replay and regression-test generation portfolio project. **Milestone 1: Next.js foundation and accepted motion migration is complete.** The landing entrance/hero works in apps/web; /app is a clearly labelled shell. No authentication, project registration, SDK, report ingestion/persistence, replay dashboard, JSON-plan editor or exporter is implemented.
+Unravel is a browser bug-reporting, replay and regression-test generation portfolio project. **Milestones 1 and 2 are complete. Developer access and private project onboarding are implemented and verified against Clerk/Neon.** No recording SDK, report ingestion/replay, JSON-plan editor or Playwright exporter exists yet. Do not start the next milestone automatically.
 
-## Implemented and verified
+## Implemented behavior
 
-- Next.js App Router with TypeScript, pnpm workspaces and separate marketing/product route groups. Vanilla Three.js/GSAP scene and shaders are reused, not translated to React Three Fiber.
-- Root-scoped controller, styles and font families; cancelled async initialization and idempotent cleanup support React Strict Mode and client navigation.
-- Preserved doorway/camera/rays/hero hold, keyboard skip/focus, pause, responsive framing, reduced motion and static/no-JavaScript/WebGL/loading/context-loss fallbacks.
-- Repository browser tests, unit tests, lint/typecheck/build and renderer-poster/reference/parity tools. Four fallback images regenerated through the Next.js renderer. Development-only /motion-capture maintenance route returns 404 in ordinary production.
-- Original 52-file prototype reference passes its pre-migration hash manifest; independent fixtures/test-site is retained. No automatic prototype retirement or Blender rebuild.
-- Current documentation is concise; prior design, decision and task records remain in *_HISTORY.md documents.
+- Developer email-code and Google authentication through the existing user-created Clerk Development app. The user confirmed both real sign-in methods worked. Scoped Clerk provider, sign-out and server-side session checks; no authentication bypass/keyless app.
+- Private project list, create-project/website form, and direct SDK-setup routing. A project has one owner and registered origin. Registration accepts full HTTP(S) URLs or domains, previews the normalized origin and rejects unsafe URLs/embedded credentials. Domain registration is not ownership verification.
+- Thin authenticated project APIs call services and an owner-constrained Drizzle repository. Client-supplied ownership is ignored; foreign/unknown IDs return the same 404. Same-origin JSON writes are bounded to 8 KiB. Duplicate origins per owner are prevented atomically.
+- Neon PostgreSQL with reviewed migrations, lazy node-postgres pool and no migration at application startup. Initial SQL applied to the verified empty development and isolated test databases. No other data was replaced or removed.
+- Approved practical dark UI: subtle sign-in architecture motif, visual Register / Integrate SDK / Investigate workflow, and responsive forms. SDK setup truthfully says recording is unavailable; no invented install command.
+- Accepted landing scene/shaders/camera preserved. Landing changes are application navigation and truthful availability copy only. Original Vite prototype, fixture, Blender files and 52-file reference remain unchanged.
 
-## Stack and boundaries
+## Local operation / providers
 
-Node 22.18.0; pnpm 10.34.9 via Corepack; Next.js 16.4.6; React 19.3.1; TypeScript 5.9.3; Three.js 0.187.0; GSAP 3.15.1; ESLint 10.14.0; Playwright Test 1.65.0. Exact dependencies are pinned in manifests/lockfile. Clerk + Neon PostgreSQL/Drizzle are approved future choices only: no provider dependency, credentials, service provisioning or Docker was added.
+Use **http://localhost:3000** and the root README commands. Next/Clerk rewrites failed with the previous 127.0.0.1 binding; a matching localhost origin fixed the observed issue without a framework upgrade or authentication rewrite.
 
-## Verification outcomes
+The user created Clerk and Neon projects and entered secrets locally in ignored apps/web/.env.local. All required development/database values and two synthetic test-user identities are configured. No values should be printed. Masked keys are rejected by a shared format preflight, with credential/session validation still performed by Clerk.
 
-Commands and setup are owned by [README.md](../README.md). Actual migration checks on Windows, Node 22.18.0:
+Clerk 7.9.25, Drizzle 0.45.4 / Kit 0.31.11 and pg 8.23.1 are pinned alongside the existing Next.js 16.4.6 / React 19.3.1 stack. The live databases report PostgreSQL 18.6. Development/migration URLs match; the test target is separate. No agent-created provider project, Docker, paid upgrade or deployment.
+
+The user explicitly approved two synthetic Clerk development users for ownership proof. E2E-labelled project rows remain under those test accounts, separate from the real developer account. Auth traces/storage files are disabled; explicit UI captures contain synthetic data only. No credentials/session headers are intended as test artifacts.
+
+## Actual verification
 
 | Check | Outcome |
 | --- | --- |
-| corepack pnpm lint | Passed |
-| corepack pnpm typecheck | Passed, including Next route type generation |
-| corepack pnpm test | 9 passed |
-| corepack pnpm build | Production build passed |
-| corepack pnpm test:e2e --project=chromium | 10 passed; sequential, retries disabled |
-| corepack pnpm posters:capture / posters:stamp / posters:check | Four renderer captures completed; source/image integrity passed |
-| corepack pnpm reference:check | 52 original prototype files unchanged |
-| corepack pnpm parity:reference | Six desktop/mobile opening/crossing/hero pairs: zero pixel difference in the controlled paused comparison |
-| Production browser smoke | Live render, skip/focus, pause, SPA cleanup, capture-route 404; no page errors |
+| lint / typecheck | Passed |
+| unit tests | 15 passed |
+| db:migrate / db:check | Reviewed development migration applied; connection/table checks passed |
+| test:integration | Real PostgreSQL test passed: owner scoping, concurrent uniqueness, validation and reconnect persistence; only its own synthetic rows cleaned |
+| test:auth | Real Clerk two-user browser proof passed in development and against the production build: creation, reload, owner isolation, forged-owner input, duplicate/cross-origin rejection and sign-out |
+| First-factor sign-in | User manually confirmed both Google and email-code sign-in; this is separate from helper-based sessions |
+| Application restart | Previously saved project re-read through authenticated API/setup page after a full Next.js restart |
+| Visual inspection | Real Clerk screen and authenticated project list/form/setup inspected at 1440x900 and 390x844; six private-page captures, no horizontal overflow |
+| reference:check | All 52 original prototype files unchanged |
+| General Chromium regressions | Configured-service full run: 13 passed, one long motion case hit its 120s total limit. With only that case budget raised to 240s, targeted rerun passed (1.9 minutes). All 14 cases covered across runs; no claim of one clean full invocation, retries or performance guarantee. |
+| Production build/posters | Final configured production build passed. Four localhost captures completed, PNG bytes unchanged, source/dependency stamp refreshed. |
 
-Browser coverage includes forward/reverse/rapid scroll, native hero reading hold, three viewport sizes, pointer/ambient response, resize, live reduced-motion changes, failure fallback, three navigation cycles, cold application-route isolation and delayed initialization after unmount. Tests caught and fixed a global CSS-variable leak and fractional-pixel offscreen rendering. Poster capture exposed Next's private-underscore directory convention; the maintenance route was corrected and recaptured.
+A scan found no actual private credential values in client bundles or versionable text files; .env.local remains ignored. This check does not replace a release security review.
 
-Visual evidence is ignored under .playwright-mcp/migration-parity and production-hero.png; browser failure artifacts use test-results. The controlled comparison used the same Chromium 158 browser/GPU, paused ambient time zero, desktop 1440x900 and mobile 390x844. It is parity evidence, not a cross-device performance guarantee. Production was also exercised independently of the development debug bridge.
+Browser evidence is ignored under .playwright-mcp/m2-clerk-live-desktop.png and m2-live-*.png. Restart proof metadata under .cache contains only a synthetic project identifier/name, no session state. Historical failed setup checks and the masked-key diagnosis remain in PROMPT_LOG.md; they are not current blockers.
 
-## In progress, limitations and next actions
+## Limitations / next step
 
-No implementation work remains in this milestone. User review remains valuable before retiring the original prototype, which is retained. Real-phone performance, sustained GPU benchmarks, Safari and Firefox remain unverified; emulation is not physical-device testing. Asset loading and GPU speed vary by machine. Browser tests allow software rendering and are not performance benchmarks.
+Local development is verified, not public-deployment readiness. Clerk development keys, production OAuth/domain setup, public-ingestion protections, hosting limits and privacy review still matter before release. Real phones, Safari/Firefox and sustained GPU performance remain unverified. pg emits an SSL-mode forward-compatibility notice; current TLS verification was preserved. Kit has two deprecated esbuild-kit transitive packages; generation and migrations work with the pinned tooling.
 
-Next: authorize Milestone 2 developer access/onboarding. Discuss Clerk and Neon development-project setup, provider limits/costs and local credential entry first. Do not paste secrets into chat. Core product work precedes remaining landing storytelling/diagnostic zoom. See DEVELOPMENT_PLAN.md for subsequent milestones.
+Next: discuss Milestone 3: standalone recording SDK and contracts, privacy defaults, explicit lifecycle and fixture integration. Do not implement it automatically. Marketing diagnostic zoom and later storytelling remain deferred.
 
-## Git baseline
+## Git
 
-The user authorized the initial local baseline commit and branch rename to main on 2026-11-10. origin remains https://github.com/vanshambansal/Unravel.git. A fresh git ls-remote origin succeeded with no advertised refs before the commit. No push, history reset or global ownership-setting change is authorized or performed. Use git log/status for the actual commit identity and working-tree state.
+main; initial baseline 6b818e6; origin https://github.com/vanshambansal/Unravel.git. Milestone 2 changes are uncommitted. No commit, push, reset or new remote-history verification in this task. Current requirements/rationale live in PROJECT_BRIEF.md, ARCHITECTURE.md, DECISIONS.md and DEVELOPMENT_PLAN.md; historical docs are retained separately.

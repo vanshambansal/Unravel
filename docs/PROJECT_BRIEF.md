@@ -4,7 +4,7 @@
 
 Build a complete, reusable browser bug-reporting, session-replay, and regression-test generation product for an SDE internship portfolio. Prioritize working behavior, clean engineering, visual quality, and reasonable development time over commercial-scale infrastructure.
 
-The agreed intended release is a hosted portfolio product with controlled synthetic demonstrations and documented limitations. Unravel's product workflow is not implemented. A minimal local integration website exists under `fixtures/test-site`; it does not implement or prove the future product pipeline. The Next.js foundation and motion migration are complete; approved product milestones and future service choices are recorded in DEVELOPMENT_PLAN.md and DECISIONS.md.
+The agreed intended release is a hosted portfolio product with controlled synthetic demonstrations and documented limitations. Unravel's end-to-end recording-to-test workflow is not implemented. Developer authentication and private project/website onboarding are implemented and verified against Clerk/Neon. A minimal local integration website exists under `fixtures/test-site`; it does not implement or prove the future product pipeline. The Next.js foundation and motion migration are complete; approved product milestones and future service choices are recorded in DEVELOPMENT_PLAN.md and DECISIONS.md.
 
 ## Users and intended workflow
 
@@ -39,6 +39,6 @@ The SDK and pipeline must remain reusable across supported sites; a demonstratio
 
 ## Agreed architecture and current implementation
 
-Next.js App Router + TypeScript with pnpm workspaces, retained vanilla Three.js and a standalone SDK introduced later. Clerk + Neon PostgreSQL/Drizzle are approved for the next product milestone; no services are provisioned by the foundation task. Detailed boundaries and future-versus-current status live in ARCHITECTURE.md and PROJECT_STATUS.md.
+Next.js App Router + TypeScript with pnpm workspaces, retained vanilla Three.js and a standalone SDK introduced later. Clerk + Neon PostgreSQL/Drizzle are used for developer access and project metadata; the user created the provider projects and entered credentials locally. Detailed boundaries and future-versus-current status live in ARCHITECTURE.md and PROJECT_STATUS.md.
 
-The approved opening/hero is being migrated from the unchanged Vite reference into apps/web. Core product functionality remains unimplemented. Follow the separately authorized milestones in DEVELOPMENT_PLAN.md; no automatic return to the deleted foundation.
+The approved opening/hero has been migrated from the unchanged Vite reference into apps/web. Recording, report/replay and test-generation functionality remain unimplemented. Follow the separately authorized milestones in DEVELOPMENT_PLAN.md; no automatic return to the deleted foundation.
