@@ -11,8 +11,18 @@ export function createPrivacy(options: PrivacyOptions = {}) {
     try { document.querySelector(selector); } catch { throw new Error('Invalid privacy selector.'); }
   }
   const ids = new Set(options.testIds ?? []), paths = new Set(options.paths ?? []), stylesheets = new Set(options.stylesheetPaths ?? []), errors = new Set(options.errorMessages ?? []);
+  const everSensitive = new WeakSet<Element>();
+  for (const element of document.querySelectorAll(BLOCK_SELECTOR)) everSensitive.add(element);
   for (const path of [...paths, ...stylesheets]) if (!path.startsWith('/') || path.includes('?') || path.includes('#') || path.includes('\\') || /\s/.test(path)) throw new Error('Allowlisted paths must be exact paths without query strings or fragments.');
-  const blocked = (element: Element | null) => Boolean(element?.closest(BLOCK_SELECTOR));
+  const blocked = (element: Element | null) => {
+    let node = element;
+    while (node) {
+      if (everSensitive.has(node)) return true;
+      if (node.matches(BLOCK_SELECTOR)) { everSensitive.add(node); return true; }
+      node = node.parentElement;
+    }
+    return false;
+  };
   const elementFor = (node: Node | null) => node?.nodeType === 1 ? node as Element : node?.parentElement ?? null;
   const matches = (element: Element | null, selectors: string[]) => !blocked(element) && selectors.some(selector => Boolean(element?.closest(selector)));
   const valueAllowed = (element: Element | null) => matches(element, valueSelectors) && Boolean(element?.matches('input:not([type="password"]):not([type="hidden"]),textarea,select,option'));
@@ -46,7 +56,8 @@ export function createPrivacy(options: PrivacyOptions = {}) {
       for (const [name, value] of Object.entries(raw)) {
         if (name === 'data-testid' && typeof value === 'string' && ids.has(value)) clean[name] = value;
         else if (name === 'type' && typeof value === 'string' && /^(text|password|hidden|email|number|checkbox|radio|button|submit|reset|search|tel|url|date|time|range|color)$/.test(value)) clean[name] = value;
-        else if (['disabled', 'checked', 'selected', 'multiple', 'required'].includes(name)) clean[name] = value === true || value === '' ? true : null;
+        else if (['checked', 'selected'].includes(name)) { if (valueAllowed(element)) clean[name] = value === true || value === '' ? true : null; }
+        else if (['disabled', 'multiple', 'required'].includes(name)) clean[name] = value === true || value === '' ? true : null;
         else if (['width', 'height', 'rows', 'cols', 'size', 'colspan', 'rowspan'].includes(name) && /^\d{1,5}$/.test(String(value))) clean[name] = String(value);
         else if (['rr_width', 'rr_height'].includes(name) && typeof value === 'string' && /^\d+(\.\d+)?px$/.test(value)) clean[name] = value;
         else if (name === 'value') clean[name] = valueAllowed(element) && typeof value === 'string' ? value.slice(0, 10000) : '';

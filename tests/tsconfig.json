@@ -18,6 +18,7 @@
   },
   "include": [
     "**/*.ts",
-    "../playwright.config.ts"
+    "../playwright.config.ts",
+    "../playwright.sdk.config.ts"
   ]
 }

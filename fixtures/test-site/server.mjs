@@ -7,6 +7,9 @@ const assets = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],
   ['/app.js', ['app.js', 'text/javascript; charset=utf-8']],
+  ['/recording.js', ['recording.js', 'text/javascript; charset=utf-8']],
+  ['/unravel.js', ['../../packages/sdk/dist/unravel.global.js', 'text/javascript; charset=utf-8']],
+  ['/react-smoke.js', ['../../.cache/sdk-react-smoke.js', 'text/javascript; charset=utf-8']],
 ]);
 
 function json(response, status, body) {
@@ -18,6 +21,11 @@ export function createTestServer() {
   return createServer(async (request, response) => {
     try {
       const pathname = new URL(request.url, 'http://localhost').pathname;
+      if (request.method === 'GET' && pathname === '/react-smoke') {
+        response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+        response.end('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Plain React SDK smoke</title></head><body><div id="root"></div><script src="/react-smoke.js"></script></body></html>');
+        return;
+      }
       if (request.method === 'POST' && pathname === '/api/questions') {
         const chunks = [];
         let size = 0;
@@ -61,5 +69,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     console.error(error.code === 'EADDRINUSE' ? 'Port 4173 is in use. Stop the other process before starting this fixture.' : 'The local test server could not start.');
     process.exitCode = 1;
   });
-  server.listen(4173, '127.0.0.1', () => console.log('Unravel test website: http://127.0.0.1:4173'));
+  const port = Number(process.env.FIXTURE_PORT ?? 4173);
+  server.listen(port, '127.0.0.1', () => console.log(`Unravel test website: http://127.0.0.1:${port}`));
 }

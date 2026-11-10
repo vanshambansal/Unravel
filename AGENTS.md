@@ -1,7 +1,7 @@
 # Development guidelines
 
 - Start with `docs/PROJECT_STATUS.md`, `docs/PROJECT_BRIEF.md`, `docs/ARCHITECTURE.md`, and current `docs/DECISIONS.md`; inspect actual files/Git state. Read design/plan docs for the task, not entire historical logs by default.
-- Active application: `apps/web`. Keep `prototypes/landing-motion` unchanged as the migration reference and `fixtures/test-site` independent. Authentication/private project onboarding are implemented; consult status for verification and limitations. Recording/report/test-generation features are not implemented. Follow the current authorized milestone; do not restart deleted phases or expand landing work automatically.
+- Active application: `apps/web`. Keep `prototypes/landing-motion` unchanged as the migration reference and `fixtures/test-site` independent. Authentication/onboarding and the local recording SDK are implemented; consult status for verification and limitations. Read `docs/SDK.md` before changing recording/privacy. Report ingestion/replay and test generation remain future work. Follow the current authorized milestone; do not restart deleted phases or expand landing work automatically.
 - Discuss Docker, database, and external-service setup with the user before starting or provisioning those resources. Approval of an unrelated coding task is not infrastructure approval.
 - Work discussion-first: explain and recommend alternatives for consequential product, architecture, privacy/security, and visual-design choices; obtain agreement before implementing them.
 - Make routine technical decisions independently within agreed scope. Challenge unnecessary complexity and explain important tradeoffs.

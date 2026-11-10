@@ -35,7 +35,7 @@ export function createReplaySanitizer(privacy: Privacy, getNode: (id: number) =>
         removes: array(data.removes).map(raw => { const item = object(raw); return { id: number(item.id), parentId: number(item.parentId) }; }),
         adds: array(data.adds).map(raw => { const item = object(raw); return { parentId: number(item.parentId), nextId: item.nextId === null ? null : number(item.nextId), node: node(item.node) }; }),
       };
-      else if (source === IncrementalSource.Input) { const id = number(data.id); safe = { source, id, text: privacy.value(privacy.elementFor(getNode(id)), data.text), isChecked: data.isChecked === true }; }
+      else if (source === IncrementalSource.Input) { const id = number(data.id), element = privacy.elementFor(getNode(id)); safe = { source, id, text: privacy.value(element, data.text), isChecked: privacy.valueAllowed(element) && data.isChecked === true }; }
       else if (source === IncrementalSource.MouseInteraction) safe = { source, type: number(data.type), id: number(data.id), x: number(data.x), y: number(data.y) };
       else if ([IncrementalSource.MouseMove, IncrementalSource.TouchMove, IncrementalSource.Drag].includes(source)) safe = { source, positions: array(data.positions).map(raw => { const item = object(raw); return { id: number(item.id), x: number(item.x), y: number(item.y), timeOffset: number(item.timeOffset) }; }) };
       else if (source === IncrementalSource.Scroll) safe = { source, id: number(data.id), x: number(data.x), y: number(data.y) };

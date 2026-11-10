@@ -50,6 +50,16 @@ Updated 2026-11-10. Earlier rationale and superseded experiments are preserved u
 
 **Why:** With valid keys, the 127.0.0.1 preview stalled while Next forwarded requests to localhost. The same sign-in route and real-session tests work with matching localhost origins. Avoid framework upgrades or custom authentication rewrites when a consistent local origin solves the observed problem. This does not choose a deployment domain.
 
+## Recording implementation and approved privacy - 2026-11-10
+
+**Decision:** Standalone TypeScript package with a small initialize/start/stop/destroy controller. @rrweb/record 2.2.2 provides recording; @rrweb/types 2.2.2 supplies event discriminants. esbuild 0.28.2 emits ESM with a lazy recording chunk and a standalone script. Zod 4.6.7 Mini owns shared runtime contracts. No React runtime, playback library, new server or LLM dependency in the SDK.
+
+**Why:** Reuse maintained DOM capture while keeping Unravel lifecycle, semantic events and privacy explicit. ESM supports framework consumers; a standalone script proves independence with the existing vanilla fixture. Mini avoids shipping unused schema-building APIs. Vite/another application framework is unnecessary for packaging a small library. Dependencies were verified against the installed Node/TypeScript toolchain through builds and browser tests.
+
+**User-approved privacy:** Mask page text/input values, always block passwords, omit bodies/headers/query/fragments and redact paths/error text unless explicitly allowlisted. Only synthetic fixture content/known paths/intentional error are opted in. Rebuild replay fields with strict attribute filtering before in-memory storage; checked/selected states also require opt-in. Default CSS/image/attribute removal sacrifices fidelity instead of silently accepting sensitive raw content. Exact trusted stylesheet paths are an explicit resource opt-in, not a general safe-resource guarantee. More permissive capture requires a later reviewed decision.
+
+**Consequences:** Results remain local and may have unresolved locators/redacted values. Full playback, upload validation, retention and public-ingestion protections remain unimplemented. Limits (120 seconds / 5 MB / 5,000 events) are provisional configurable stop guardrails, not established product budgets. Keep measurements and compatibility limits in SDK.md/PROJECT_STATUS.md. No deployment, provider provisioning or package publication is authorized by this milestone.
+
 ## Entry template
 
 Date; decision; context/rationale; alternatives actually considered; consequences. Keep active choices here and implementation outcomes in PROJECT_STATUS.md/PROMPT_LOG.md.

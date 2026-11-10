@@ -17,10 +17,12 @@ Approved direction: Next.js + TypeScript, pnpm workspaces, retained vanilla Thre
 - Two explicitly approved synthetic Clerk users and their E2E-labelled project rows remain for repeatable tests. No Docker, paid upgrade, commit or push. Recording SDK and later landing sections remain out of scope.
 - Commands and detailed actual verification/limitations are owned by README.md and PROJECT_STATUS.md.
 
-## 3. Standalone recording SDK - planned
+## 3. Standalone recording SDK - implementation complete (2026-11-10)
 
-- Explicit lifecycle and rrweb/action/error/safe-network capture. Mask before persistence/upload, stop/destroy fully restore instrumentation.
-- Verify SSR-safe import, privacy sentinels, correct HTTP-error classification, React/Next.js integration and measured provisional limits.
+- Standalone browser TypeScript SDK with version 1 runtime contracts; explicit lifecycle and sanitized rrweb/action/error/fetch/XHR capture to local memory.
+- Approved conservative privacy defaults and synthetic fixture opt-ins. Passwords remain blocked after reveal; checked/selected states require opt-in too. Teardown restores owned instrumentation.
+- SSR-safe import, privacy sentinels, correct HTTP-error classification, plain React Strict Mode/Next.js integration, provisional limits and measured bundle/recording size. Actual outcomes are in PROJECT_STATUS.md.
+- No upload, report persistence, replay player, test plan or exporter. Conservative replay sanitization limits styling fidelity; full replay/resource policy is Milestone 4 work. No marketing redesign or new service.
 
 ## 4. Report submission and replay - planned
 

@@ -7,6 +7,8 @@
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js" defer></script>
+    <script src="/unravel.js" defer></script>
+    <script src="/recording.js" defer></script>
   </head>
   <body>
     <main>
@@ -17,7 +19,7 @@
       </header>
       <section aria-labelledby="question-title">
         <h2 id="question-title">Ask a question</h2>
-        <p id="demo-note" class="notice">Submission intentionally returns HTTP 500. Nothing is saved. The Unravel SDK is not installed yet.</p>
+        <p id="demo-note" class="notice">Submission intentionally returns HTTP 500. Nothing is saved. Recording is explicit and stays in memory.</p>
         <form id="question-form" aria-label="Question submission" aria-describedby="demo-note">
           <label for="category">Category</label>
           <select id="category" name="category" data-testid="category">
@@ -31,11 +33,21 @@
 
           <label for="private-value">Private test value <span>(optional)</span></label>
           <input id="private-value" data-testid="private-value" type="password" autocomplete="off" aria-describedby="private-help">
-          <p id="private-help" class="help">Dummy values only. This field is never included in the submission. It is a future SDK masking test, not a login field.</p>
+          <p id="private-help" class="help">Dummy values only. This field is blocked from recording and never included in the submission.</p>
 
           <button id="submit-question" type="submit" data-testid="submit-question">Submit question</button>
           <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
         </form>
+      </section>
+      <section data-unravel-block aria-labelledby="recording-title">
+        <h2 id="recording-title">Local recording</h2>
+        <p>Only synthetic question content is allowed. Other text/values are masked. No upload or replay is available yet.</p>
+        <div class="recording-controls">
+        <button id="record-start" type="button">Start recording</button>
+        <button id="record-stop" type="button" class="secondary">Stop recording</button>
+        <button id="record-destroy" type="button" class="secondary">Discard recording</button>
+        </div>
+        <p id="record-status" role="status" aria-live="polite">Not recording</p>
       </section>
       <details>
         <summary>Additional diagnostic check</summary>

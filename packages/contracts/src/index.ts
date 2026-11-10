@@ -4,7 +4,10 @@ export const RECORDING_VERSION = 1 as const;
 const text = (max: number) => z.string().check(z.maxLength(max));
 const positive = z.number().check(z.gte(0));
 const nullableText = (max: number) => z.nullable(text(max));
-export const SafeUrlSchema = z.strictObject({ origin: text(512), path: nullableText(2048) });
+export const SafeUrlSchema = z.strictObject({
+  origin: text(512).check(z.refine(value => { try { const url = new URL(value); return /^https?:$/.test(url.protocol) && url.origin === value; } catch { return false; } }, 'Expected an HTTP(S) origin')),
+  path: z.nullable(text(2048).check(z.refine(value => value.startsWith('/') && !/[?#\\\s]/.test(value), 'Expected a path without query or fragment'))),
+});
 export type SafeUrl = z.infer<typeof SafeUrlSchema>;
 
 export const LocatorSchema = z.union([
@@ -20,7 +23,7 @@ export const ActionSchema = z.strictObject({
 export const NetworkSchema = z.strictObject({
   kind: z.literal('network'), ...time, requestId: z.uuid(),
   transport: z.enum(['fetch', 'xhr']), method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'OTHER']),
-  url: z.nullable(SafeUrlSchema), status: z.nullable(z.number().check(z.gte(0), z.lte(599))),
+  url: z.nullable(SafeUrlSchema), status: z.nullable(z.number().check(z.int(), z.gte(0), z.lte(599))),
   startedAt: positive, durationMs: positive,
   outcome: z.enum(['success', 'http-error', 'network-error', 'aborted', 'timeout', 'opaque']),
 });
@@ -42,7 +45,7 @@ export type Locator = z.infer<typeof LocatorSchema>;
 // rrweb's sanitized JSON data retains its version-specific node/event structure.
 // This envelope intentionally excludes plugin/custom events and arbitrary extensions.
 export const ReplayEventSchema = z.strictObject({
-  type: z.number().check(z.gte(0), z.lte(4)), timestamp: positive, data: z.json(),
+  type: z.number().check(z.int(), z.gte(0), z.lte(4)), timestamp: positive, data: z.json(),
 });
 export type ReplayEvent = z.infer<typeof ReplayEventSchema>;
 export const StopReasonSchema = z.enum(['manual', 'duration-limit', 'size-limit', 'event-limit', 'navigation', 'recorder-error']);

@@ -1,4 +1,4 @@
-import type { SemanticEvent, ErrorEvent } from '@unravel/contracts';
+import type { SemanticEvent, ErrorEvent as CapturedError } from '@unravel/contracts';
 import type { Privacy } from './privacy';
 
 export function instrumentEvents(privacy: Privacy, at: () => number, emit: (event: SemanticEvent) => void): () => void {
@@ -28,14 +28,17 @@ export function instrumentEvents(privacy: Privacy, at: () => number, emit: (even
   }
   for (const name of ['click', 'input', 'change', 'submit']) listen(document, name, action);
   const errorTypes = ['Error', 'TypeError', 'RangeError', 'ReferenceError', 'SyntaxError', 'URIError', 'EvalError'];
-  function errorType(value: unknown): ErrorEvent['errorType'] {
+  function errorType(value: unknown): CapturedError['errorType'] {
     if (!(value instanceof Error)) return 'Unknown';
-    const name = value.name;
-    return errorTypes.includes(name) ? name as ErrorEvent['errorType'] : 'Unknown';
+    let name: string;
+    try { name = value.name; } catch { return 'Unknown'; }
+    return errorTypes.includes(name) ? name as CapturedError['errorType'] : 'Unknown';
   }
   listen(window, 'error', event => {
     if (!(event instanceof ErrorEvent)) return;
-    send({ kind: 'error', at: at(), source: 'error', errorType: errorType(event.error), message: privacy.errorMessage(event.message), file: privacy.safeUrl(event.filename), line: event.lineno || null, column: event.colno || null });
+    const descriptor = event.error instanceof Error ? Object.getOwnPropertyDescriptor(event.error, 'message') : undefined;
+    const message = privacy.errorMessage(event.message) ?? privacy.errorMessage(descriptor && 'value' in descriptor ? descriptor.value : undefined);
+    send({ kind: 'error', at: at(), source: 'error', errorType: errorType(event.error), message, file: privacy.safeUrl(event.filename), line: event.lineno || null, column: event.colno || null });
   });
   listen(window, 'unhandledrejection', event => {
     const reason = (event as PromiseRejectionEvent).reason;
@@ -48,8 +51,8 @@ export function instrumentEvents(privacy: Privacy, at: () => number, emit: (even
     if (url) send({ kind: 'navigation', at: at(), source, url });
   }
   const originalPush = history.pushState, originalReplace = history.replaceState;
-  const push: typeof originalPush = function (...args) { const result = Reflect.apply(originalPush, this, args); navigation('push'); return result; };
-  const replace: typeof originalReplace = function (...args) { const result = Reflect.apply(originalReplace, this, args); navigation('replace'); return result; };
+  const push: typeof originalPush = function (this: History, ...args) { const result = Reflect.apply(originalPush, this, args); navigation('push'); return result; };
+  const replace: typeof originalReplace = function (this: History, ...args) { const result = Reflect.apply(originalReplace, this, args); navigation('replace'); return result; };
   history.pushState = push; history.replaceState = replace;
   listen(window, 'popstate', () => navigation('pop')); listen(window, 'hashchange', () => navigation('hash')); navigation('initial');
   cleanup.push(() => { if (history.pushState === push) history.pushState = originalPush; if (history.replaceState === replace) history.replaceState = originalReplace; });

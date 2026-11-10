@@ -10,7 +10,7 @@ export function instrumentNetwork(privacy: Privacy, at: () => number, emit: (eve
   const removeListeners = new Set<() => void>();
   const requests = new WeakMap<XMLHttpRequest, { url: ReturnType<Privacy['safeUrl']>; method: NetworkEvent['method'] }>();
   function report(event: NetworkEvent) { if (active) { try { emit(event); } catch { /* Instrumentation cannot change host request behavior. */ } } }
-  const wrappedFetch: typeof fetch = function (input, init) {
+  const wrappedFetch: typeof fetch = function (this: unknown, input, init) {
     // Never inspect headers, bodies, response content or arbitrary toString/getters.
     let requestMethod: unknown = 'GET';
     try {
@@ -28,13 +28,16 @@ export function instrumentNetwork(privacy: Privacy, at: () => number, emit: (eve
       throw error;
     });
   };
-  const wrappedOpen: typeof originalOpen = function (...args: Parameters<typeof originalOpen>) {
+  const wrappedOpen: typeof originalOpen = function (this: XMLHttpRequest, ...args: [method: string, url: string | URL, async?: boolean, username?: string | null, password?: string | null]) {
     const result = Reflect.apply(originalOpen, this, args);
     requests.set(this, { method: method(args[0]), url: privacy.safeUrl(args[1]) });
     return result;
   };
-  const wrappedSend: typeof originalSend = function (...args: Parameters<typeof originalSend>) {
-    const xhr = this, info = requests.get(xhr) ?? { method: 'OTHER' as const, url: null };
+  const wrappedSend: typeof originalSend = function (this: XMLHttpRequest, ...args: Parameters<typeof originalSend>) {
+    // Closures below must retain this request when invoked as DOM listeners.
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const xhr = this;
+    const info = requests.get(xhr) ?? { method: 'OTHER' as const, url: null };
     const id = crypto.randomUUID(), start = performance.now(), startedAt = at();
     let failure: NetworkEvent['outcome'] | null = null;
     const aborted = () => { failure = 'aborted'; }, failed = () => { failure = 'network-error'; }, timedOut = () => { failure = 'timeout'; };
