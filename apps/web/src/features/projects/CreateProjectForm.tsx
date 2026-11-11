@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { validateProject, type ProjectFields } from './validation';
+import { ActionBar, SettingRow, SettingsGroup } from '../workspace/compositions';
 
 export function CreateProjectForm() {
   const router = useRouter(); const lock = useRef(false);
@@ -26,15 +27,16 @@ export function CreateProjectForm() {
     } catch { setError('We could not reach Unravel. Your details are still here; please try again.'); }
     finally { lock.current = false; setPending(false); }
   }
-  return <form className="product-panel project-form" onSubmit={submit} noValidate aria-busy={pending}>
-    <div className="product-field"><label htmlFor="project-name">Project name</label><input id="project-name" name="name" maxLength={80} required autoComplete="off" placeholder="e.g. Question Submission" value={name} onChange={e => setName(e.target.value)} aria-invalid={!!fields.name} aria-describedby={fields.name ? 'name-error' : undefined} />{fields.name && <p className="product-field-error" id="name-error">{fields.name}</p>}</div>
-    <div className="product-field"><label htmlFor="website-url">Website address</label><input id="website-url" name="websiteUrl" type="text" inputMode="url" autoCapitalize="none" spellCheck={false} required maxLength={2048} autoComplete="url" placeholder="https://example.com" value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} aria-invalid={!!fields.websiteUrl} aria-describedby={`website-help${fields.websiteUrl ? ' website-error' : ''}`} />
-      <p id="website-help" className="product-small">Paste a page URL or enter your domain. We save only the website origin—the protocol, hostname and optional port. Paths and query strings are removed. Use <code>http://localhost:4173</code> for the local test site.</p>
-      {fields.websiteUrl && <p id="website-error" className="product-field-error">{fields.websiteUrl}</p>}
-      {parsed && <p className="origin-preview" aria-live="polite">Website to register: <strong>{parsed.origin}</strong></p>}
-    </div>
-    {error && <p className="product-notice product-field-error" role="alert">{error}</p>}
-    <div className="product-actions"><button className="product-button" type="submit" disabled={pending}>{pending ? 'Creating project…' : 'Create project'}</button><Link className="product-button secondary" href="/app/projects">Cancel</Link></div>
-    <p className="product-small">Only your account can access this project. Registering a URL does not verify domain ownership.</p>
+  return <form onSubmit={submit} noValidate aria-busy={pending}>
+    <SettingsGroup title="Website registration" description="One project connects one website to your investigations." icon={<span>&#9671;</span>} footer={<ActionBar status={<span>Private to your account</span>}><Link className="product-button secondary" href="/app/projects">Cancel</Link><button className="product-button" type="submit" disabled={pending}>{pending ? 'Creating project…' : 'Create project'}</button></ActionBar>}>
+      <SettingRow label="Project name" htmlFor="project-name" description="A clear name you will recognize in your workspace."><input id="project-name" name="name" maxLength={80} required autoComplete="off" placeholder="e.g. Question Submission" value={name} onChange={e => setName(e.target.value)} aria-invalid={!!fields.name} aria-describedby={fields.name ? 'name-error' : undefined} />{fields.name && <p className="product-field-error" id="name-error">{fields.name}</p>}</SettingRow>
+      <SettingRow label="Website address" htmlFor="website-url" description="Use the website where visitors will report bugs."><input id="website-url" name="websiteUrl" type="text" inputMode="url" autoCapitalize="none" spellCheck={false} required maxLength={2048} autoComplete="url" placeholder="https://example.com" value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} aria-invalid={!!fields.websiteUrl} aria-describedby={`website-help${fields.websiteUrl ? ' website-error' : ''}`} />
+        <p id="website-help" className="ui-field-help">We save protocol, host and port. Paths and queries are removed. Loopback addresses default to HTTP. localhost and 127.0.0.1 are different origins.</p>
+        {fields.websiteUrl && <p id="website-error" className="product-field-error">{fields.websiteUrl}</p>}
+        {parsed && <p className="ui-origin origin-preview">Website to register <strong>{parsed.origin}</strong></p>}
+      </SettingRow>
+      {error && <p className="product-notice product-field-error ui-settings-alert" role="alert">{error}</p>}
+    </SettingsGroup>
+    <p className="ui-form-note">Next, install the SDK and send your first report. Registration does not verify domain ownership.</p>
   </form>;
 }

@@ -1,41 +1,93 @@
-# Approved visual foundation
+# Unravel visual direction
 
-Updated 2026-11-10. The user accepted the doorway/hero prototype; no further look-development cycle is authorized. Historical references, exploration records and rejected lighting experiments remain in [DESIGN_HISTORY.md](DESIGN_HISTORY.md).
+Updated: 2026-11-11
 
-## Current identity and experience
+## Authority and approval
 
-- Monumental dark architectural entrance, cool concrete/stone, crimson recessed illumination and controlled floor reflections.
-- One continuous camera approach through the threshold into the atrium; keep the geometry mostly stationary.
-- Entrance: "A failure is only the beginning." Existing Manrope 600, larger/brighter copy. Clearly visible top-directed UI rays continue through the copy and feather away below supporting text; do not shrink them into a faint text-only patch.
-- Hero: "Every bug has a story." Environment appears before headline/supporting copy/CTAs. Rose/cool-white SideRays move over typography with restrained pointer response; these are UI light effects, not physical shadows.
-- Inter interface text and IBM Plex Mono technical labels. Existing licensed local font bytes are retained with application-scoped family names.
-- Preserve current camera, glow, ray behavior, typography values and canonical framing during framework migration. Assets/strip importer correction are preserved; no new renderer, React Three Fiber, particles or decorative waves.
+The cinematic doorway/hero is approved and must remain unchanged. The internal application is an approved redesign task: V1/V2 remain references and history, not restrictions against replacing weak layouts. The user selected B for authentication and A for every other internal surface, then approved the coordinated motion direction for implementation. V1/V2 and both A/B explorations remain intact for reference. Runtime aesthetic acceptance is separate from this direction approval. A design proposal, implemented screen, passing check and user aesthetic acceptance are four different states.
 
-## Motion and accessibility
+This document owns visual intent. INTERNAL_UI.md owns patterns and implementation mapping; PROJECT_STATUS.md owns actual functionality/results; PROJECT_BRIEF.md owns requirements. Historical design discussion and superseded capability statements live in DESIGN_HISTORY.md. Do not infer current functionality from old Figma copy.
 
-Native scroll, no smoothing or input hijacking. Camera completes around 1.5 viewport heights; full hero at 1.8; sticky release at 2.55 provides 0.75 viewport of reading space. Extreme flings can still pass the hold.
+## Internal product brief
 
-Keyboard Skip Intro focuses the heading. Pause freezes ambient/ray motion but allows navigation. Reduced motion and unavailable graphics present the same-scene static hero. Useful content remains available without JavaScript. Resize/mobile recompose the canonical scene; graphics pause offscreen/hidden and dispose on route exit.
+Create an expressive, cohesive developer application with Raycast-like material depth, Resend-like technical clarity and Apple-like proportions and fluid interaction. Charcoal and crimson connect it to Unravel's architecture. Craftsmanship is required; neither minimalism nor restrained motion is the primary objective.
 
-## Remaining landing flow - planned
+Composition comes before components: establish each page's job, dominant working area, information hierarchy and next action. Purposeful space is welcome; empty acres, repetitive cards, caption-sized instructions and decorative metrics are not. Glass needs a visible layered context and crisp readable foregrounds, not a dark transparent fill on another dark fill.
 
-Doorway - hero - ordinary recording/workflow sections - readable diagnostic interface - bounded zoom into a detail in that same request element - sequence/replay/reproduction/JSON-plan/Playwright explanation - normal sections and final CTA. No detached giant-error screen. Reduced motion presents the panels consecutively.
+Preserve real authentication, ownership, recording, persistence, replay and plan/export behavior. Keep scripts/resources blocked in replay. The widget remains standalone and style-isolated. Within the application, expressive materials and motion must support confident task completion. Authentication can carry more architectural atmosphere than evidence/data panels.
 
-Use the existing [Figma file](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4). Frame IDs and applied storyboard remain in design/figma/exploration-state.json and pending-landing-flow-v2.json. Do not rerun historical construction or create a duplicate file. Refine only consequential desktop/mobile/diagnostic/report-detail compositions; implement ordinary sections from shared tokens. Product preview content must distinguish illustrative data from working features.
+## Selected compositions and retained alternatives
 
-## Assets and boundaries
+- **A / Glass workspace:** a framed application with narrow project navigation, luminous edge hierarchy, layered charcoal materials and a connected replay/evidence workbench. Strong navigation continuity and a distinctly Unravel floating-recorder surface.
+- **B / Open canvas:** horizontal navigation, larger uninterrupted working areas and contextual tools. Replay leads into a horizontal evidence sequence and readable reproduction/test-plan workflow. More visual openness, less persistent navigation.
 
-User references under design/references and original concept studies are retained, not deployed as full-UI screenshots. Current runtime assets are the Blender GLB, PBR/bake data, local fonts/mark and renderer-derived fallback captures. Source/licenses are preserved. Active application paths and maintenance procedures are in ARCHITECTURE.md and README.md.
+Use A's framed glass workspace and persistent project navigation across product pages, and B's immersive architectural sign-in. Do not merge other B layouts into A without a concrete usability reason. Figma uses synthetic content; application screens use real authorized data.
 
-The Vite reference remains unchanged. Its successful historical checks are not proof of Next.js parity or performance; current evidence belongs in PROJECT_STATUS.md. No changes to Figma or Blender assets are required for Milestone 1.
+## System requirements
 
-## Product access and onboarding - approved direction, 2026-11-10
+- Typography: existing licensed Manrope and Inter remain available; mono is for actual code, identifiers and timestamps. Body and primary controls must be comfortably readable at normal scale. Candidate type scales and line heights live in Figma styles, not duplicated here.
+- Materials: distinguish canvas, task surface and floating layer. Use edge light, directional shadows, tonal contrast and selective translucency; do not put every item in another rounded container. Compare candidates with and without atmospheric effects.
+- Navigation: only real destinations. Projects, Reports, SDK setup and Settings must have clear context; no speculative teams, billing or analytics. Candidate A and B may propose different shells.
+- Forms/settings: label-control relationships, useful grouping, clear saved/unsaved/error feedback, origin-change consequences and deliberate destructive confirmation. The name of the task, rather than a decorative eyebrow, establishes hierarchy.
+- Collections: useful project/report metadata, contextual actions and realistic empty/long-list states. Search/status/metadata-edit proposals are explicitly marked planned until implemented.
+- Investigation: replay is dominant; event chronology, selected evidence and the next reproduction action are visibly connected. Do not imply a network failure proves backend root cause. Masked and legacy replay limitations remain contextual.
+- Plans/export: readable steps and structured actions/values/assertions lead to JSON and code views. Developer-confirmed expected behavior, missing-safe-value and stale-save states remain visible. Generation is implemented locally, not a planned placeholder.
+- Recorder: complete explicit Start/Starting/Recording/Stop/Describe/Submitting/Retry/Success/discard workflow; show it on a plausible host website and at narrow width. Nothing records before Start, and nothing uploads before Submit.
 
-The user authorized Milestone 2 with email-code and Google sign-in. Four native editable concepts are on the new page **02 - Product access & onboarding** in the existing Figma file; the accepted landing frames were not changed:
+## Motion and responsive intent
 
-- [Sign-in](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-63): restrained split composition, Google and passwordless email; auth internals use Clerk components.
-- [Projects / empty desktop](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-93): project-first navigation and useful empty state without invented activity.
-- [Website registration](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-131): name/origin fields and a clear next step.
-- [Projects / mobile](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-168): single-column content and large controls.
+Author motion as part of the system: sliding selection, surface expansion, coordinated evidence selection, recorder state changes and clear save/copy feedback. Authentication may include soft architectural light/depth. Avoid delaying access to forms or moving evidence while it is being read. Animations must be interruptible, preserve focus and have reduced-motion equivalents.
 
-All four were visually inspected; clipped rows/input fields and wrapped button labels were fixed. Existing buttons, color/spacing variables and text styles are reused; missing field/navigation primitives are local components. Fonts verified as Manrope, Inter and IBM Plex Mono. No complete-UI raster or paid/AI-generated asset was used. The user approved this direction. Implementation adds a restrained architectural trace on sign-in, visual Register / Integrate SDK / Investigate steps, and beginner-friendly URL normalization/validation with immediate SDK-setup routing. Actual provider component internals follow Clerk capabilities; actual Clerk UI and authenticated projects/registration/setup were inspected at desktop and mobile sizes without horizontal overflow. Google and email-code sign-in were confirmed by the user. State is in design/figma/onboarding-state.json. No 3D scene belongs in the dashboard.
+Use 1440x900 desktop and 390x844 mobile design targets. Include short-screen behavior, long titles/origins, content overflow and keyboard/focus annotations. Static frames demonstrate layout and intent, not measured runtime animation, GPU performance or accessibility conformance.
+
+## Review standard
+
+Compare actual frames side by side using comparable content. Check visual hierarchy, proportion, readability, material depth, brand recognition, interaction coherence and supported states before proposing implementation. Review implementation later at realistic browser sizes against the approved target; functional checks alone cannot pass the visual gate.
+
+Use the existing [Figma workspace](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4). Preserve prior pages and shared styles. New candidate foundations must not alter old instances. The exploration ledger under design/figma records exact frame IDs and validation.
+
+## Landing boundary
+
+Keep the approved camera journey, rays, light, materials, type and skip/reduced-motion behavior. Remaining product storytelling and diagnostic zoom are a later task. The new internal look must not initialize the marketing renderer on auth/product routes. Existing scene artwork can guide or illustrate auth concepts without importing the full scene runtime.
+
+
+## Approved A/B composition references
+
+[Open the comparison entry point](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=96-237). The new page is **05 - Internal product / A & B**. Previous pages and shared masters remain intact. Sixteen native review compositions cover both candidates; the entry point, shared foundations and two nine-variant recorder families support them.
+
+| Composition | A / Glass workspace | B / Open canvas |
+| --- | --- | --- |
+| Authentication | [A](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=84-35) | [B](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=84-201) |
+| Projects | [A](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=84-87) | [B](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=84-245) |
+| Settings | [A](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=87-49) | [B](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=87-292) |
+| Investigation | [A](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=87-146) | [B](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=87-378) |
+| Mounted recorder | [A](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=89-521) | [B](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=89-579) |
+| Mobile investigation | [A](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=89-647) | [B](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=89-691) |
+| Mobile recorder | [A](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=89-735) | [B](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=89-773) |
+| Workflow and states | [A](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=91-199) | [B](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=91-361) |
+
+**Selected: A for product, B for authentication.** Persistent project context and adjacent replay, chronology and selected request details make a more connected investigation workbench. Architectural context is visible through the header/navigation; evidence/form surfaces stay readable. B gives replay more width and a horizontal sequence, but spreads the evidence-to-action relationship across more vertical space. The user explicitly selected B's authentication composition; other B frames remain comparison references.
+
+Companion boards cover SDK installation, structured/JSON/export modes, report collection and planned management controls, registration validation, destructive confirmation, first-use/no-match/loading/failure guidance and responsive/motion annotations. They are pattern coverage, not additional implemented pages. Email-code/Google are the intended authentication direction; the current Clerk signup password discrepancy requires separate provider review.
+
+The independent static design review found three focused issues: an implied global search, B's missing replay-boundary note, and weak selective glass in A. All three were corrected and scored resolved. Recorder-state coverage was inspected after fixing a clipped export. The review does not establish runtime behavior, animation quality, performance or user aesthetic acceptance. Exact validation lives in the exploration ledger; current application state remains in PROJECT_STATUS.md.
+
+Exploration-time tool status (historical): Figma, browser, Impeccable and shadcn search were verified. Mobbin returned a paid-plan requirement and was not retried. Motion Primitives selection/morphing source, shadcn resizing, Aceternity code presentation, React Bits glass and Magic UI accents informed feasibility; no runtime library was installed during the static exploration. The later implementation selects Motion as described below. Existing atrium artwork was reused from the Figma file; no local reference image was uploaded or new asset generated.
+
+## Implemented motion language ? 2026-11-11
+
+Light gives materials life; persistent surfaces explain state changes; selected evidence stays connected to playback. The sign-in artwork is the exact existing atrium asset, with bounded moving light shafts, floor illumination and pointer-responsive light. The form is available immediately. No landing renderer or 3D scene is loaded on product/authentication routes.
+
+A navigation selection moves between real destinations. The project switcher uses an anchored native popover; resource surfaces respond locally to the pointer. Dialogs, copy/save feedback and framework selection share short, interruptible transitions. Evidence selection and details animate without remounting the replay frame; leaving investigation still disposes playback immediately. Plan drafts retain their existing lifecycle.
+
+The standalone recorder morphs one persistent material silhouette between launcher, panel and dock. Text/controls remain unscaled. Start and Submit retain their explicit meanings. Its motion uses browser APIs and CSS; it imports no React or application animation runtime.
+
+Web UI uses Motion 14.12.0 for React layout continuity; GSAP/Three.js remain in the landing. Routine feedback is about 120?240 ms and surface transitions about 360 ms. These are tunable design values, not performance guarantees. Pause stops atmosphere; reduced motion removes spatial/ambient effects while preserving usable state feedback. Hidden/offscreen atmospheric effects pause. Actual checks and browser artifacts belong in PROJECT_STATUS.md.
+
+## Approved recorder refinement - 2026-11-11
+
+The user approved a compact, movable widget while retaining A's material/motion identity. Desktop width is 376px; the normal ready state has one Start action and concise privacy copy. Description is optional and initially collapsed. Movement is available through launcher/timer/header/grip, with keyboard/reset alternatives and viewport clamping. The same silhouette morph follows its current position. New browser captures and actual checks live in PROJECT_STATUS; no Figma/reference frame or landing renderer was changed.
+
+## Review-first generator - 2026-11-12
+
+Preserve Direction A's framed materials; make the reviewed sequence the main working area. A single View code workspace owns Playwright and JSON, with readable syntax, line numbers and explicit JSON Apply/Discard. Expected outcomes appear only for Verify a fix. Direct Edit/Remove, recoverable removed actions and a staged sheet with Cancel/Apply avoid turning the page into a long questionnaire. A reachable sticky footer supplies the next real action, while the post-download guide explains local execution. Neutral Prepared for export / Not run wording distinguishes syntactic readiness from a real test result. No new visual theme or landing change. Runtime evidence lives in PROJECT_STATUS and behavior in TEST_PLANS.

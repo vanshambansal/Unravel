@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { PageContent, PageHeader, EmptyState } from '@/features/workspace/compositions';
 export default function WorkspaceError({ reset }: { reset: () => void }) {
-  return <section role="alert" className="product-panel"><h1>We couldn’t load your workspace.</h1><p>Check that project storage is configured and available, then try again.</p><div className="product-actions"><button className="product-button" onClick={reset}>Try again</button><Link className="product-button secondary" href="/" prefetch={false}>Return to Unravel</Link></div></section>;
+  return <PageContent width="form"><PageHeader title="We couldn’t load your workspace." description="Your saved data has not been changed." /><div role="alert"><EmptyState title="Try loading it again" description="Check that project storage is configured and available, then retry." actions={<><button className="product-button" onClick={reset}>Try again</button><Link className="product-button secondary" href="/" prefetch={false}>Return to Unravel</Link></>} /></div></PageContent>;
 }

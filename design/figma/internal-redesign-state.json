@@ -1,0 +1,539 @@
+{
+  "date": "2026-11-11",
+  "fileKey": "aMr55xjZKRkkLBSFuVN4u4",
+  "sessionId": "3a647127-6e43-4198-a6c1-510377808379",
+  "status": "Static design exploration complete; awaiting user direction approval. Application UI unchanged.",
+  "page": {
+    "id": "82:31",
+    "name": "05 · Internal product / A & B"
+  },
+  "index": {
+    "id": "96:237",
+    "name": "Review / Start here",
+    "width": 3120,
+    "height": 430,
+    "descendants": 30
+  },
+  "baseline": {
+    "landing": {
+      "before": "db9228e7",
+      "after": "db9228e7",
+      "count": 452
+    },
+    "v2": {
+      "before": "4f0bca20",
+      "after": "4f0bca20",
+      "count": 810
+    },
+    "scope": "Geometry/text fingerprints; mutations restricted to the new page and independent new foundations."
+  },
+  "frames": [
+    {
+      "id": "84:35",
+      "name": "A / Authentication",
+      "width": 1440,
+      "height": 900,
+      "descendants": 51
+    },
+    {
+      "id": "84:87",
+      "name": "A / Projects",
+      "width": 1440,
+      "height": 900,
+      "descendants": 107
+    },
+    {
+      "id": "84:201",
+      "name": "B / Authentication",
+      "width": 1440,
+      "height": 900,
+      "descendants": 43
+    },
+    {
+      "id": "84:245",
+      "name": "B / Projects",
+      "width": 1440,
+      "height": 900,
+      "descendants": 91
+    },
+    {
+      "id": "87:49",
+      "name": "A / Project settings",
+      "width": 1440,
+      "height": 900,
+      "descendants": 94
+    },
+    {
+      "id": "87:146",
+      "name": "A / Investigation",
+      "width": 1440,
+      "height": 1160,
+      "descendants": 143
+    },
+    {
+      "id": "87:292",
+      "name": "B / Project settings",
+      "width": 1440,
+      "height": 900,
+      "descendants": 76
+    },
+    {
+      "id": "87:378",
+      "name": "B / Investigation",
+      "width": 1440,
+      "height": 1200,
+      "descendants": 102
+    },
+    {
+      "id": "89:521",
+      "name": "A / Floating recorder",
+      "width": 1440,
+      "height": 1120,
+      "descendants": 57
+    },
+    {
+      "id": "89:579",
+      "name": "B / Floating recorder",
+      "width": 1440,
+      "height": 1120,
+      "descendants": 67
+    },
+    {
+      "id": "89:647",
+      "name": "A / Mobile investigation",
+      "width": 390,
+      "height": 844,
+      "descendants": 43
+    },
+    {
+      "id": "89:691",
+      "name": "B / Mobile investigation",
+      "width": 390,
+      "height": 844,
+      "descendants": 48
+    },
+    {
+      "id": "89:735",
+      "name": "A / Mobile recorder",
+      "width": 390,
+      "height": 844,
+      "descendants": 37
+    },
+    {
+      "id": "89:773",
+      "name": "B / Mobile recorder",
+      "width": 390,
+      "height": 844,
+      "descendants": 47
+    },
+    {
+      "id": "91:199",
+      "name": "A / Workflow and states",
+      "width": 1440,
+      "height": 2219,
+      "descendants": 168
+    },
+    {
+      "id": "91:361",
+      "name": "B / Workflow and states",
+      "width": 1440,
+      "height": 2219,
+      "descendants": 168
+    }
+  ],
+  "families": [
+    {
+      "id": "89:244",
+      "width": 952,
+      "height": 4183,
+      "variants": [
+        {
+          "id": "89:59",
+          "name": "State=Ready,Viewport=Desktop",
+          "width": 424,
+          "height": 403,
+          "x": 24,
+          "y": 24
+        },
+        {
+          "id": "89:77",
+          "name": "State=Starting,Viewport=Desktop",
+          "width": 424,
+          "height": 335,
+          "x": 504,
+          "y": 24
+        },
+        {
+          "id": "89:93",
+          "name": "State=Recording,Viewport=Desktop",
+          "width": 424,
+          "height": 425,
+          "x": 24,
+          "y": 924
+        },
+        {
+          "id": "89:112",
+          "name": "State=Describe,Viewport=Desktop",
+          "width": 424,
+          "height": 535,
+          "x": 504,
+          "y": 924
+        },
+        {
+          "id": "89:137",
+          "name": "State=Submitting,Viewport=Desktop",
+          "width": 424,
+          "height": 535,
+          "x": 24,
+          "y": 1824
+        },
+        {
+          "id": "89:162",
+          "name": "State=Retry,Viewport=Desktop",
+          "width": 424,
+          "height": 601,
+          "x": 504,
+          "y": 1824
+        },
+        {
+          "id": "89:188",
+          "name": "State=Success,Viewport=Desktop",
+          "width": 424,
+          "height": 325,
+          "x": 24,
+          "y": 2724
+        },
+        {
+          "id": "89:203",
+          "name": "State=Discard,Viewport=Desktop",
+          "width": 424,
+          "height": 375,
+          "x": 504,
+          "y": 2724
+        },
+        {
+          "id": "89:219",
+          "name": "State=Describe,Viewport=Mobile",
+          "width": 358,
+          "height": 535,
+          "x": 24,
+          "y": 3624
+        }
+      ]
+    },
+    {
+      "id": "89:520",
+      "width": 976,
+      "height": 4230,
+      "variants": [
+        {
+          "id": "89:245",
+          "name": "State=Ready,Viewport=Desktop",
+          "width": 448,
+          "height": 450,
+          "x": 24,
+          "y": 24
+        },
+        {
+          "id": "89:273",
+          "name": "State=Starting,Viewport=Desktop",
+          "width": 448,
+          "height": 382,
+          "x": 504,
+          "y": 24
+        },
+        {
+          "id": "89:299",
+          "name": "State=Recording,Viewport=Desktop",
+          "width": 448,
+          "height": 472,
+          "x": 24,
+          "y": 924
+        },
+        {
+          "id": "89:328",
+          "name": "State=Describe,Viewport=Desktop",
+          "width": 448,
+          "height": 582,
+          "x": 504,
+          "y": 924
+        },
+        {
+          "id": "89:363",
+          "name": "State=Submitting,Viewport=Desktop",
+          "width": 448,
+          "height": 582,
+          "x": 24,
+          "y": 1824
+        },
+        {
+          "id": "89:398",
+          "name": "State=Retry,Viewport=Desktop",
+          "width": 448,
+          "height": 648,
+          "x": 504,
+          "y": 1824
+        },
+        {
+          "id": "89:434",
+          "name": "State=Success,Viewport=Desktop",
+          "width": 448,
+          "height": 372,
+          "x": 24,
+          "y": 2724
+        },
+        {
+          "id": "89:459",
+          "name": "State=Discard,Viewport=Desktop",
+          "width": 448,
+          "height": 422,
+          "x": 504,
+          "y": 2724
+        },
+        {
+          "id": "89:485",
+          "name": "State=Describe,Viewport=Mobile",
+          "width": 358,
+          "height": 582,
+          "x": 24,
+          "y": 3624
+        }
+      ]
+    }
+  ],
+  "foundations": {
+    "frameId": "83:31",
+    "collectionId": "VariableCollectionId:82:32",
+    "textStylePrefix": "Unravel exploration/",
+    "effectStyle": "Unravel exploration/Floating recorder",
+    "proposalOnly": true
+  },
+  "validation": {
+    "textProblems": [],
+    "placeholderCount": 0,
+    "fonts": [
+      "Manrope",
+      "Inter",
+      "IBM Plex Mono"
+    ],
+    "sharedTextStyleCount": 656,
+    "totalText": 710,
+    "note": "Inline type overrides on illustrative host websites are separate from application styles.",
+    "prototypeLinks": [
+      {
+        "id": "84:115",
+        "destinations": [
+          "87:146"
+        ]
+      },
+      {
+        "id": "84:119",
+        "destinations": [
+          "91:199"
+        ]
+      },
+      {
+        "id": "84:123",
+        "destinations": [
+          "87:49"
+        ]
+      },
+      {
+        "id": "84:160",
+        "destinations": [
+          "87:146"
+        ]
+      },
+      {
+        "id": "84:293",
+        "destinations": [
+          "87:378"
+        ]
+      },
+      {
+        "id": "84:319",
+        "destinations": [
+          "87:378"
+        ]
+      },
+      {
+        "id": "87:72",
+        "destinations": [
+          "84:87"
+        ]
+      },
+      {
+        "id": "87:78",
+        "destinations": [
+          "87:146"
+        ]
+      },
+      {
+        "id": "87:82",
+        "destinations": [
+          "91:199"
+        ]
+      },
+      {
+        "id": "87:169",
+        "destinations": [
+          "84:87"
+        ]
+      },
+      {
+        "id": "87:179",
+        "destinations": [
+          "91:199"
+        ]
+      },
+      {
+        "id": "87:183",
+        "destinations": [
+          "87:49"
+        ]
+      },
+      {
+        "id": "87:200",
+        "destinations": [
+          "91:199"
+        ]
+      },
+      {
+        "id": "87:290",
+        "destinations": [
+          "91:199"
+        ]
+      },
+      {
+        "id": "87:314",
+        "destinations": [
+          "87:378"
+        ]
+      },
+      {
+        "id": "87:318",
+        "destinations": [
+          "91:361"
+        ]
+      },
+      {
+        "id": "87:404",
+        "destinations": [
+          "91:361"
+        ]
+      },
+      {
+        "id": "87:408",
+        "destinations": [
+          "87:292"
+        ]
+      },
+      {
+        "id": "87:421",
+        "destinations": [
+          "91:361"
+        ]
+      },
+      {
+        "id": "87:480",
+        "destinations": [
+          "91:361"
+        ]
+      },
+      {
+        "id": "96:246",
+        "destinations": [
+          "84:35"
+        ]
+      },
+      {
+        "id": "96:249",
+        "destinations": [
+          "84:87"
+        ]
+      },
+      {
+        "id": "96:252",
+        "destinations": [
+          "87:146"
+        ]
+      },
+      {
+        "id": "96:255",
+        "destinations": [
+          "89:521"
+        ]
+      },
+      {
+        "id": "96:263",
+        "destinations": [
+          "84:201"
+        ]
+      },
+      {
+        "id": "96:266",
+        "destinations": [
+          "84:245"
+        ]
+      },
+      {
+        "id": "96:269",
+        "destinations": [
+          "87:378"
+        ]
+      },
+      {
+        "id": "96:272",
+        "destinations": [
+          "89:579"
+        ]
+      }
+    ],
+    "contrastRoleSamples": [
+      {
+        "role": "body",
+        "ratio": 13.15
+      },
+      {
+        "role": "secondary",
+        "ratio": 6.96
+      },
+      {
+        "role": "accent",
+        "ratio": 5.53
+      },
+      {
+        "role": "host feedback",
+        "ratio": 6.11
+      }
+    ],
+    "contrastLimit": "Base role pairs only; static checks do not certify live translucent blending or accessibility.",
+    "independentReview": {
+      "disposition": "ship",
+      "scope": "Three static-design material fixes scored resolved; recorder state captures inspected. Not user acceptance or runtime verification.",
+      "recommendation": "A",
+      "report": "design/figma/internal-redesign-review.md"
+    },
+    "browserAudit": "Existing localhost:3000 /app/projects timed out and showed server error 2407025973; no fresh application pass.",
+    "documentationChecks": {
+      "whitespace": "passed",
+      "localMarkdownLinks": "passed",
+      "authoringSyntax": "four helpers passed",
+      "originalReference": "52 files unchanged"
+    }
+  },
+  "evidence": {
+    "directory": ".cache/internal-redesign-review",
+    "pngCount": 18,
+    "signedAssetUrlsRetained": false
+  },
+  "toolStatus": {
+    "figma": "reads/writes/exports verified",
+    "shadcn": "registry search verified; not installed in app",
+    "impeccable": "context loader verified",
+    "mobbin": "paid-plan refusal; not retried",
+    "browser": "connected; application audit blocked by server error"
+  },
+  "boundary": "No application UI/runtime/backend/database/SDK/landing changes, dependency installation, new service, commit or push.",
+  "resume": "Use this ledger and existing native nodes. Authoring helpers are construction history, not idempotent full-rebuild commands; do not rerun them against existing frames."
+}

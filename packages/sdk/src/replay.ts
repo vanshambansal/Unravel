@@ -1,4 +1,4 @@
-import { ReplayEventSchema, type ReplayEvent } from '@unravel/contracts';
+import { ReplayEventSchema, sanitizePresentation, type ReplayEvent } from '@unravel/contracts';
 import { EventType, IncrementalSource } from '@rrweb/types';
 import type { Privacy } from './privacy';
 type ObjectValue = Record<string, unknown>;
@@ -14,6 +14,13 @@ export function createReplaySanitizer(privacy: Privacy, getNode: (id: number) =>
     if (type === 0) return { id, type, childNodes: array(source.childNodes).map(child => node(child, depth + 1)) };
     if (type === 1) return { id, type, name: 'html', publicId: '', systemId: '' };
     if (type === 3 || type === 4 || type === 5) return { id, type, textContent: type === 3 ? privacy.text(dom, source.textContent) : '' };
+    const attributes = object(source.attributes);
+    if (type === 2 && (source.isShadow === true || privacy.blocked(privacy.elementFor(dom)) || ('rr_width' in attributes && 'rr_height' in attributes))) {
+      const dimension = (value: unknown) => typeof value === 'string' && /^\d+(?:\.\d+)?px$/.test(value) ? Math.round(Math.min(65535, Number.parseFloat(value)) * 100) / 100 : 0;
+      const width = dimension(attributes.rr_width), height = dimension(attributes.rr_height);
+      // Never replay a blocked <details> as a live native "Details" control.
+      return { id, type: 2, tagName: 'div', attributes: { style: sanitizePresentation(width && height ? `display:block;visibility:hidden;width:${width}px;height:${height}px` : 'display:none') ?? 'display:none' }, childNodes: [] };
+    }
     return { id, type: 2, tagName: privacy.tag(source.tagName), attributes: privacy.attributes(privacy.elementFor(dom), object(source.attributes)), childNodes: array(source.childNodes).map(child => node(child, depth + 1)), ...(source.isShadow === true ? { isShadow: true } : {}) };
   }
   return (raw: unknown): ReplayEvent | null => {

@@ -7,15 +7,20 @@
     "node": ">=22.18.0 <23"
   },
   "scripts": {
-    "dev": "corepack pnpm build:packages && corepack pnpm --filter @unravel/web dev",
+    "dev": "corepack pnpm build:packages && corepack pnpm build:replay && corepack pnpm --filter @unravel/web dev",
     "start": "corepack pnpm --filter @unravel/web start",
-    "lint": "eslint apps/web/src apps/web/tests apps/web/drizzle.config.ts apps/web/playwright.auth.config.ts packages/contracts/src packages/sdk/src tests playwright.config.ts playwright.sdk.config.ts",
+    "lint": "eslint apps/web/src apps/web/tests apps/web/drizzle.config.ts apps/web/playwright.auth.config.ts apps/web/playwright.reports.config.ts apps/web/playwright.standard.config.ts apps/web/playwright.projects.config.ts apps/web/playwright.report-restart.config.ts packages/contracts/src packages/sdk/src packages/test-plan/src tests playwright.config.ts playwright.sdk.config.ts",
     "typecheck": "corepack pnpm build:packages && corepack pnpm --filter @unravel/web typecheck && corepack pnpm --filter @unravel/sdk typecheck && tsc -p tests/tsconfig.json",
     "test": "corepack pnpm build:packages && node --experimental-strip-types --test tests/unit/*.test.ts",
-    "build": "corepack pnpm build:packages && corepack pnpm posters:check && corepack pnpm --filter @unravel/web build",
-    "build:packages": "corepack pnpm --filter @unravel/contracts build && corepack pnpm --filter @unravel/sdk build",
+    "build": "corepack pnpm build:packages && corepack pnpm build:replay && corepack pnpm posters:check && corepack pnpm --filter @unravel/web build",
+    "build:replay": "node apps/web/scripts/build-replay.mjs",
+    "replay:dev": "corepack pnpm build:replay && node scripts/replay-host.mjs",
+    "test:reports": "corepack pnpm build:packages && corepack pnpm build:replay && corepack pnpm --filter @unravel/web test:reports",
+    "test:report-restart": "corepack pnpm --filter @unravel/web exec playwright test --config playwright.report-restart.config.ts",
+    "build:packages": "corepack pnpm --filter @unravel/contracts build && corepack pnpm --filter @unravel/sdk build && corepack pnpm --filter @unravel/test-plan build",
     "test:sdk": "corepack pnpm build:packages && node scripts/build-sdk-smoke.mjs && playwright test --config playwright.sdk.config.ts",
     "sdk:measure": "node scripts/measure-sdk.mjs",
+    "sdk:pack": "corepack pnpm build:packages && node scripts/pack-sdk.mjs",
     "test:e2e": "playwright test",
     "posters:check": "node scripts/check-posters.mjs",
     "posters:capture": "node scripts/capture-posters.mjs",
@@ -27,7 +32,12 @@
     "db:check": "corepack pnpm --filter @unravel/web db:check",
     "db:migrate": "corepack pnpm --filter @unravel/web db:migrate",
     "test:integration": "corepack pnpm --filter @unravel/web test:integration",
-    "test:auth": "corepack pnpm --filter @unravel/web test:auth"
+    "test:auth": "corepack pnpm --filter @unravel/web test:auth",
+    "test:motion": "corepack pnpm --filter @unravel/web exec playwright test --config playwright.auth.config.ts motion.spec.ts",
+    "test:projects": "corepack pnpm build:packages && corepack pnpm build:replay && corepack pnpm --filter @unravel/web exec playwright test --config playwright.projects.config.ts",
+    "test:generated": "node scripts/verify-generated.mjs",
+    "test:plans": "corepack pnpm build:packages && corepack pnpm build:replay && corepack pnpm --filter @unravel/web exec playwright test --config playwright.reports.config.ts test-plan.spec.ts",
+    "test:standard": "corepack pnpm build:packages && corepack pnpm build:replay && node scripts/build-standard-sites.mjs && corepack pnpm --filter @unravel/web exec playwright test --config playwright.standard.config.ts"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",

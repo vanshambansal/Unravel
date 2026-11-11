@@ -1,5 +1,6 @@
 import type { Locator, SafeUrl } from '@unravel/contracts';
 import type { PrivacyOptions } from './types';
+import { capturePresentation } from './presentation';
 export const REDACTED = '[redacted]';
 export const BLOCK_SELECTOR = 'script,iframe,canvas,video,audio,svg,object,embed,[data-unravel-block],input[type="password"],input[type="hidden"],[autocomplete="current-password"],[autocomplete="new-password"],[autocomplete="one-time-code"],[autocomplete^="cc-"]';
 const standardTags = new Set('html head body title meta link main header footer section article aside nav div span p h1 h2 h3 h4 h5 h6 form label input textarea select option button a ul ol li dl dt dd table thead tbody tr th td details summary br hr pre code strong em small fieldset legend img style'.split(' '));
@@ -17,9 +18,14 @@ export function createPrivacy(options: PrivacyOptions = {}) {
   const blocked = (element: Element | null) => {
     let node = element;
     while (node) {
+      // Shadow-root replay is unsupported. Omit the host/subtree instead of emitting
+      // an unsupported snapshot that makes an otherwise ordinary page unsubmitable.
+      if (node.shadowRoot || node.getRootNode() instanceof ShadowRoot) return true;
       if (everSensitive.has(node)) return true;
       if (node.matches(BLOCK_SELECTOR)) { everSensitive.add(node); return true; }
-      node = node.parentElement;
+      // Widget UI lives in a shadow root. Its blocked host must win over all opt-ins.
+      const root = node.getRootNode();
+      node = node.parentElement ?? (root instanceof ShadowRoot ? root.host : null);
     }
     return false;
   };
@@ -35,18 +41,30 @@ export function createPrivacy(options: PrivacyOptions = {}) {
       else return null;
       const url = new URL(address, location.href);
       if (!['http:', 'https:'].includes(url.protocol)) return null;
-      return { origin: url.origin, path: url.origin === location.origin && paths.has(url.pathname) ? url.pathname : null };
+      return { origin: url.origin, path: url.origin === location.origin && (url.pathname === '/' || paths.has(url.pathname)) ? url.pathname : null };
     } catch { return null; }
   }
   function locator(element: Element): Locator {
     const id = element.getAttribute('data-testid');
-    return id && ids.has(id) ? { kind: 'testId', value: id.slice(0, 120) } : { kind: 'unresolved', tag: standardTags.has(element.localName) ? element.localName : 'element' };
+    if (id && ids.has(id)) return { kind: 'testId', value: id.slice(0, 120) };
+    const parts: string[] = []; let node: Element | null = element;
+    while (node && node !== document.body && parts.length < 20 && node.parentElement && standardTags.has(node.localName)) {
+      const siblings = [...node.parentElement.children].filter(sibling => sibling.localName === node!.localName);
+      const ordinal = siblings.indexOf(node) + 1;
+      if (ordinal > 9999) return { kind: 'unresolved', tag: element.localName };
+      parts.unshift(`${node.localName}:nth-of-type(${ordinal})`); node = node.parentElement;
+    }
+    const value = `body > ${parts.join(' > ')}`;
+    if (node === document.body && parts.length && value.length <= 500) return { kind: 'css', value };
+    return { kind: 'unresolved', tag: standardTags.has(element.localName) ? element.localName : 'element' };
   }
   return {
     blocked, elementFor, valueAllowed, safeUrl, locator,
     text(node: Node | null, value: unknown): string {
       const element = elementFor(node);
       if (element?.closest('script,style')) return '';
+      // Whitespace contains no page content; retaining it avoids a redaction label for every indentation node.
+      if (typeof value === 'string' && /^[\t\r\n ]*$/.test(value)) return value.slice(0, 10000);
       return matches(element, textSelectors) && typeof value === 'string' ? value.slice(0, 10000) : REDACTED;
     },
     value(element: Element | null, value: unknown) { return valueAllowed(element) && typeof value === 'string' ? value.slice(0, 10000) : REDACTED; },
@@ -65,6 +83,10 @@ export function createPrivacy(options: PrivacyOptions = {}) {
         else if (name === 'href' && element?.localName === 'link' && typeof value === 'string') {
           try { const url = new URL(value, location.href); if (url.origin === location.origin && stylesheets.has(url.pathname)) clean[name] = url.origin + url.pathname; } catch { /* Resource omitted. */ }
         }
+      }
+      if (!blocked(element) && element && !element.matches('head,link,style,meta,title')) {
+        const style = capturePresentation(element);
+        if (style) clean.style = style;
       }
       return clean;
     },

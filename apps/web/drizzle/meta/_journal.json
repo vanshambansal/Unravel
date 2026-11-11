@@ -8,6 +8,20 @@
       "when": 1794292365203,
       "tag": "0000_initial_projects",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794309450137,
+      "tag": "0001_mature_diamondback",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794334414998,
+      "tag": "0002_magenta_red_shift",
+      "breakpoints": true
     }
   ]
 }

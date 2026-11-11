@@ -9,7 +9,8 @@ export function instrumentEvents(privacy: Privacy, at: () => number, emit: (even
   function action(event: Event) {
     const target = event.composedPath()[0];
     if (!(target instanceof Element) || privacy.blocked(target)) return;
-    const element = event.type === 'click' ? target.closest('button,a,input,[role="button"]') : target;
+    const submitter = event instanceof SubmitEvent ? event.submitter : null;
+    const element = event.type === 'submit' && submitter instanceof Element ? submitter : event.type === 'click' ? target.closest('button,a,input,summary,[role="button"]') : target;
     if (!element || privacy.blocked(element)) return;
     const input = element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement;
     let kind: 'click' | 'fill' | 'select' | 'check' | 'submit' = event.type === 'submit' ? 'submit' : 'click';
@@ -46,7 +47,10 @@ export function instrumentEvents(privacy: Privacy, at: () => number, emit: (even
     const message = typeof reason === 'string' ? reason : descriptor && 'value' in descriptor ? descriptor.value : undefined;
     send({ kind: 'error', at: at(), source: 'unhandledrejection', errorType: errorType(reason), message: privacy.errorMessage(message), file: null, line: null, column: null });
   });
+  let lastAddress = location.href;
   function navigation(source: 'initial' | 'push' | 'replace' | 'pop' | 'hash') {
+    if (source !== 'initial' && lastAddress === location.href) return;
+    lastAddress = location.href;
     const url = privacy.safeUrl(location.href);
     if (url) send({ kind: 'navigation', at: at(), source, url });
   }

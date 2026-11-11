@@ -48,6 +48,16 @@ test('real PostgreSQL persistence, owner isolation, atomic uniqueness and reconn
     service = projectService(projectRepository(drizzle(pool, { schema })));
     assert.equal((await service.get(a, project.id)).name, 'Question Submission');
     assert.equal((await service.list(a)).length, 2);
+    const expected = { name: project.name, origin: project.origin };
+    await assert.rejects(service.update(b, project.id, { name: 'Denied', websiteUrl: 'other.example', expected }), (e: unknown) => e instanceof ApplicationError && e.status === 404);
+    await assert.rejects(service.update(a, project.id, { name: 'Duplicate', websiteUrl: 'https://concurrent.example', expected }), (e: unknown) => e instanceof ApplicationError && e.status === 409);
+    const updated = await service.update(a, project.id, { name: 'Renamed', websiteUrl: 'localhost:4184/question', expected });
+    assert.equal(updated.id, project.id); assert.equal(updated.origin, 'http://localhost:4184');
+    await assert.rejects(service.update(a, project.id, { name: 'Stale', websiteUrl: 'other.example', expected }), (e: unknown) => e instanceof ApplicationError && e.status === 409);
+    const removal = { confirmation: updated.name, expected: { name: updated.name, origin: updated.origin } };
+    await assert.rejects(service.remove(b, project.id, removal), (e: unknown) => e instanceof ApplicationError && e.status === 404);
+    await service.remove(a, project.id, removal);
+    await assert.rejects(service.remove(a, project.id, removal), (e: unknown) => e instanceof ApplicationError && e.status === 404);
   } catch (error) {
     if (error instanceof assert.AssertionError || error instanceof ApplicationError) throw error;
     // eslint-disable-next-line preserve-caught-error -- Driver causes may expose connection credentials in test logs.

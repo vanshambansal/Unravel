@@ -4,6 +4,7 @@
 
 # Future generated artifacts
 node_modules/
+.pnpm-store/
 .next/
 dist/
 build/

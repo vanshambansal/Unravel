@@ -240,3 +240,164 @@ Next proposed slice: normal product-story sections after the hero, ending in a r
 ## Entrance ray visibility correction ? 2026-11-10
 
 User clarified that the ray shaft must remain visible: tightening should stop spill below the copy, not hide the ceiling-to-text beam. The small radial mask was too restrictive and is replaced with a soft horizontal corridor and a vertical fade ending just below the supporting text. The larger typography is retained. Desktop/mobile browser views confirm visible animated rays from above through the copy, with floor spill suppressed. Hero, camera and scene assets unchanged.
+
+
+---
+
+# Archived current-design document before internal overhaul - 2026-11-11
+
+# Approved landing foundation and product design review
+
+Updated 2026-11-11. The user accepted the doorway/hero prototype; no further look-development cycle is authorized. Historical references, exploration records and rejected lighting experiments remain in [DESIGN_HISTORY.md](DESIGN_HISTORY.md).
+
+## Latest implementation: material consistency and real regression workflow
+
+Shared charcoal/crimson layered surfaces now cover authentication, projects, registration, SDK setup, settings, reports and the new reproduction/plan workspace. Keep the contained compositions described in [INTERNAL_UI.md](INTERNAL_UI.md). Large scrolling cards avoid true backdrop blur after browser inspection exposed offscreen compositor artifacts; bounded navigation/dialog surfaces retain it. This is a material refinement of approved V2, not a new design direction or landing redesign.
+
+Investigation now links to a functional Reproduction & test plan tab, with readable steps, structured controls, JSON editing, review messages and save/export states. The desktop workspace stacks on mobile. The older references below that describe these stages as planned are historical. Fresh recordings retain bounded safe presentation; legacy recordings remain structural. Masking and separate-origin isolation are preserved.
+
+Actual browser screenshots were inspected across auth, projects, registration, setup, settings, reports, investigation, plan editing and not-found states at desktop/mobile sizes. Loading/error layouts were source-reviewed. Exact checks and limitations are owned by PROJECT_STATUS.md. No Figma frames, landing renderer or original prototype files changed in this task.
+
+## Internal application compositions
+
+The user identified repeated disconnected page layouts and selected Raycast's actual Settings, Extension Manager and launcher as the primary internal UI reference. The implementation guide and reusable composition inventory now live in [INTERNAL_UI.md](INTERNAL_UI.md); do not duplicate their rules here. Approved V2 typography/identity and Figma compositions remain the baseline. All supplied `design/references/internal-ui/1.png` through `8.png` were inspected, along with the user's new screenshots and the linked Raycast documentation. V2 projects/investigation design contexts and screenshots were read from the existing Figma file; no Figma frames were changed.
+
+Settings now uses a contained group with aligned divided rows, inset controls, an integrated action/status footer and a separate compact deletion surface. Native dialogs use the shared floating-surface composition. Projects, reports, new-project forms and investigation headings reuse shared compositions instead of adding another page-specific CSS patch. Existing settings-only geometry/dialog rules were removed from the V2 stylesheet. The cinematic landing and SDK widget implementation remain unchanged; the standalone widget's existing Shadow DOM style recipe is documented rather than coupled to React/dashboard CSS. Actual checks belong to PROJECT_STATUS.md.
+
+## Project-management completion - historical first layout
+
+The initial management UI used a separate explanatory column and form; the composition system above supersedes that geometry. Project tabs, owner-managed edits, origin confirmation and typed deletion behavior remain intact. Fixture connection setup is separate developer scaffolding, not part of the visitor widget.
+
+## Internal product V2 - approved and implemented, 2026-11-10
+
+The user approved V2 and authorized implementation. The application now uses the compact project-switching header, project rows, framework-specific SDK setup, integrated replay/evidence workspace and complete floating recorder. V1 and both Figma comparison columns remain preserved; this implementation task made no Figma edits. Cinematic scene code and the original prototype remain unchanged.
+
+Runtime adjustments: the investigation divider is pointer/keyboard adjustable on wide screens and stacks on narrow screens; event filters and readable details use actual recorded evidence. Fit restores the nested replay viewport after panning. The recorder is 424px on desktop with safe mobile margins, reachable controls on short screens, a minimized recording dock, draft retention, retry and explicit discard. Shadow DOM isolates host styles; system/available Inter fonts avoid fetching fonts on visitor sites. Reduced-motion mode disables decorative transitions. Reproduction/plan/export remain visibly planned, not enabled functionality.
+
+Production Chromium checks exercised the complete visitor-to-developer flow, actual replay, resize/filters and responsive layouts. Desktop/mobile projects, investigation, setup, recorder and anonymous sign-in were inspected. These checks do not establish universal accessibility or real-phone/browser coverage. Actual verification belongs to PROJECT_STATUS.md.
+
+The user found V1 structurally useful but visually insufficient and explicitly required preserving it. **04 · Product identity / V2 comparison** contains separate V1 copies in the left column and V2 alternatives in the right; the original V1 page, shared masters and styles were not edited. Its before/after structural fingerprint matches (`1acd66fc`, covering layer names/types/positions/sizes, text, fonts and fills). New V2-only typography/material styles avoid changing existing instances.
+
+| Composition | Side-by-side comparison | V2 detail |
+| --- | --- | --- |
+| Projects | [V1 / V2](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=74-240) | [V2 projects](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=69-148) |
+| Investigation | [V1 / V2](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=74-245) | [V2 investigation](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=70-154) |
+| Floating recorder | [V1 / V2](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=74-250) | [V2 mounted recorder](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=72-163) |
+
+- Projects keeps the collection layout: 32px page headings, more deliberate vertical rhythm, quieter row actions, actual Unravel trace mark, and visible hover/focus studies. An empty-state alternative and onboarding notes remain review annotations, not simultaneous production sections.
+- Investigation replaces two separately framed cards with one replay/evidence workspace. A larger replay stage, consistent transport, chronological markers, quiet event rows and selected-request key/value details establish hierarchy. Investigate → Reproduce → Protect gives direction; the latter capabilities remain explicitly planned. Structural replay and synthetic opt-ins are represented honestly; no improved capture fidelity is implied. Trade-off: a fixed composed inspector needs carefully bounded resizing and stacking during implementation.
+- Recorder grows from 360px to 424px on desktop, with 15px body text, 52px primary controls, clearer recording status/timer, a captured-session summary and stronger floating depth. It is mounted on an editable realistic Question desk website mockup, with launcher and Ready/Recording/Retry studies below. All eight V2 component states exist separately. Trade-off: better readability occupies more of the host page; narrow viewports must reflow to safe margins, and short viewports need internal scrolling with reachable controls. Recording must leave the host site interactive. Visitor expectations remain optional report description context, not validated test assertions.
+
+The existing component research continues to inform restrained selection, panel sizing and launcher expansion. No new library/asset installation or external image upload. Three V2 compositions and three comparison views were visually inspected; final V2 compositions and recorder masters have zero text-bound overflow, shared text styles and the intended Manrope/Inter/IBM Plex Mono families. No flattened UI/image layers. Close-control alignment was refined and the launcher added after the first visual pass. Motion and actual accessibility remain unverified static specifications. Metadata: [internal-ui-v2-state.json](../design/figma/internal-ui-v2-state.json).
+
+The following exploration notes describe the preceding static design task. Its statements about unverified motion and no runtime changes are historical; current implementation evidence is recorded above and in PROJECT_STATUS.md.
+
+## Internal product V1 - retained comparison baseline, 2026-11-10
+
+The user requested a stronger internal identity and approved exploring three compositions before application changes. The earlier M2 direction below is historical approval, not approval of this revision. Keep the product spacious and purposeful: Manrope headings, Inter controls/body, IBM Plex Mono technical labels, charcoal surfaces and restrained crimson. The selected navigation is a compact global header/project switcher rather than a persistent sidebar. The SDK must supply the complete floating visitor workflow out of the box; it is not implemented yet.
+
+New editable compositions on **03 · Product identity / V1** in the existing file:
+
+- [Projects](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=58-31): populated collection with exact origins and direct report/setup actions; compact empty-state alternative and onboarding interaction notes are review material below the main layout.
+- [Investigation](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=60-37): dominant structural replay, desktop resizing affordance, chronological evidence, filters and readable selected-request details. Reproduction/JSON plan/export remain explicitly planned. Synthetic example content is illustrative, not a live replay in Figma.
+- [Floating recorder](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=61-42): launcher, eight reusable panel states (Ready, Starting, Recording, Describe, Submitting, Retry, Success, Discard), a 390px treatment and interaction/privacy notes. Proposed expansion is 180-240 ms with reduced-motion support; actual runtime focus, animation and responsiveness remain unverified. The recording state must leave the underlying website interactive.
+
+Existing color/spacing variables, typography styles and button masters are reused. The recorder family and event-row master are local components outside the review compositions. All UI remains native text/frames/instances; no full-UI raster, AI-generated asset, paid resource, new library subscription or package installation. All three final screenshots were inspected; wrapped-text overlap, inherited button-label widths and a header encoding defect were corrected. Final bounds checks report zero text overflow; fonts are Manrope, Inter and IBM Plex Mono. Original landing and onboarding frame sizes/descendant counts match their loaded-page baselines. Metadata lives in [internal-ui-state.json](../design/figma/internal-ui-state.json).
+
+Component research informs patterns rather than requiring dependencies: sliding selection from Motion Primitives Animated Background; filename/highlight/copy presentation from Aceternity Code Block; desktop panel sizing from shadcn Resizable; restrained launcher expansion from Morphing Popover. Keep React/motion runtimes out of the standalone widget. Aceternity's stacked tab animation and continuous Border Beam effects are not selected defaults. shadcn Sidebar is not needed for the selected compact navigation. Onboarding annotations call for React/Next.js tabs, copy feedback and progress based on an actually received report, not a fabricated installation check.
+
+No application redesign or SDK widget was implemented in this task. Review these static compositions before authorizing UI changes. Authentication and complete onboarding redesign are not additional deliverables here.
+
+## Current identity and experience
+
+- Monumental dark architectural entrance, cool concrete/stone, crimson recessed illumination and controlled floor reflections.
+- One continuous camera approach through the threshold into the atrium; keep the geometry mostly stationary.
+- Entrance: "A failure is only the beginning." Existing Manrope 600, larger/brighter copy. Clearly visible top-directed UI rays continue through the copy and feather away below supporting text; do not shrink them into a faint text-only patch.
+- Hero: "Every bug has a story." Environment appears before headline/supporting copy/CTAs. Rose/cool-white SideRays move over typography with restrained pointer response; these are UI light effects, not physical shadows.
+- Inter interface text and IBM Plex Mono technical labels. Existing licensed local font bytes are retained with application-scoped family names.
+- Preserve current camera, glow, ray behavior, typography values and canonical framing during framework migration. Assets/strip importer correction are preserved; no new renderer, React Three Fiber, particles or decorative waves.
+
+## Motion and accessibility
+
+Native scroll, no smoothing or input hijacking. Camera completes around 1.5 viewport heights; full hero at 1.8; sticky release at 2.55 provides 0.75 viewport of reading space. Extreme flings can still pass the hold.
+
+Keyboard Skip Intro focuses the heading. Pause freezes ambient/ray motion but allows navigation. Reduced motion and unavailable graphics present the same-scene static hero. Useful content remains available without JavaScript. Resize/mobile recompose the canonical scene; graphics pause offscreen/hidden and dispose on route exit.
+
+## Remaining landing flow - planned
+
+Doorway - hero - ordinary recording/workflow sections - readable diagnostic interface - bounded zoom into a detail in that same request element - sequence/replay/reproduction/JSON-plan/Playwright explanation - normal sections and final CTA. No detached giant-error screen. Reduced motion presents the panels consecutively.
+
+Use the existing [Figma file](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4). Frame IDs and applied storyboard remain in design/figma/exploration-state.json and pending-landing-flow-v2.json. Do not rerun historical construction or create a duplicate file. Refine only consequential desktop/mobile/diagnostic/report-detail compositions; implement ordinary sections from shared tokens. Product preview content must distinguish illustrative data from working features.
+
+## Assets and boundaries
+
+User references under design/references and original concept studies are retained, not deployed as full-UI screenshots. Current runtime assets are the Blender GLB, PBR/bake data, local fonts/mark and renderer-derived fallback captures. Source/licenses are preserved. Active application paths and maintenance procedures are in ARCHITECTURE.md and README.md.
+
+The Vite reference remains unchanged. Its successful historical checks are not proof of Next.js parity or performance; current evidence belongs in PROJECT_STATUS.md. No changes to Figma or Blender assets are required for Milestone 1.
+
+## Product access and onboarding - approved direction, 2026-11-10
+
+The user authorized Milestone 2 with email-code and Google sign-in. Four native editable concepts are on the new page **02 - Product access & onboarding** in the existing Figma file; the accepted landing frames were not changed:
+
+- [Sign-in](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-63): restrained split composition, Google and passwordless email; auth internals use Clerk components.
+- [Projects / empty desktop](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-93): project-first navigation and useful empty state without invented activity.
+- [Website registration](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-131): name/origin fields and a clear next step.
+- [Projects / mobile](https://www.figma.com/design/aMr55xjZKRkkLBSFuVN4u4?node-id=41-168): single-column content and large controls.
+
+All four were visually inspected; clipped rows/input fields and wrapped button labels were fixed. Existing buttons, color/spacing variables and text styles are reused; missing field/navigation primitives are local components. Fonts verified as Manrope, Inter and IBM Plex Mono. No complete-UI raster or paid/AI-generated asset was used. The user approved this direction. Implementation adds a restrained architectural trace on sign-in, visual Register / Integrate SDK / Investigate steps, and beginner-friendly URL normalization/validation with immediate SDK-setup routing. Actual provider component internals follow Clerk capabilities; actual Clerk UI and authenticated projects/registration/setup were inspected at desktop and mobile sizes without horizontal overflow. Google and email-code sign-in were confirmed by the user. State is in design/figma/onboarding-state.json. No 3D scene belongs in the dashboard.
+
+## Report UI implementation - 2026-11-10
+
+The report list/detail extends the approved practical dark workspace without changing Figma, the landing scene or typography assets. Replay and timeline are side by side on larger screens and stacked on narrow screens. Status, partial-recording/privacy limits, actual-player seeking, keyboard range controls, fit/100% inspection and confirmed deletion are functional UI. Replay deliberately uses original masked structure without original styles/resources; this is a fidelity boundary, not a screenshot-parity claim. Production desktop/mobile captures were visually inspected, including fixing stale pan offset when returning to fit. Current evidence and browser scope are recorded in PROJECT_STATUS.md; REPORTS.md owns local operation/security details.
+
+
+
+# Archived internal composition guide before A/B redesign - 2026-11-11
+
+# Internal application compositions
+
+This is the implementation guide for product UI. [DESIGN.md](DESIGN.md) owns visual direction and references; [PROJECT_STATUS.md](PROJECT_STATUS.md) owns actual verification. Backend and SDK privacy behavior have separate owners. Do not copy old page markup or append a page-specific CSS patch when a composition fits.
+
+## Foundation
+
+Use Raycast's actual application UI as the primary reference: [Settings](https://manual.raycast.com/settings), [Manage Extensions](https://developers.raycast.com/information/developer-tools/manage-extensions-command), and [Themes](https://manual.raycast.com/themes). The supplied `design/references/internal-ui/1.png` and `8.png` show contained settings groups and aligned rows; the user's launcher/extension screenshots illustrate restrained floating surfaces and contextual actions. Resend informs breathing room; Sentry informs replay/evidence hierarchy. Do not copy macOS window chrome, fill navigation with nonexistent features, or add effects to compensate for layout.
+
+Retain the approved V2 Manrope headings, Inter body and IBM Plex Mono technical values, charcoal identity and crimson selection/focus accents. Three depth levels: quiet page canvas, contained editing/collection surface, strongest shadow on floating dialogs/widget. Use inset control surfaces rather than outlining every block. Keep body/control text 14–15px, captions 12–13px and technical labels 11–12px; do not use captions for primary instructions.
+
+## Code owners and recipes
+
+`apps/web/src/features/workspace/compositions.tsx` owns reusable markup; `compositions.css` owns geometry, material tokens and responsive rules for it. Existing `workspace.css` owns shared type/control foundations and `product-v2.css` owns the application shell and remaining approved feature layouts. All are scoped to `.unravel-workspace`; marketing must never import them.
+
+| Composition | Use and rules | Current usage |
+| --- | --- | --- |
+| `PageContent` + `PageHeader` | One H1, short purpose, optional context and relevant actions. Wide for collections/investigation; 1000px maximum for settings/forms. Align navigation to the contained content width. | Projects, reports, registration, settings |
+| `SettingsGroup` + `SettingRow` | Header and icon, divided label/control rows, support text near its field. Desktop labels and controls align; phone rows stack. Do not put a loose explanatory column beside an oversized form. | Settings and registration |
+| `ActionBar` | Footer belongs to its editing group. Status at the start, reset/cancel then primary action at the end. Distinguish unchanged, unsaved, pending, saved and error states. Keep submitted values on failure. | Settings and registration |
+| `ResourceCollection` + `ResourceItem` | One surface, quiet heading/count, repeated semantic list rows and optional footer. Title, meaningful metadata, contextual actions; no invented metrics or disabled fake filters. A row with several actions is not wrapped in another link. | Projects and report list |
+| `EmptyState` | Explain absence and one useful next action. Do not render populated and empty alternatives simultaneously. “No matches” must differ from “no resources” when search is implemented. | Projects and report list |
+| `ProductDialog` | Native modal with labelled title/description, contained body and separate action footer. Cancel first, destructive action last. Opener owns show/close, pending cancellation policy and focus return. Use typed confirmation for project deletion. | Origin change and deletion |
+| `InvestigationSurface` + `PanelHeading` | One bounded replay/evidence surface, concise panel toolbar, functional controls. Feature code retains refs, resizing, player isolation and timeline behavior; narrow viewports stack panels. | Report investigation |
+| `ProjectTabs` | Real Reports / SDK setup / Settings links with current location. Preserve the project switcher/account menu; do not invent sidebars for three destinations. | Project routes |
+
+The SDK widget stays framework-independent with its own Shadow DOM stylesheet. Its 424px floating panel, clear state heading, 15px body, generous primary control and restrained shadow are the floating-recorder recipe. Do not import React compositions, application fonts or dashboard CSS into the SDK. This pass does not change recorder behavior or claim that app CSS automatically styles it. Compare widget materials with the same approved V2 foundation during future changes.
+
+## Craft and behavior
+
+- Prefer short supporting copy, a restrained group header and subtle row dividers. Put technical identifiers in read-only rows, not beside a detached paragraph.
+- Keep destructive actions in a separate compact, quiet surface. Reserve solid red for the final confirmation; explain irreversibility before collecting confirmation.
+- Keep labels associated with controls and errors referenced by `aria-describedby`; maintain status/alert announcements. Do not replace native semantics with clickable divs.
+- Preserve visible keyboard focus, native scrolling, safe modal margins and internal overflow on short screens. Do not hide the account button when suppressing mobile account text.
+- Keep motion to short background/focus transitions. Respect reduced motion. No automatic layout travel, particle backgrounds or general glass blur on ordinary forms.
+- Do not silently change APIs, ownership, privacy defaults or data retention while refining presentation. New product behavior requires its own agreed task.
+
+## Completion check for every page change
+
+Use the real authenticated page and representative content. Inspect at 1366×768, 1440×900, 390×844 and a narrow 320px viewport where appropriate. Check overflow, long text, focus, pending/error/success and applicable empty states. Exercise dialogs with keyboard and inspect actual screenshots; static Figma and passing builds do not establish visual quality.
+
+Run relevant repository commands from README and report actual outcomes. Update this guide only when a reusable pattern changes; link to it from design/agent documentation instead of duplicating token values and rules. Further pages should compose these primitives or extend them for a concrete need, not grow an unrelated visual system.
+
+## Shared material treatment and plan workspace
+
+`product-materials.css` owns the common product/auth surface finish: restrained charcoal/crimson canvas gradients, translucent card fills, edge highlights and inset controls. True backdrop blur is limited to bounded header/dialog surfaces; large scrolling panels use inexpensive layered materials, avoiding offscreen compositor artifacts. `features/reports/test-plan.css` owns the plan editor's responsive two-column/stacked layout. Keep these separate from business logic and the cinematic landing.
+
+Report workflow tabs switch between investigation and a real reproduction/plan editor. Edits stay in memory when switching tabs; persistence is explicit. Use grouped controls, concise review messages and a shared footer. Future widgets/pages should use the same material hierarchy without adding blur to every nested row.

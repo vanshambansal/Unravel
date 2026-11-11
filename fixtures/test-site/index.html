@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="/styles.css">
     <script src="/app.js" defer></script>
     <script src="/unravel.js" defer></script>
+    <script src="/unravel-config.js" defer></script>
     <script src="/recording.js" defer></script>
   </head>
   <body>
     <main>
       <header>
         <p class="eyebrow">Unravel integration fixture</p>
-        <h1>Question desk</h1>
+        <h1 id="fixture-heading">Question desk</h1>
         <p>A small website for testing browser recording, diagnostics, and regression tests. Use synthetic data only.</p>
       </header>
       <section aria-labelledby="question-title">
@@ -39,22 +40,33 @@
           <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
         </form>
       </section>
-      <section data-unravel-block aria-labelledby="recording-title">
+      <section id="fixture-debug" hidden data-unravel-block aria-labelledby="recording-title">
         <h2 id="recording-title">Local recording</h2>
-        <p>Only synthetic question content is allowed. Other text/values are masked. No upload or replay is available yet.</p>
+        <p>Only synthetic question content is allowed. Other text/values are masked. Capture stays in this tab until you explicitly submit it.</p>
+        <details><summary>Connect a registered project</summary>
+          <label for="sdk-project">Public project ID</label><input id="sdk-project" value="12345678-1234-4234-8234-123456789012" spellcheck="false">
+          <label for="sdk-origin">Local Unravel origin</label><input id="sdk-origin" value="http://localhost:3000" spellcheck="false">
+          <p class="help">Register this website's exact origin in Unravel, then paste its project ID. Applying configuration discards the current local recording. No secret keys belong here.</p>
+          <button id="record-configure" type="button" class="secondary">Apply project configuration</button>
+        </details>
         <div class="recording-controls">
         <button id="record-start" type="button">Start recording</button>
         <button id="record-stop" type="button" class="secondary">Stop recording</button>
         <button id="record-destroy" type="button" class="secondary">Discard recording</button>
         </div>
         <p id="record-status" role="status" aria-live="polite">Not recording</p>
+        <label for="report-title">Bug report title</label><input id="report-title" maxlength="120" required value="Question submission fails">
+        <label for="report-description">What happened? <span>(optional)</span></label><textarea id="report-description" maxlength="2000" rows="2" placeholder="Synthetic details only. Do not enter secrets or personal information."></textarea>
+        <button id="report-submit" type="button">Submit bug report</button>
+        <p id="submission-status" role="status" aria-live="polite">Not submitted. Stop a recording before submitting.</p>
       </section>
+
       <details>
         <summary>Additional diagnostic check</summary>
         <p>The button below intentionally throws a JavaScript error. This is separate from an HTTP failure.</p>
         <button id="trigger-error" type="button" class="secondary">Trigger test error</button>
       </details>
-      <footer>Local test target · no accounts, storage, analytics, or external services</footer>
+      <footer>Local integration target · synthetic data only</footer>
     </main>
   </body>
 </html>

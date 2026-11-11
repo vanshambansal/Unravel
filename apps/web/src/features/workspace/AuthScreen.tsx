@@ -1,24 +1,27 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
+import Image from 'next/image';
 import { SignIn, SignUp } from '@clerk/nextjs';
 import { Suspense } from 'react';
 import { authConfigured } from '@/server/auth';
+import { AmbientMotionControl, MaterialLight } from './WorkspaceMotion';
 
 export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   return <main className="auth-layout">
+    <Image className="auth-architecture" src="/landing/artwork/hero-atrium.png" alt="" fill sizes="100vw" priority />
+    <div className="auth-shade" aria-hidden="true" /><MaterialLight atmosphere />
+    <header className="auth-header"><Link className="workspace-brand" href="/" prefetch={false} aria-label="Unravel home"><Image src="/landing/artwork/unravel-mark.svg" width={26} height={26} alt="" />unravel</Link><AmbientMotionControl /></header>
     <section className="auth-story" aria-label="About Unravel">
-      <Link className="product-brand" href="/" prefetch={false} aria-label="Unravel home">unravel</Link>
-      <div className="auth-story-copy"><p className="product-eyebrow">FROM THE MOMENT IT BREAKS</p><h1>Every bug<br />has a story.</h1><p>Give yours a path to a fix.</p>
-        <div className="auth-thread" aria-hidden="true"><span /><span /><span /><span /></div>
-        <p className="product-eyebrow">RECORD / REPLAY / REVIEW / EXPORT</p><p className="product-small">Developer workspace.<br />Visitors report without an account.</p>
-      </div><p className="product-small auth-footnote">Unravel · Development preview</p>
+      <div className="auth-story-copy"><h1>Follow the failure.<br />Find the sequence.</h1><p>From a visitor report to a regression<br className="auth-desktop-break" /> test you can review and run.</p>
+        <ul className="auth-workflow" aria-label="Investigation workflow">{[['play', 'Replay'], ['reports', 'Evidence'], ['code', 'Test plan']].map(([icon, label]) => <li key={label}><Image src={`/product/${icon}.svg`} width={20} height={20} alt="" />{label}</li>)}</ul>
+      </div>
     </section>
     <section className="auth-form-section" aria-label="Developer authentication">
       <div className="auth-form-container">
-        <h2>Welcome to Unravel</h2><p>Sign in or create your developer account.</p>
-        {authConfigured() ? <Suspense fallback={<p role="status">Loading secure sign-in…</p>}>
+        {authConfigured() ? <Suspense fallback={<p role="status">Loading secure sign-in...</p>}>
           {mode === 'sign-in' ? <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" /> : <SignUp routing="path" path="/sign-up" signInUrl="/sign-in" />}
-        </Suspense> : <div className="product-notice" role="status"><h3>Sign-in setup is pending</h3><p>Developer access is not available on this installation yet. No account is required to explore the landing page.</p></div>}
-        <Link className="product-text-link" href="/" prefetch={false}>Return to Unravel</Link>
+        </Suspense> : <div className="product-notice" role="status"><h2>Sign-in setup is pending</h2><p>Developer access is not available on this installation yet. No account is required to explore the landing page.</p></div>}
+        <p className="auth-privacy"><Image src="/product/shield.svg" width={16} height={16} alt="" />Secure sign-in. Visitors report without an account.</p>
+        <footer className="auth-footer"><Link href="/" prefetch={false}>Return to Unravel</Link><span>Development preview</span></footer>
       </div>
     </section>
   </main>;

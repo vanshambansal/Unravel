@@ -24,15 +24,31 @@ Approved direction: Next.js + TypeScript, pnpm workspaces, retained vanilla Thre
 - SSR-safe import, privacy sentinels, correct HTTP-error classification, plain React Strict Mode/Next.js integration, provisional limits and measured bundle/recording size. Actual outcomes are in PROJECT_STATUS.md.
 - No upload, report persistence, replay player, test plan or exporter. Conservative replay sanitization limits styling fidelity; full replay/resource policy is Milestone 4 work. No marketing redesign or new service.
 
-## 4. Report submission and replay - planned
+## 4. Report submission and replay - complete locally (2026-11-10)
 
 - Versioned validation, retry/idempotency, persistence, metadata list, replay/detail and aligned timeline.
 - Prove restart persistence, duplicate suppression and rejection without partial writes. Test against real PostgreSQL.
+- Approved: self-contained masked replay, owner-controlled deletion/no automatic expiry, provisional 5 MB cap and a separate local replay host. Versioned server validation, transactional persistence, retry/deduplication, actual replay/timeline seeking and deletion passed real PostgreSQL/production browser checks. A previously retained recording survived a full server restart. Origin/script/resource isolation and responsive fit/100% view were tested. Detailed outcomes/limits live in PROJECT_STATUS.md and operation in REPORTS.md; public deployment remains out of scope.
 
-## 5. Editable plan and regression proof - planned
+## V2 product corrections - complete locally (2026-11-10)
 
-- Readable steps and persisted editable JSON plan, explicit expected behavior and validated Playwright export.
-- Export once; unchanged test fails against the fixture bug and passes after the fix. Preserve actual results/artifacts.
+- Approved V2 projects, onboarding, investigation and floating recorder implemented; V1 retained in Figma and cinematic renderer preserved.
+- Complete mountWidget workflow, isolated styles, privacy exclusion, framework instructions and portable local SDK package. Real browser submission/retry/replay and responsive/keyboard checks passed; exact evidence and remaining limitations are in PROJECT_STATUS.md.
+- No generation or public deployment added. Next milestone still needs its separate implementation task.
+
+## Product completion roadmap (approved after V2)
+
+1. Project management and onboarding: complete locally. Rename/origin settings, typed permanent deletion, owner/same-origin/stale-edit checks and visible fixture setup passed production browser and database checks. No new migration or automatic changes to existing data. Actual outcomes are in PROJECT_STATUS.md.
+2. Report management: Open/Resolved, editable title/description, server-side search/pagination and presentation-only typing consolidation.
+3. Styled replay: bounded sanitized layout/CSS, preserved masking and separate-origin isolation; fresh recordings required for new fidelity. Images/fonts deferred.
+4. Resume the regression milestone below, then release preparation.
+
+Each implementation task stops after actual checks and documentation. Current outcomes live in PROJECT_STATUS.md.
+
+## 5. Editable plan and regression proof - complete for the bounded local workflow (2026-11-11)
+
+- Readable deterministic steps, persisted editable version 1 JSON plan, explicit developer-confirmed expected behavior and validated standalone Playwright export are implemented. See TEST_PLANS.md.
+- Actual downloaded export: five expected assertion failures against the HTTP-500 fixture, then five passes against the isolated source-patched HTTP-200 fixture, retries disabled and file SHA-256 unchanged. Artifacts retained; current outcomes live in PROJECT_STATUS.md.
 
 ## 6. Finish presentation and release preparation - planned
 
@@ -40,3 +56,20 @@ Approved direction: Next.js + TypeScript, pnpm workspaces, retained vanilla Thre
 - Maintain honest previews. Verify responsive/accessibility, supported browsers, deployment limits, privacy and public-ingestion protections.
 
 Keep marketing work bounded. No milestone authorizes the next one implicitly.
+
+Internal UI completion work uses the compositions and browser review criteria in INTERNAL_UI.md. Settings, registration and resource-list recipes are implemented; reuse them as report management and plan editing are added, without treating a presentation refactor as a completed product milestone.
+
+Latest steering prioritized styled replay and regression generation ahead of report triage. Report Open/Resolved, metadata editing and search/pagination remain unimplemented; do not claim those tasks complete. Public release preparation remains separate.
+
+
+## Internal product direction and motion implementation (2026-11-11)
+
+Previous preparation produced two independent Figma directions covering authentication, projects/settings, investigation, recorder, mobile and workflow patterns. That design-only task did not change application behavior. The subsequent approval and runtime implementation are described below; DESIGN.md owns the composition references.
+
+The user selected B authentication and A product compositions and approved coordinated motion. Shell/auth, investigation and recorder motion are implemented; see PROJECT_STATUS for current checks and artifacts. Next gate: review actual browser behavior and aesthetics, then address only consequential findings. Planned report management controls in the concepts remain unimplemented. Public-release and remaining landing work stay separate.
+
+## Review-first generator - implementation 2026-11-11
+
+Readable steps, contextual technical editing, reversible inclusion/reorder, Steps/Playwright/JSON preview and assertion-free reproduction export are implemented. Regression checks require confirmed intended outcomes. Version 2 remains compatible with old saved plans; original evidence and ownership/revision checks remain unchanged. No LLM or second adapter. PROJECT_STATUS owns actual checks and remaining limits; user runtime/aesthetic review is a separate gate.
+
+Next bounded completion choice: report triage/metadata/search/pagination, then remaining presentation and release protections. Do not start these automatically or claim public readiness.

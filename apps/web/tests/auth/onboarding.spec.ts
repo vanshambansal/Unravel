@@ -29,7 +29,7 @@ test('real Clerk sessions, responsive project creation, persistence, ownership a
     await a.getByRole('button', { name: 'Create project', exact: true }).click();
     await expect(a).toHaveURL(/\/app\/projects\/[0-9a-f-]+\/setup$/);
     await expect(a.getByRole('heading', { name, exact: true })).toBeVisible();
-    await expect(a.getByRole('heading', { name: 'Local recording SDK ready' })).toBeVisible();
+    await expect(a.getByRole('heading', { name: 'Integration checklist' })).toBeVisible();
     const id = a.url().split('/').at(-2)!;
     await a.reload(); await expect(a.getByRole('heading', { name, exact: true })).toBeVisible();
     const saved = await (await first.request.get(`/api/projects/${id}`)).json();

@@ -1,4 +1,5 @@
 import type { Recording, StopReason } from '@unravel/contracts';
+import type { SubmissionState } from './submission';
 export type PrivacyOptions = {
   allowTextSelectors?: string[];
   allowValueSelectors?: string[];
@@ -14,6 +15,8 @@ export type RecorderOptions = {
   privacy?: PrivacyOptions;
   limits?: { maxDurationMs?: number; maxBytes?: number; maxEvents?: number };
   onStateChange?: (status: RecorderStatus) => void;
+  submissionUrl?: string;
+  onSubmissionChange?: (status: SubmissionState) => void;
 };
 export interface Recorder {
   start(): Promise<void>;
@@ -21,4 +24,6 @@ export interface Recorder {
   getRecording(): Recording | null;
   getStatus(): RecorderStatus;
   destroy(): void;
+  submit(details: { title: string; description?: string }): Promise<import('@unravel/contracts').SubmissionReceipt>;
+  getSubmissionStatus(): SubmissionState;
 }

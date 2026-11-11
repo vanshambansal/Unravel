@@ -8,6 +8,9 @@ export function errorResponse(error: unknown) {
 }
 export async function projectBody(request: Request): Promise<unknown> {
   if (request.headers.get('origin') !== new URL(request.url).origin) throw new ApplicationError(403, 'Submit this form from the Unravel application.');
+  return boundedJson(request, 8192);
+}
+export async function boundedJson(request: Request, maxBytes: number): Promise<unknown> {
   if (request.headers.get('content-type')?.split(';')[0].trim() !== 'application/json') throw new ApplicationError(415, 'Send a JSON request.');
   const reader = request.body?.getReader();
   if (!reader) throw new ApplicationError(400, 'The request body is missing.');
@@ -16,7 +19,7 @@ export async function projectBody(request: Request): Promise<unknown> {
     while (true) {
       const { done, value } = await reader.read(); if (done) break;
       length += value.byteLength;
-      if (length > 8192) { await reader.cancel(); throw new ApplicationError(413, 'Project details are too large.'); }
+      if (length > maxBytes) { await reader.cancel(); throw new ApplicationError(413, 'The request exceeds the permitted size.'); }
       chunks.push(value);
     }
     const bytes = new Uint8Array(length); let offset = 0;

@@ -14,7 +14,39 @@ declare global {
   }
 }
 const projectId = '12345678-1234-4234-8234-123456789012';
-test.beforeEach(async ({ page }) => { await page.goto('/'); await expect(page.locator('#record-start')).toBeVisible(); });
+test('explicit submission retries identical content after response loss and returns one receipt', async ({ page }) => {
+  await page.goto('/?debug=1');
+  const bodies: string[] = []; let calls = 0;
+  const receipt = { reportId: '22345678-1234-4234-8234-123456789012', duplicate: true };
+  await page.route('**/api/ingest/*', async route => { calls++; bodies.push(route.request().postData()!); if (calls === 1) await route.abort('failed'); else await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(receipt) }); });
+  await page.evaluate(async projectId => {
+    window.fixtureRecorder.destroy(); window.fixtureRecorder = window.UnravelSDK.initialize({ projectId, submissionUrl: `${location.origin}/api/ingest/${projectId}` });
+    await window.fixtureRecorder.start(); window.fixtureRecorder.stop();
+    try { await window.fixtureRecorder.submit({ title: 'Synthetic retry' }); } catch { /* Simulated response loss. */ }
+  }, projectId);
+  expect(await page.evaluate(() => window.fixtureRecorder.getSubmissionStatus().state)).toBe('error');
+  expect(await page.evaluate(() => window.fixtureRecorder.submit({ title: 'Synthetic retry' }))).toEqual(receipt);
+  expect(await page.evaluate(() => window.fixtureRecorder.submit({ title: 'Synthetic retry' }))).toEqual(receipt);
+  expect(calls).toBe(2); expect(bodies[0]).toBe(bodies[1]);
+  await expect(page.evaluate(() => window.fixtureRecorder.submit({ title: 'Changed details' }))).rejects.toThrow('same report details');
+});
+
+test('submission is never automatic and destroy cancels pending upload', async ({ page }) => {
+  await page.goto('/?debug=1'); let contacted = false;
+  await page.route('**/api/ingest/*', async route => { contacted = true; await new Promise(resolve => setTimeout(resolve, 400)); await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ reportId: '22345678-1234-4234-8234-123456789012', duplicate: false }) }).catch(() => {}); });
+  await page.evaluate(async projectId => {
+    window.fixtureRecorder.destroy(); window.fixtureRecorder = window.UnravelSDK.initialize({ projectId, submissionUrl: `${location.origin}/api/ingest/${projectId}` });
+    await window.fixtureRecorder.start(); window.fixtureRecorder.stop();
+  }, projectId);
+  expect(contacted).toBe(false);
+  await page.evaluate(() => { void window.fixtureRecorder.submit({ title: 'Synthetic cancel' }).catch(() => {}); });
+  await expect.poll(() => contacted).toBe(true);
+  await expect(page.evaluate(() => window.fixtureRecorder.start())).rejects.toThrow('Wait for report submission');
+  await page.evaluate(() => window.fixtureRecorder.destroy()); await page.waitForTimeout(500);
+  expect(await page.evaluate(() => window.fixtureRecorder.getRecording())).toBeNull();
+  expect(await page.evaluate(() => window.fixtureRecorder.getSubmissionStatus().state)).toBe('idle');
+});
+test.beforeEach(async ({ page }) => { await page.goto('/?debug=1'); await expect(page.locator('#record-start')).toBeVisible(); });
 
 test('explicit recording captures actions and real HTTP failure, with separate JS error', async ({ page }) => {
   expect(await page.evaluate(() => window.fixtureRecorder.getStatus().eventCount)).toBe(0);
@@ -28,7 +60,7 @@ test('explicit recording captures actions and real HTTP failure, with separate J
   await page.locator('#submit-question').click();
   expect((await response).status()).toBe(500);
   await expect(page.locator('#feedback')).toContainText('could not submit');
-  await page.locator('summary').click(); await page.locator('#trigger-error').click();
+  await page.getByText('Additional diagnostic check', { exact: true }).click(); await page.locator('#trigger-error').click();
   await page.waitForTimeout(250);
   const recording = await page.evaluate(() => window.fixtureRecorder.stop()) as Recording;
   expect(recording.hasFullSnapshot).toBe(true);
@@ -88,7 +120,7 @@ test('Next.js client lifecycle records on desktop and mobile', async ({ page }) 
   test.setTimeout(90000);
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 844 });
-    await page.goto('http://localhost:3013/sdk-lab');
+    await page.goto(`${process.env.SDK_LAB_BASE_URL ?? 'http://localhost:3013'}/sdk-lab`);
     await page.getByRole('button', { name: 'Start recording', exact: true }).click();
     await expect(page.getByRole('status')).toHaveText('recording');
     await page.getByTestId('lab-question').fill('Synthetic Next');
@@ -120,6 +152,7 @@ test('privacy sentinels never enter replay or semantic channels, including DOM m
     const input = document.createElement('input'); input.id = 'ordinary'; input.value = 'PRIVATE_VALUE_SENTINEL';
     input.setAttribute('title', 'PRIVATE_TITLE_SENTINEL'); input.dataset.secret = 'PRIVATE_DATA_SENTINEL'; document.body.append(input);
     const p = document.createElement('p'); p.textContent = 'PRIVATE_TEXT_SENTINEL'; document.body.append(p);
+    const host=document.createElement('aside'); host.attachShadow({mode:'open'}).innerHTML='<button>PRIVATE_SHADOW_SENTINEL</button>'; document.body.append(host);
     const check = document.createElement('input'); check.type = 'checkbox'; check.id = 'private-check'; check.checked = true; document.body.append(check);
     document.title = 'PRIVATE_TITLE_SENTINEL';
     history.replaceState({}, '', '/?secret=PRIVATE_QUERY_SENTINEL#PRIVATE_HASH_SENTINEL');
@@ -140,6 +173,7 @@ test('privacy sentinels never enter replay or semantic channels, including DOM m
   expect(recording.hasFullSnapshot).toBe(true);
   expect(JSON.stringify(recording)).not.toMatch(/PRIVATE_[A-Z_]+_SENTINEL/);
   expect(JSON.stringify(recording.replay)).not.toContain('"checked":true');
+  expect(JSON.stringify(recording.replay)).not.toContain('"isShadow":true');
   expect(recording.events).toContainEqual(expect.objectContaining({ kind: 'network', url: { origin: 'http://127.0.0.1:4183', path: null } }));
 });
 

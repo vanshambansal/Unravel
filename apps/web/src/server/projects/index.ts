@@ -18,5 +18,7 @@ export function projectServices() {
     list: (owner: string | null) => safe(() => service.list(owner)),
     get: (owner: string | null, id: string) => safe(() => service.get(owner, id)),
     create: (owner: string | null, input: unknown) => safe(() => service.create(owner, input)),
+    update: (owner: string | null, id: string, input: unknown) => safe(() => service.update(owner, id, input)),
+    remove: (owner: string | null, id: string, input: unknown) => safe(() => service.remove(owner, id, input)),
   };
 }

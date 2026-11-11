@@ -12,8 +12,9 @@ export function validateProject(input: unknown): { value?: ValidProject; fields:
   let origin = '';
   try {
     if (!address || address.length > 2048 || /[\s\\]/.test(address) || hasControl(address)) throw new Error();
-    // Bare domains default to HTTPS; HTTP must be explicit (including localhost).
-    const url = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(address) ? address : `https://${address}`);
+    // Loopback development addresses default to HTTP; public domains default to HTTPS.
+    const loopback = /^(localhost|127\.0\.0\.1|\[::1\])(?=[:/]|$)/i.test(address);
+    const url = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(address) ? address : `${loopback ? 'http' : 'https'}://${address}`);
     if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || !url.hostname || url.hostname.endsWith('.')) throw new Error();
     if (!url.hostname.includes('.') && url.hostname !== 'localhost' && !url.hostname.startsWith('[')) throw new Error();
     origin = url.origin;

@@ -1,6 +1,6 @@
 # Architecture
 
-Updated 2026-11-10. This document describes the implemented foundation separately from approved future product architecture.
+Updated 2026-11-11. This document describes the implemented foundation separately from approved future product architecture.
 
 ## Implemented
 
@@ -38,10 +38,10 @@ The Blender source/builder still targets the original prototype's asset director
 ## Product boundaries - current and future
 
 - Implemented: Next.js Node Route Handlers call modular validation, authorization and persistence services. No separate Express process.
-- Implemented: Clerk authenticates developers and Unravel authorizes every project operation. Future report operations must follow the same ownership boundary; visitors will report without an account.
-- Implemented: Neon PostgreSQL with Drizzle/node-postgres and reviewed project migrations. Future replay payloads must be bounded and separately retrieved; report lists must not fetch replay blobs.
-- Implemented: standalone TypeScript SDK and versioned shared runtime contracts for sanitized in-memory rrweb recording and semantic telemetry. Report ingestion and playback are planned; see SDK.md for privacy/fidelity limits.
-- Planned: framework-independent versioned JSON test plans with deterministic generation; expected assertions require developer confirmation. Playwright is the first export adapter, executed locally.
+- Implemented: Clerk authenticates developers and Unravel authorizes every project/report operation. Visitors submit without an account.
+- Implemented: Neon PostgreSQL with Drizzle/node-postgres and reviewed project/report migrations. Bounded replay payloads are stored/retrieved separately; report lists do not fetch replay blobs.
+- Implemented: standalone TypeScript SDK and versioned runtime contracts for sanitized recording/semantic telemetry, explicit submission and masked structural playback. See SDK.md and REPORTS.md for privacy/fidelity limits.
+- Implemented locally: framework-independent versioned JSON test plans with deterministic generation; expected assertions require developer confirmation. Playwright is the first export adapter, executed locally.
 - Public deployment requires authorization, ingestion protections, privacy review and measured hosting/payload limits. No LLM or hosted test execution is assumed.
 
 ## Verification ownership
@@ -55,8 +55,8 @@ Pure behavior uses Node's test runner. Repository Playwright tests cover real br
 - /app redirects to /app/projects. The product layout and data-reading pages check the developer session; private APIs independently authenticate every request. Missing configuration fails closed; no test/preview identity bypass exists.
 - Thin /api/projects and /api/projects/[projectId] handlers call server auth and project services. Validation is shared with the form; the server never trusts owner IDs from a body or route. All repository reads constrain both owner and project ID, with foreign/missing projects returning the same 404.
 - A project stores UUID, stable Clerk subject, name, normalized website origin and creation time. No local password/email/account synchronization or webhook is needed. Initial convention: one owner and one website origin per project; the same owner cannot duplicate an origin, while independent owners may register it. Domain registration is not domain ownership verification.
-- PostgreSQL is lazy-connected through a small node-postgres pool and Drizzle. No connection at module import/build, no automatic migration at server startup. SQL migration creates the table, owner index and owner/origin uniqueness constraint. No report tables yet.
-- Registration accepts a domain or full HTTP(S) URL, defaults bare domains to HTTPS, rejects embedded credentials/unsafe schemes, and previews the exact stored origin. Paths/query/fragment are discarded. The server does not fetch submitted URLs. Creation leads to /app/projects/[id]/setup; current guidance explains local workspace SDK use and that upload/replay remain unavailable.
+- PostgreSQL is lazy-connected through a small node-postgres pool and Drizzle. No connection at module import/build, no automatic migration at server startup. The initial SQL creates projects, owner index and owner/origin uniqueness; Milestone 4 adds reports/payloads through an additive migration.
+- Registration accepts a domain or full HTTP(S) URL, defaults bare domains to HTTPS, rejects embedded credentials/unsafe schemes, and previews the exact stored origin. Paths/query/fragment are discarded. The server does not fetch submitted URLs. Creation leads to /app/projects/[id]/setup with actual local SDK/submission instructions and a report-list link.
 - Writes require same-origin JSON and an 8 KiB bounded body. Provider authentication is separate from project ownership. Database/unknown failures return generic errors without connection strings. Public anonymous report-ingestion controls are a later milestone.
 - Real PostgreSQL tests require an isolated TEST_DATABASE_URL and refuse the app database. Real-session browser tests use two existing synthetic Clerk development users; they do not prove first-factor delivery or OAuth. See SERVICE_SETUP.md for manual flow verification.
 
@@ -67,3 +67,44 @@ Pure behavior uses Node's test runner. Repository Playwright tests cover real br
 The separate fixture serves the SDK's standalone script, while a development-only Next.js client harness consumes its ESM entry. A test-built plain React Strict Mode harness proves the same package independently of Next. Marketing/auth/project pages do not initialize the SDK; setup displays source instructions without importing the recording engine. No playback library is added to the browser recorder.
 
 Native form interactions use allowlisted test IDs or explicitly unresolved locators. Conservative reconstruction omits arbitrary DOM attributes/CSS/resource bodies; this limits fidelity intentionally. See SDK.md for exact policy, provisional limits and lifecycle. Milestone 4 must treat clients/payloads as untrusted, validate independently, and establish replay sandbox/resource policy before displaying recorded content. SDK masking is not server authorization or proof that arbitrary submitted data is safe.
+
+## Milestone 4 implementation
+
+The preferred integration is SDK `mountWidget`: a framework-independent Shadow DOM launcher/panel delegates to the existing recorder and submission controller. It owns explicit recording, report details, unchanged retry and teardown; no React runtime is required. The widget host and descendants are excluded from replay/actions even across shadow boundaries. The local package contains its declarations and bundled shared contracts; see SDK.md for packing/installing. The application uses a compact project switcher, real setup instructions and an integrated responsive replay/evidence view; neither product routes nor the widget import marketing graphics. Bare loopback registrations default to HTTP; public bare domains still default to HTTPS. Existing registrations are not rewritten.
+
+Explicit SDK submission sends a bounded versioned envelope after Stop, without credentials. Requests are accepted only on loopback and for the exact registered Origin; this is not public-ingestion authentication. Thin handlers call validation/services/repositories. A transaction stores report metadata plus a separate immutable replay/event payload. A project/recording uniqueness constraint and canonical SHA-256 digest distinguish identical retries from conflicting reuse. Private detail/replay/delete operations constrain project owner independently on the server. Owner deletion cascades to the payload; no automatic expiry is selected for local development.
+
+Deep server validation reconstructs an inert replay subset and removes original resource references. Report lists never retrieve payloads. The authenticated page fetches replay separately and sends it only to the configured isolated player origin. Its source/origin/channel-checked bridge controls playback/seek/fit; timing acknowledgements report actual player position. Original recorded DOM stays in rrweb's script-disabled iframe. The user-approved separate loopback server serves only trusted HTML/JS/CSS, with an explicit parent-origin allowlist and strict resource-blocking CSP; it has no private API/database access. Same-origin hosting is refused. The earlier opaque-origin failure and rejected same-origin permission proposal remain historical; the isolated implementation passed browser DOM-access, script/resource and unauthorized-embedding checks. See REPORTS.md for operation and PROJECT_STATUS.md for actual results and limits.
+
+## Project management
+
+Owner-scoped PATCH/DELETE on `/api/projects/[projectId]` reuse the bounded same-origin JSON boundary. PATCH validates the same name/origin rules as registration and maps the owner/origin unique constraint to a field conflict. Both operations require the last-read name/origin snapshot and include it in the SQL write predicate; a concurrent change cannot be overwritten. DELETE also requires the exact current project name. The existing project/report/payload foreign-key cascade is reused; no schema migration is needed. Existing report evidence retains its recorded origin. Missing/foreign projects return the same 404; stale snapshots return 409. Origin changes affect subsequent ingestion validation, not immutable historical recordings. No account, provider or ingestion-trust model changed.
+
+## Internal presentation boundary
+
+Workspace composition components own repeatable page/group/row/footer/list/dialog markup and scoped CSS. Product feature modules retain state, validation, API calls and replay refs/bridge ownership. Navigation and account controls stay in the workspace shell. The standalone SDK retains its separate Shadow DOM presentation and no React dependency. See INTERNAL_UI.md for usage; do not import product presentation into marketing or recording packages.
+
+## Styled replay and regression boundary
+
+Presentation-v1 recording captures a closed computed-style vocabulary; shared contract functions validate every inline declaration again on ingestion. Resource-loading CSS, generated content and original stylesheet bodies remain excluded. Legacy recordings remain readable without presentation. Replay stays on the same isolated local origin with scripts/resources disabled.
+
+`packages/test-plan` is pure schema/normalization/prose/adapter logic. Thin private plan/export handlers authorize report ownership before loading or writing. The separate report_test_plans table stores one mutable plan with an optimistic revision; report evidence remains immutable. The editor and JSON operate on the same plan and require safe replacements for masked values. Reproduction validates included actions; regression additionally requires confirmed expected outcomes. Unapplied/invalid data blocks Playwright export, which saves a valid dirty draft before downloading. Server export validates stored data and returns escaped Playwright source; it never executes supplied code. Controlled local proof uses the actual downloaded file against buggy/fixed fixture source versions. Operation and limitations are owned by TEST_PLANS.md.
+
+
+## Design-tool context and exploration boundary
+
+apps/web/PRODUCT.md is a small design-tool context entry point linking to the authoritative project brief/status. Native Figma authoring helpers and the current exploration ledger live under design/figma; they are not application modules or a second frontend. A/B styles/components are isolated from prior Figma masters. No runtime architecture or privacy boundary changes during the design-only exploration.
+
+## Internal presentation runtime
+
+The approved B authentication and A workspace use existing architectural artwork, CSS material light and web-only Motion transitions. WorkspaceMotion owns ambient pause, visibility and reduced-motion policy. The landing Three.js/GSAP renderer remains marketing-only. The server product layout passes authorized project metadata into persistent navigation; there is no client ownership bypass.
+
+Recorder state and recording/submission services remain independent of widget presentation. One persistent Shadow DOM material shell uses native Web Animations; its listeners/animations clean up through the widget AbortController. Investigation motion preserves the player while selecting evidence, but view exit still removes it immediately. Plan draft state remains mounted after first opening.
+
+## Review-first plan boundary - 2026-11-11
+
+The pure test-plan package reads version 1 or 2 and outputs normalized version 2, without database writes. PlanEditor/PlanControls edit that draft; save still uses the existing private revision-checked JSONB boundary. Export mode is reproduction or regression: included action validation applies to both, while confirmed typed outcomes apply only to regression. No uploaded code is executed by the server. New source positions link back to the original investigation clock; the player is still disposed when leaving Investigation. TEST_PLANS.md owns supported checks and execution limits.
+
+## Generator interaction boundary
+
+PlanEditor owns applied drafts, staged edits, memory-only recovery and server revisions; PlanControls owns the contextual sheet, PlanCode the lazy CodeMirror lifecycle, and RunGuide the local-execution handoff. The shared test-plan package alone normalizes evidence, validates supported selectors/plans and generates code. It never mutates recording evidence or executes tests on the server. Capture identifies supported controls with allowlisted test IDs or content-free structural paths. See TEST_PLANS.md for behavior/limits, SDK.md for privacy and PROJECT_STATUS.md for execution evidence.

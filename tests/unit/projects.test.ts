@@ -11,6 +11,9 @@ test('website registration normalizes pasted pages and makes the exact origin ex
     ['example.com', 'https://example.com'],
     [' HTTPS://EXAMPLE.COM:443/questions?token=synthetic#form ', 'https://example.com'],
     ['http://localhost:4173/questions', 'http://localhost:4173'],
+    ['localhost:4173', 'http://localhost:4173'],
+    ['127.0.0.1:4184', 'http://127.0.0.1:4184'],
+    ['[::1]:4173', 'http://[::1]:4173'],
     ['http://127.0.0.1:4173', 'http://127.0.0.1:4173'],
     ['http://[::1]:4173', 'http://[::1]:4173'],
   ]) assert.deepEqual(validateProject({ name: '  Demo  ', websiteUrl }).value, { name: 'Demo', origin });
@@ -30,6 +33,7 @@ test('anonymous service calls cannot reach persistence; client ownership is igno
     async list(owner) { calls.push(['list', owner]); return [project]; },
     async find(owner, id) { calls.push(['find', owner, id]); return owner === project.ownerId ? project : undefined; },
     async create(...values) { calls.push(['create', ...values]); return project; },
+    async update() { return project; }, async remove() { return true; },
   };
   const service = projectService(repository);
   for (const call of [() => service.list(null), () => service.get(null, project.id), () => service.create(null, {})]) {
@@ -43,7 +47,7 @@ test('anonymous service calls cannot reach persistence; client ownership is igno
 });
 test('invalid registration and duplicate website produce useful field errors', async () => {
   let writes = 0;
-  const service = projectService({ async list() { return []; }, async find() { return undefined; }, async create() { writes++; return undefined; } });
+  const service = projectService({ async list() { return []; }, async find() { return undefined; }, async create() { writes++; return undefined; }, async update() { return undefined; }, async remove() { return false; } });
   await assert.rejects(service.create('owner', {}), (e: unknown) => e instanceof ApplicationError && e.status === 422 && !!e.fields?.websiteUrl);
   assert.equal(writes, 0);
   await assert.rejects(service.create('owner', { name: 'Demo', websiteUrl: 'example.com' }), (e: unknown) => e instanceof ApplicationError && e.status === 409);
@@ -57,4 +61,37 @@ test('project HTTP requests reject cross-origin, invalid JSON, unsupported types
   const response = errorResponse(new Error('secret connection information'));
   assert.equal(response.status, 503); assert.ok(!(await response.text()).includes('secret connection'));
   assert.equal(response.headers.get('cache-control'), 'no-store');
+});
+
+test('project management checks owner, current snapshot, validation and exact deletion confirmation', async () => {
+  const project = { id: '11111111-1111-4111-8111-111111111111', ownerId: 'a', name: 'Demo', origin: 'https://example.com', createdAt: new Date() };
+  let current: typeof project | undefined = project, collision = false, race = false;
+  const service = projectService({
+    async list() { return []; }, async find(owner) { return owner === 'a' ? current : undefined; }, async create() { return undefined; },
+    async update(owner, id, expected, next) {
+      assert.equal(owner, 'a'); assert.equal(id, project.id); assert.deepEqual(expected, { name: current!.name, origin: current!.origin });
+      if (collision) throw { cause: { code: '23505', constraint: 'projects_owner_origin_unique' } };
+      if (race) return undefined;
+      current = { ...current!, ...next }; return current;
+    },
+    async remove() { if (race) return false; current = undefined; return true; },
+  });
+  const expected = { name: project.name, origin: project.origin };
+  const input = { name: 'Renamed', websiteUrl: 'localhost:4184/path', expected };
+  for (const method of [() => service.update(null, project.id, input), () => service.remove(null, project.id, { expected, confirmation: 'Demo' })]) await assert.rejects(method, (e: unknown) => e instanceof ApplicationError && e.status === 401);
+  for (const method of [() => service.update('b', project.id, input), () => service.remove('b', project.id, { expected, confirmation: 'Demo' })]) await assert.rejects(method, (e: unknown) => e instanceof ApplicationError && e.status === 404);
+  await assert.rejects(service.update('a', project.id, { ...input, expected: { ...expected, name: 'Old' } }), (e: unknown) => e instanceof ApplicationError && e.status === 409);
+  await assert.rejects(service.update('a', project.id, { ...input, websiteUrl: 'javascript:bad' }), (e: unknown) => e instanceof ApplicationError && e.status === 422);
+  collision = true;
+  await assert.rejects(service.update('a', project.id, input), (e: unknown) => e instanceof ApplicationError && e.status === 409 && !!e.fields?.websiteUrl);
+  collision = false; race = true;
+  await assert.rejects(service.update('a', project.id, input), (e: unknown) => e instanceof ApplicationError && e.status === 409);
+  race = false;
+  const updated = await service.update('a', project.id, input);
+  assert.equal(updated.id, project.id); assert.equal(updated.origin, 'http://localhost:4184');
+  const deletion = { expected: { name: updated.name, origin: updated.origin }, confirmation: 'Renamed' };
+  await assert.rejects(service.remove('a', project.id, { ...deletion, confirmation: 'renamed' }), (e: unknown) => e instanceof ApplicationError && e.status === 422);
+  race = true; await assert.rejects(service.remove('a', project.id, deletion), (e: unknown) => e instanceof ApplicationError && e.status === 409);
+  race = false; await service.remove('a', project.id, deletion);
+  await assert.rejects(service.remove('a', project.id, deletion), (e: unknown) => e instanceof ApplicationError && e.status === 404);
 });

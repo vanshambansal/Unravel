@@ -26,8 +26,9 @@ try {
     console.log('Reviewed development migrations applied successfully.');
   } else {
     await pool.query('select 1');
-    const result = await pool.query("select to_regclass('public.projects') is not null as ready");
-    console.log(`Database connection passed; projects table ${result.rows[0].ready ? 'present' : 'absent (run db:migrate)'}.`);
+    const result = await pool.query("select to_regclass('public.projects') is not null as projects, to_regclass('public.reports') is not null as reports, to_regclass('public.report_payloads') is not null as payloads");
+    console.log(`Database connection passed; projects=${result.rows[0].projects}, reports=${result.rows[0].reports}, payloads=${result.rows[0].payloads}.`);
+    if (!Object.values(result.rows[0]).every(Boolean)) throw new Error('Database tables missing; run db:migrate.');
   }
 } catch (error) {
   // Database driver messages can contain credentials/hostnames; never echo them.

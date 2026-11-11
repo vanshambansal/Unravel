@@ -1,0 +1,132 @@
+/* A shell + B authentication. Owns chrome and motion; feature compositions remain separate. */
+.unravel-workspace { --motion-fast:120ms; --motion-standard:240ms; --motion-surface:360ms; --motion-arrive:cubic-bezier(.16,1,.3,1); }
+.workspace-motion { min-height:100svh; }
+.unravel-workspace .workspace-brand { display:inline-flex; align-items:center; gap:10px; flex-shrink:0; font:600 20px/28px 'Unravel Product Manrope',sans-serif; letter-spacing:-.03em; width:max-content; }
+.workspace-brand img { display:block; }
+.unravel-workspace .workspace-motion-control { display:inline-flex; align-items:center; gap:7px; border:1px solid transparent; border-radius:8px; padding:8px 10px; min-height:40px; background:transparent; color:#c5c1cc; font-size:12px; line-height:20px; transition:background var(--motion-fast),color var(--motion-fast); }
+.unravel-workspace .workspace-motion-control:hover { background:#ffffff08; color:#f6f2ec; }
+.unravel-workspace .workspace-motion-control:disabled { cursor:default; color:#b4b1bd; }
+.workspace-material-light { position:absolute; inset:0; overflow:hidden; pointer-events:none; border-radius:inherit; z-index:0; }
+.workspace-pointer-light { position:absolute; inset:0; transition:opacity var(--motion-standard); }
+.unravel-workspace .workspace-frame { --product-surface:#191b22; --product-raised:#262832; --product-border:#363640; --ui-surface:#191b22; --ui-surface-inset:#111318; position:relative; isolation:isolate; display:flex; flex-direction:column; min-height:calc(100svh - 40px); margin:20px; border:1px solid #ffffff20; border-radius:20px; background:linear-gradient(130deg,#171a20aa,#15161bd9); box-shadow:0 24px 64px #0007; }
+.workspace-motion:has(.workspace-frame) { display:flow-root; background:linear-gradient(#12121b66,#080a10b3),url('/landing/artwork/hero-atrium.png') center top / cover fixed; }
+.workspace-header { position:relative; z-index:3; display:flex; align-items:center; gap:24px; min-height:64px; padding:12px 20px; border-bottom:1px solid #ffffff12; border-radius:20px 20px 0 0; background:#25273094; backdrop-filter:blur(16px); }
+.workspace-header>.workspace-brand { width:164px; }
+.workspace-header-actions { display:flex; align-items:center; gap:16px; margin-left:auto; }
+.workspace-header .product-account { margin:0; flex-direction:row-reverse; gap:12px; }
+.workspace-header .product-account>div { display:flex; gap:14px; align-items:center; }
+.workspace-header .product-account-details>span { display:none; }
+.workspace-body { position:relative; z-index:1; display:grid; grid-template-columns:208px minmax(0,1fr); flex:1; }
+.workspace-sidebar { display:flex; flex-direction:column; gap:20px; padding:18px 16px; background:#08090c73; backdrop-filter:blur(12px); border-radius:0 0 0 20px; min-width:0; }
+.workspace-sidebar nav { display:grid; gap:6px; }
+.unravel-workspace .workspace-nav-caption { color:#b4b1bd; font-size:12px; line-height:20px; padding:0 10px; margin-bottom:6px; }
+.unravel-workspace .workspace-nav-project { margin-top:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.unravel-workspace .workspace-nav-link { position:relative; isolation:isolate; display:flex; gap:12px; align-items:center; min-height:46px; border-radius:10px; padding:11px 12px; font-size:14px; color:#b4b1bd; transition:color var(--motion-fast),background var(--motion-fast); }
+.workspace-nav-link>img,.workspace-nav-link>span:not(.workspace-nav-selection) { position:relative; z-index:1; }
+.workspace-nav-link:hover { background:#ffffff05; }
+.unravel-workspace .workspace-nav-link[aria-current] { color:#f6f2ec; }
+.workspace-nav-selection { position:absolute; inset:0; border-radius:10px; background:linear-gradient(110deg,#ffffff09,#ffffff02),#262832; box-shadow:inset 0 1px 0 #ffffff0c; }
+.unravel-workspace .workspace-nav-hint { margin:8px 10px; font-size:12px; line-height:21px; color:#b4b1bd; }
+.workspace-sidebar-note { margin-top:auto; display:grid; gap:10px; padding:28px 10px 8px; }
+.workspace-sidebar-note p { font-size:12px; line-height:20px; }
+.workspace-content { min-width:0; width:100%; padding:28px; }
+.workspace-content .ui-page { max-width:1400px; }
+.workspace-project-switcher { min-width:0; }
+.unravel-workspace .workspace-project-trigger { display:flex; align-items:center; gap:12px; min-height:40px; width:260px; max-width:100%; padding:8px 12px; color:var(--product-text); background:transparent; border:1px solid transparent; border-radius:9px; font-size:14px; text-align:left; transition:background var(--motion-standard),border-color var(--motion-standard); }
+.workspace-project-trigger>span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.workspace-project-trigger:hover,.workspace-project-trigger[aria-expanded=true] { background:#ffffff07; border-color:#ffffff12; }
+.workspace-switcher-chevron { margin-left:auto; transition:transform var(--motion-standard) var(--motion-arrive); }
+.workspace-project-trigger[aria-expanded=true] .workspace-switcher-chevron { transform:rotate(180deg); }
+.unravel-workspace .workspace-project-popover { position:fixed; inset:auto; margin:0; padding:8px; max-height:min(480px,65svh); overflow-y:auto; background:linear-gradient(125deg,#35333bdf,#1b1d26f5); color:var(--product-text); border:1px solid #ffffff29; border-radius:14px; box-shadow:0 20px 55px #0008; backdrop-filter:blur(20px); transform-origin:36px top; opacity:0; transform:translateY(-5px) scale(.97); transition:opacity 160ms,transform var(--motion-surface) var(--motion-arrive),display var(--motion-surface) allow-discrete,overlay var(--motion-surface) allow-discrete; }
+.workspace-project-popover:popover-open { opacity:1; transform:translateY(0) scale(1); }
+@starting-style { .workspace-project-popover:popover-open { opacity:0; transform:translateY(-5px) scale(.97); } }
+.unravel-workspace .workspace-popover-label { padding:8px 10px; font-size:12px; color:#c0bdc9; }
+.workspace-project-popover nav { display:grid; gap:3px; }
+.workspace-project-popover a { display:block; padding:10px 12px; font-size:14px; border-radius:8px; overflow-wrap:anywhere; transition:background var(--motion-fast); }
+.workspace-project-popover a[aria-current] { background:#ffffff0c; }
+.workspace-project-popover a:hover,.workspace-project-popover a:focus-visible { background:#ffffff12; }
+.workspace-project-popover .workspace-create-project { margin-top:8px; border-top:1px solid #ffffff16; border-radius:0 0 8px 8px; color:#ff969d; }
+
+/* The environment is visible at first paint; lighting never gates the form. */
+.unravel-workspace .auth-layout { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,468px); align-items:center; gap:clamp(40px,7vw,120px); min-height:100svh; padding:140px max(40px,7vw) 72px; background:#0c0d11; }
+.auth-architecture { z-index:-3; object-fit:cover; object-position:center; }
+.auth-shade { position:absolute; inset:0; z-index:-2; pointer-events:none; background:linear-gradient(110deg,#080b10c7,#110d15a8); }
+.auth-header { position:absolute; inset:40px 4.2vw auto; display:flex; align-items:center; justify-content:space-between; gap:16px; z-index:2; }
+.unravel-workspace .auth-story { display:block; position:relative; padding:0; border:0; background:none; overflow:visible; }
+.auth-story::before { content:none; }
+.unravel-workspace .auth-story-copy { display:grid; gap:24px; max-width:620px; }
+.unravel-workspace .auth-story-copy h1 { font-size:clamp(36px,3.65vw,52px); line-height:1.16; letter-spacing:-.03em; text-wrap:balance; }
+.unravel-workspace .auth-story-copy>p { font-size:20px; line-height:1.5; color:#c2becb; max-width:40ch; }
+.auth-workflow { list-style:none; margin:2px 0 0; padding:0; display:flex; flex-wrap:wrap; gap:30px; }
+.auth-workflow li { display:flex; align-items:center; gap:12px; font-size:14px; }
+.unravel-workspace .auth-form-section { position:relative; display:flex; align-items:center; justify-content:center; padding:0; min-width:0; }
+.unravel-workspace .auth-form-container { display:grid; gap:20px; width:100%; max-width:468px; }
+.unravel-workspace .auth-root { width:100%; }
+.unravel-workspace .auth-card-box { width:100%; max-width:100%; border:1px solid #ffffff25; border-radius:16px; background:#191b22ed; box-shadow:0 24px 70px #0006; overflow:hidden; }
+.unravel-workspace .auth-card { width:100%; padding:32px; background:transparent; box-shadow:none; }
+.unravel-workspace .auth-provider-heading { font:600 30px/38px 'Unravel Product Manrope',sans-serif; letter-spacing:-.025em; }
+.unravel-workspace .auth-provider-header { text-align:left; align-items:flex-start; }
+.unravel-workspace .auth-provider-subtitle { font-size:15px; line-height:24px; color:#b4b1bd; }
+.unravel-workspace .auth-input { min-height:46px; padding:11px 12px; border:1px solid #363640; border-radius:8px; background:#111318; font-size:15px; color:#f6f2ec; }
+.unravel-workspace .auth-primary { min-height:44px; font-size:15px; transition:background var(--motion-fast); }
+.unravel-workspace .auth-social { min-height:44px; background:#111318; border:1px solid #363640; color:#f6f2ec; font-size:14px; }
+.unravel-workspace .auth-privacy { display:flex; align-items:start; gap:9px; font-size:12px; line-height:20px; color:#c0bdc9; padding:0 8px; }
+.auth-privacy img { flex-shrink:0; margin-top:2px; }
+.auth-footer { display:flex; justify-content:space-between; gap:16px; padding:0 8px; color:#b4b1bd; font-size:12px; line-height:20px; }
+.auth-footer a:hover { color:#f6f2ec; text-decoration:underline; text-underline-offset:4px; }
+.auth-light-shaft { position:absolute; top:-36%; height:145%; width:20%; transform-origin:50% 0; background:linear-gradient(90deg,transparent,#ffd9e509 30%,#fdb9bf1c 52%,transparent); mask-image:linear-gradient(transparent 5%,#000 28%,#000 60%,transparent 85%); mix-blend-mode:screen; animation:auth-light-travel 16s ease-in-out infinite alternate; animation-play-state:paused; }
+.auth-light-shaft--near { right:9%; rotate:27deg; }
+.auth-light-shaft--far { left:12%; width:11%; rotate:-14deg; opacity:.65; animation-duration:21s; animation-delay:-8s; }
+.auth-floor-light { position:absolute; bottom:0; left:25%; width:70%; height:24%; border-radius:50%; background:radial-gradient(ellipse,#e34c5824,transparent 66%); transform:rotate(-9deg); animation:auth-reflection-travel 18s ease-in-out infinite alternate; animation-play-state:paused; }
+.workspace-material-light[data-active=true] :is(.auth-light-shaft,.auth-floor-light) { animation-play-state:running; }
+@keyframes auth-light-travel { from { transform:translateX(-12%) skewX(-3deg); opacity:.45; } to { transform:translateX(18%) skewX(3deg); opacity:.95; } }
+@keyframes auth-reflection-travel { from { transform:translateX(-4%) rotate(-9deg); opacity:.5; } to { transform:translateX(8%) rotate(-5deg); opacity:1; } }
+@media(max-width:1000px) {
+  .unravel-workspace .auth-layout { gap:36px; padding:124px 36px 48px; grid-template-columns:minmax(0,1fr) minmax(340px,.9fr); }
+  .unravel-workspace .auth-story-copy>p { font-size:17px; }
+  .auth-desktop-break { display:none; }
+  .auth-workflow { gap:20px; }
+  .workspace-header { gap:12px; }
+  .workspace-header>.workspace-brand { width:auto; }
+  .workspace-header-actions { gap:8px; }
+  .workspace-header .product-account-details { display:none; }
+  .workspace-project-trigger { width:220px; }
+  .workspace-body { grid-template-columns:180px minmax(0,1fr); }
+  .workspace-content { padding:24px; }
+}
+@media(max-width:700px) {
+  .unravel-workspace .workspace-frame { margin:8px; border-radius:16px; min-height:calc(100svh - 16px); }
+  .workspace-header { border-radius:16px 16px 0 0; padding:12px; gap:12px; flex-wrap:wrap; }
+  .workspace-header .workspace-brand { font-size:18px; }
+  .workspace-header-actions { margin-left:auto; }
+  .workspace-header .workspace-motion-control span { display:none; }
+  .workspace-project-switcher { order:3; flex-basis:100%; }
+  .unravel-workspace .workspace-project-trigger { width:100%; }
+  .workspace-body { grid-template-columns:minmax(0,1fr); }
+  .workspace-sidebar { padding:8px 12px; border-radius:0; backdrop-filter:none; border-bottom:1px solid #ffffff12; }
+  .workspace-sidebar nav { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; padding:0; }
+  .workspace-sidebar nav>div { min-width:0; }
+  .workspace-sidebar :is(.workspace-nav-caption,.workspace-nav-hint,.workspace-sidebar-note) { display:none; }
+  .unravel-workspace .workspace-nav-link { font-size:12px; gap:3px; padding:8px 2px; min-height:52px; flex-direction:column; text-align:center; }
+  .workspace-nav-link>span:not(.workspace-nav-selection) { white-space:nowrap; }
+  .workspace-nav-link img { width:16px; height:16px; }
+  .workspace-content { padding:24px 16px 40px; }
+  .unravel-workspace .auth-layout { grid-template-columns:minmax(0,1fr); gap:32px; padding:112px 20px 36px; align-content:start; }
+  .auth-header { inset:24px 20px auto; }
+  .auth-architecture { object-position:60% center; }
+  .unravel-workspace .auth-story-copy { gap:16px; max-width:468px; margin:auto; }
+  .unravel-workspace .auth-story-copy h1 { font-size:34px; line-height:42px; }
+  .unravel-workspace .auth-story-copy>p { font-size:16px; line-height:25px; }
+  .auth-workflow { gap:22px; }
+  .auth-workflow li { font-size:12px; gap:8px; }
+  .unravel-workspace .auth-card { padding:24px; }
+  .auth-footer { flex-wrap:wrap; }
+}
+@media(prefers-reduced-transparency:reduce) {
+  .workspace-header,.workspace-sidebar,.unravel-workspace .workspace-project-popover { backdrop-filter:none; background:#191b22; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .workspace-material-light { display:none; }
+  .unravel-workspace .workspace-project-popover { transition:none; transform:none; }
+  .workspace-switcher-chevron { transition:none; }
+}

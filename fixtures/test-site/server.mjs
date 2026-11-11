@@ -2,6 +2,8 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadEnvFile } from 'node:process';
+import { fixtureConfiguration } from './configuration.mjs';
 
 const assets = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
@@ -17,10 +19,15 @@ function json(response, status, body) {
   response.end(JSON.stringify(body));
 }
 
-export function createTestServer() {
+export function createTestServer(configuration = fixtureConfiguration()) {
   return createServer(async (request, response) => {
     try {
       const pathname = new URL(request.url, 'http://localhost').pathname;
+      if (request.method === 'GET' && pathname === '/unravel-config.js') {
+        response.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+        response.end(`window.__UNRAVEL_FIXTURE_CONFIG__ = Object.freeze(${JSON.stringify(configuration)});`);
+        return;
+      }
       if (request.method === 'GET' && pathname === '/react-smoke') {
         response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
         response.end('<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Plain React SDK smoke</title></head><body><div id="root"></div><script src="/react-smoke.js"></script></body></html>');
@@ -64,7 +71,14 @@ export function createTestServer() {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const server = createTestServer();
+  // Automated fixture processes are hermetic and explicitly opt into URL overrides.
+  if (process.env.FIXTURE_ALLOW_TEST_CONFIG !== '1') {
+    try { loadEnvFile(fileURLToPath(new URL('./.env.local', import.meta.url))); }
+    catch (error) { if (error.code !== 'ENOENT') throw error; }
+  }
+  const configuration = fixtureConfiguration();
+  if (configuration.error && !configuration.testOverrides) console.warn(`Unravel developer setup: ${configuration.error}`);
+  const server = createTestServer(configuration);
   server.on('error', (error) => {
     console.error(error.code === 'EADDRINUSE' ? 'Port 4173 is in use. Stop the other process before starting this fixture.' : 'The local test server could not start.');
     process.exitCode = 1;
