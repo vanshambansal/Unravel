@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { IntentLink as Link } from '@/features/workspace/IntentLink';
 import { requirePageDeveloper } from '@/server/auth';
 import { projectServices } from '@/server/projects';
 import { Workflow } from '@/features/workspace/Workflow';

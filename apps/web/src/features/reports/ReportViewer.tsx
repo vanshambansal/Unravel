@@ -1,8 +1,10 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { SemanticEvent } from '@unravel/contracts';
 import type { CSSProperties } from 'react';
+import {timelineEntries} from './timeline';
+import {validReplayOrigin} from './replay-origin';
 import { InvestigationSurface, PanelHeading } from '../workspace/compositions';
 import { LayoutGroup, motion } from 'motion/react';
 
@@ -17,17 +19,18 @@ export function ReportViewer({ projectId, reportId, events, durationMs, startedA
   const container = useRef<HTMLDivElement>(null), bridge = useRef<(type: string, offset?: number) => void>(() => {});
   const [state, setState] = useState('Loading replay'), [offset, setOffset] = useState(0), [playing, setPlaying] = useState(false);
   const [selected, setSelected] = useState<number | null>(null), [error, setError] = useState('');
-  const [actualSize, setActualSize] = useState(false);
+  const [actualSize, setActualSize] = useState(false), [ratio,setRatio]=useState('16 / 10');
   const [confirming, setConfirming] = useState(false), [deleting, setDeleting] = useState(false);
+  const [rawTimeline,setRawTimeline]=useState(false);
   const [filter, setFilter] = useState('all'), [share, setShare] = useState(66);
   const grid = useRef<HTMLDivElement>(null);
-  const entries = events.map((event,index)=>({event,index})).sort((a,b)=>a.event.at-b.event.at);
-  const visible = entries.filter(({event})=>filter==='all'||event.kind===filter);
+  const entries = useMemo(() => timelineEntries(events,rawTimeline), [events,rawTimeline]);
+  const visible = useMemo(() => entries.filter(({event})=>filter==='all'||event.kind===filter), [entries,filter]);
   const chosen = selected === null ? null : events[selected];
   const router = useRouter();
   useEffect(() => {
     const root = container.current!; const frame = document.createElement('iframe');
-    if (replayOrigin === location.origin || !/^http:\/\/127\.0\.0\.1:\d+$/.test(replayOrigin)) { setError('Configure an isolated loopback replay origin, separate from the dashboard.'); return; }
+    if (!validReplayOrigin(replayOrigin,location.origin)) { setError('Configure an isolated HTTPS replay origin (or separate loopback development origin).'); return; }
     // Permissions apply to a separate trusted origin, never to the dashboard or recorded document.
     frame.title = 'Session replay'; frame.setAttribute('sandbox', 'allow-scripts allow-same-origin'); frame.referrerPolicy = 'no-referrer'; frame.src = replayOrigin + '/';
     const controller = new AbortController(), channel = crypto.randomUUID(); let ready = false, active = true, initialized = false;
@@ -53,11 +56,14 @@ export function ReportViewer({ projectId, reportId, events, durationMs, startedA
     fetch(`/api/projects/${projectId}/reports/${reportId}/replay`, { signal: controller.signal, cache: 'no-store' }).then(async response => {
       if (!response.ok) throw new Error(); const data = await response.json();
       if (!active || !Array.isArray(data.replay)) return;
+      const viewport=data.replay.find((event:{type:number})=>event.type===4)?.data;
+      if(viewport?.width>0&&viewport?.height>0)setRatio(`${viewport.width} / ${viewport.height}`);
       replay = data.replay; baseline = Math.max(0, Number(data.replay[0]?.timestamp ?? startedAt) - startedAt); initialize();
     }).catch(() => { if (active) { setError('Could not load the recording. Reload to retry.'); setState('Replay unavailable'); } });
     return () => { active = false; clearTimeout(startup); controller.abort(); window.removeEventListener('message', message); frame.remove(); bridge.current = () => {}; };
   }, [projectId, reportId, durationMs, startedAt, replayOrigin, initialOffset, events]);
-  function seek(at: number) { setPlaying(false); setOffset(at); bridge.current('seek', at); }
+  const seek = useCallback((at: number) => { setPlaying(false); setOffset(at); bridge.current('seek', at); }, []);
+  const selectEvidence = useCallback((index: number, at: number) => { setSelected(index); seek(at); }, [seek]);
   async function remove() {
     setDeleting(true); setError('');
     try { const response = await fetch(`/api/projects/${projectId}/reports/${reportId}`, { method: 'DELETE' }); if (!response.ok) throw new Error(); router.push(`/app/projects/${projectId}/reports`); router.refresh(); }
@@ -68,9 +74,9 @@ export function ReportViewer({ projectId, reportId, events, durationMs, startedA
     <InvestigationSurface className="report-grid" ref={grid} style={{'--replay-share':`${share}%`} as CSSProperties}>
       <section id="report-replay" className="report-replay" aria-label="Recorded session">
         <PanelHeading title="Session replay" status={<span role="status" className="product-small">{state}</span>} />
-        <div className="report-player" ref={container} />
+        <div className="report-player" ref={container} style={{aspectRatio:ratio}} />
         <div className="report-controls"><button className="product-button secondary" disabled={state !== 'Replay ready'} onClick={() => { const next = !playing && offset >= durationMs - 20 ? 0 : offset; bridge.current(playing ? 'pause' : 'play', next); setOffset(next); setPlaying(!playing); }}>{playing ? 'Pause replay' : 'Play replay'}</button><button className="product-button secondary" disabled={state !== 'Replay ready'} aria-pressed={actualSize} onClick={() => { bridge.current(actualSize ? 'fit' : 'actual'); if(actualSize) container.current?.scrollIntoView({block:'nearest',behavior:'instant'}); setActualSize(!actualSize); }}>{actualSize ? 'Fit recording' : '100% size'}</button><output data-testid="replay-time" aria-live="off">{timestamp(offset)} / {timestamp(durationMs)}</output></div>
-        {actualSize && <p className="product-small">Scroll inside the recording to inspect it at its original size.</p>}
+        <p className="product-small">{actualSize?'Scroll inside the recording to inspect it at its original size.':'Fit shows the complete viewport. Use 100% size to inspect small details.'}</p>
         <label className="product-small" htmlFor="replay-position">Replay position</label>
         <input id="replay-position" type="range" min="0" max={durationMs} step="10" value={offset} onChange={event => seek(Number(event.target.value))} disabled={state !== 'Replay ready'} />
         <p className="report-policy product-small">{styled ? 'Masked styled replay. Bounded layout and colors are captured; scripts, images and external resources stay blocked.' : 'Legacy structural replay: styling was not captured. Submit a fresh recording for the new styled replay; text masking remains enabled.'}</p>
@@ -81,13 +87,13 @@ export function ReportViewer({ projectId, reportId, events, durationMs, startedA
         onPointerMove={event=>{if(!event.currentTarget.hasPointerCapture(event.pointerId))return;const box=grid.current!.getBoundingClientRect();setShare(Math.min(72,Math.max(50,Math.round((event.clientX-box.left)/box.width*100))));}}
         onPointerUp={event=>event.currentTarget.releasePointerCapture(event.pointerId)} />
       <section id="report-evidence" className="report-timeline" aria-label="Recorded events"><h2>Evidence</h2><p className="product-small">Select an event to seek the replay.</p>
-        <LayoutGroup id={`evidence-${reportId}`}><div className="evidence-filters" role="group" aria-label="Filter evidence">{[['all','All'],['action','Actions'],['network','Network'],['error','Errors'],['navigation','Navigation']].map(([value,title])=><button key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{filter===value&&<motion.span className="evidence-filter-selection" layoutId="filter" />}<span>{title}</span></button>)}</div>
-        <motion.ol layoutScroll aria-label="Event timeline">{visible.map(({event,index}) => <li key={index}><button aria-label={`${event.kind} ${label(event)} ${timestamp(event.at)}`} className={selected === index ? 'selected' : ''} aria-pressed={selected === index} onClick={() => { setSelected(index); seek(event.at); }}>{selected === index && <motion.span className="evidence-selection" layoutId="selected-event" transition={{ type:'spring',stiffness:500,damping:42 }} />}<time>{timestamp(event.at)}</time><span className="report-event-kind">{event.kind}</span><span>{label(event)}</span></button></li>)}</motion.ol></LayoutGroup>
+        <label className="timeline-raw"><input type="checkbox" checked={rawTimeline} onChange={event=>setRawTimeline(event.target.checked)}/> Show every typing event</label><LayoutGroup id={`evidence-${reportId}`}><div className="evidence-filters" role="group" aria-label="Filter evidence">{[['all','All'],['action','Actions'],['network','Network'],['error','Errors'],['navigation','Navigation']].map(([value,title])=><button key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{filter===value&&<motion.span className="evidence-filter-selection" layoutId="filter" />}<span>{title}</span></button>)}</div>
+        <EvidenceList visible={visible} selected={selected} onSelect={selectEvidence}/></LayoutGroup>
         {!visible.length&&<p className="evidence-empty">No {filter} events were captured in this recording.</p>}
         {chosen && <motion.div key={selected} className="report-event-details" initial={{opacity:.5,x:6}} animate={{opacity:1,x:0}} transition={{duration:.18}}><p className="evidence-type">{chosen.kind==='network' ? `HTTP ${chosen.status ?? chosen.outcome}` : chosen.kind}</p><h3>{chosen.kind==='network'?`${chosen.method} ${chosen.url?.path??'[path masked]'}`:chosen.kind==='action'?`${chosen.action} action`:chosen.kind==='error'?chosen.errorType:'Navigation'}</h3><dl>
           <div><dt>Time</dt><dd>{timestamp(chosen.at)}</dd></div>
           {chosen.kind==='network'&&<><div><dt>Status</dt><dd>{chosen.status??'Unavailable'} · {chosen.outcome}</dd></div><div><dt>Duration</dt><dd>{chosen.durationMs.toFixed(0)} ms</dd></div><div><dt>Transport</dt><dd>{chosen.transport}</dd></div><div><dt>Origin</dt><dd>{chosen.url?.origin??'Masked'}</dd></div></>}
-          {chosen.kind==='action'&&<><div><dt>Target</dt><dd>{chosen.target.kind!=='unresolved'?chosen.target.value:`${chosen.target.tag} · unresolved`}</dd></div><div><dt>Value</dt><dd>{chosen.redacted?'Masked':chosen.value??'Not applicable'}</dd></div></>}
+          {chosen.kind==='action'&&<><div><dt>Target</dt><dd>{chosen.target.kind!=='unresolved'?chosen.target.value:`${chosen.target.tag} · unresolved`}</dd></div><div><dt>Value</dt><dd>{chosen.redacted?'Masked':chosen.values !== undefined ? chosen.values?.join(', ') || 'No options selected' : chosen.value??'Not applicable'}</dd></div></>}
           {chosen.kind==='error'&&<><div><dt>Source</dt><dd>{chosen.source}</dd></div><div><dt>Message</dt><dd>{chosen.message??'Masked'}</dd></div></>}
           {chosen.kind==='navigation'&&<div><dt>Path</dt><dd>{chosen.url.path??'Masked'}</dd></div>}
         </dl><p className="product-small">Diagnostics are evidence, not a guaranteed root-cause diagnosis. Network bodies and headers are never captured.</p></motion.div>}
@@ -99,3 +105,8 @@ export function ReportViewer({ projectId, reportId, events, durationMs, startedA
     </section>
   </>;
 }
+
+// Playback clock updates must not rebuild every evidence row at 10 Hz.
+const EvidenceList = memo(function EvidenceList({visible,selected,onSelect}:{visible:ReturnType<typeof timelineEntries>;selected:number|null;onSelect(index:number,at:number):void}) {
+  return <motion.ol layoutScroll aria-label="Event timeline">{visible.map(({event,index,indices,startAt}) => <li key={index}><button aria-label={`${event.kind} ${label(event)} ${timestamp(event.at)}`} className={selected !== null && indices.includes(selected) ? 'selected' : ''} aria-pressed={selected!==null&&indices.includes(selected)} onClick={() => onSelect(index,event.at)}>{selected !== null && indices.includes(selected) && <motion.span className="evidence-selection" layoutId="selected-event" transition={{ type:'spring',stiffness:500,damping:42 }} />}<time>{timestamp(event.at)}</time><span className="report-event-kind">{event.kind}</span><span>{label(event)}{indices.length>1&&<span className="timeline-group-note">{indices.length} typing updates &middot; {timestamp(startAt)}&ndash;{timestamp(event.at)}. Select for final value; show every event for individual updates.</span>}</span></button></li>)}</motion.ol>;
+});

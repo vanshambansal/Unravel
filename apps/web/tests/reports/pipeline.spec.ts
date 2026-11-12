@@ -17,8 +17,8 @@ test('record → response-loss retry → private persisted replay → seek → o
   try {
     const owner = await a.newPage(), other = await b.newPage();
     for (const [page, email] of [[owner, process.env.E2E_CLERK_USER_EMAIL!], [other, process.env.E2E_CLERK_OTHER_EMAIL!]] as const) {
-      await page.goto('/sign-in'); await clerk.signIn({ page, emailAddress: email });
-      await page.goto('/app/projects'); await expect(page.getByRole('heading', { name: 'Your projects' })).toBeVisible();
+      await page.goto('/sign-in', { waitUntil: 'domcontentloaded' }); await clerk.signIn({ page, emailAddress: email });
+      await page.goto('/app/projects', { waitUntil: 'domcontentloaded' }); await expect(page.getByRole('heading', { name: 'Your projects' })).toBeVisible();
     }
     const origin = new URL(baseURL!).origin, fixtureOrigin = 'http://127.0.0.1:4185';
     const created = await a.request.post('/api/projects', { headers: { origin }, data: { name: `E2E reports ${randomUUID()}`, websiteUrl: fixtureOrigin } });
@@ -26,7 +26,7 @@ test('record → response-loss retry → private persisted replay → seek → o
     if (created.status() === 409) { const list = await (await a.request.get('/api/projects')).json(); project = list.projects.find((p: { origin: string }) => p.origin === fixtureOrigin); }
     else { expect(created.status()).toBe(201); project = (await created.json()).project; }
     expect(project).toBeTruthy();
-    const page = await visitor.newPage(); await page.goto(fixtureOrigin + "/?debug=1");
+    const page = await visitor.newPage(); await page.goto(fixtureOrigin + "/?debug=1", { waitUntil: 'domcontentloaded' });
     await page.getByText('Connect a registered project', { exact: true }).click();
     await page.locator('#sdk-project').fill(project.id); await page.locator('#sdk-origin').fill(origin);
     await page.locator('#record-configure').click(); await expect(page.locator('#submission-status')).toContainText('Project configured');
@@ -74,7 +74,7 @@ test('record → response-loss retry → private persisted replay → seek → o
     expect(JSON.stringify(replay)).not.toContain('PRIVATE_REPORT'); expect(JSON.stringify(replay)).not.toContain('styles.css');
     const external: string[] = [];
     owner.on('request', request => { if (request.url().startsWith(fixtureOrigin) || request.url().includes('external-replay-test.example')) external.push(request.url()); });
-    await owner.goto(`/app/projects/${project.id}/reports/${reportId}`);
+    await owner.goto(`/app/projects/${project.id}/reports/${reportId}`, { waitUntil: 'domcontentloaded' });
     await expect(owner.getByRole('heading', { name: title, exact: true })).toBeVisible();
     await expect(owner.getByText('Replay ready', { exact: true })).toBeVisible();
     const frame = owner.frameLocator('iframe[title="Session replay"]');
@@ -107,6 +107,9 @@ test('record → response-loss retry → private persisted replay → seek → o
     await owner.evaluate(() => window.scrollTo(0,0));
     await owner.screenshot({ path: '../../.playwright-mcp/m4-report-desktop.png', fullPage: true });
     await owner.setViewportSize({ width: 390, height: 844 }); expect(await owner.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    // The later diagnostic action scrolls the recorded page below the form.
+    // Inspect the request moment; Fit must preserve, not rewrite, evidence scroll.
+    await owner.getByRole('button', { name: /network.*POST.*api\/questions.*500/ }).click();
     await owner.getByRole('button', { name: '100% size', exact: true }).click();
     const playerAddress = await owner.locator('iframe[title="Session replay"]').getAttribute('src');
     const hostFrame = owner.frames().find(item => item.url() === playerAddress)!;
@@ -114,7 +117,14 @@ test('record → response-loss retry → private persisted replay → seek → o
     await owner.getByRole('button', { name: 'Fit recording', exact: true }).click();
     await expect.poll(() => hostFrame.evaluate(() => document.documentElement.style.overflow)).toBe('hidden');
     await expect.poll(() => hostFrame.evaluate(() => scrollX + scrollY)).toBe(0);
-    await expect(frame.frameLocator('iframe').locator('textarea')).toBeInViewport();
+    // Fit scales the recorded viewport, not the entire document. The recorded
+    // scroll can legitimately put a particular form field outside that viewport.
+    // Check the whole viewport from the trusted host; recorded scripts stay off.
+    await expect(owner.locator('iframe[title="Session replay"]')).toBeInViewport({ratio:.95});
+    await expect.poll(async()=>{
+      const [recorded,host]=await Promise.all([frame.locator('iframe').boundingBox(),owner.locator('iframe[title="Session replay"]').boundingBox()]);
+      return !!(recorded&&host&&recorded.width>0&&recorded.height>0&&recorded.x>=host.x-1&&recorded.y>=host.y-1&&recorded.x+recorded.width<=host.x+host.width+1&&recorded.y+recorded.height<=host.y+host.height+1);
+    }).toBe(true);
     await owner.evaluate(() => window.scrollTo(0,0));
     await owner.screenshot({ path: '../../.playwright-mcp/m4-report-mobile.png', fullPage: true });
     await owner.reload(); await expect(owner.getByText('Replay ready', { exact: true })).toBeVisible();

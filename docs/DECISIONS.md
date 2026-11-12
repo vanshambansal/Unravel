@@ -1,10 +1,10 @@
 # Current technical decisions
 
-Updated 2026-11-10. Earlier rationale and superseded experiments are preserved unchanged in [DECISIONS_HISTORY.md](DECISIONS_HISTORY.md).
+Updated 2026-11-12. Earlier rationale and superseded experiments are preserved unchanged in [DECISIONS_HISTORY.md](DECISIONS_HISTORY.md).
 
 ## Application boundary and packaging
 
-**Decision:** One Next.js App Router + TypeScript application for marketing, future authentication/dashboard and initial Node APIs. pnpm workspaces; no Turborepo/Nx or separate Express server. Create SDK/contracts/test-plan packages only when used.
+**Decision:** One Next.js App Router + TypeScript application for marketing, authentication/dashboard and initial Node APIs. pnpm workspaces; no Turborepo/Nx or separate Express server. Create SDK/contracts/test-plan packages only when used.
 
 **Why:** Minimize deployment/integration boundaries while keeping server services modular. The removed application did not survive; reuse the accepted scene instead of rebuilding it. Existing Node 22.18.0 satisfies verified Next 16.4.6 and pnpm 10.34.9 engine ranges.
 
@@ -22,7 +22,7 @@ Updated 2026-11-10. Earlier rationale and superseded experiments are preserved u
 
 ## Testing and supported tooling
 
-**Decision:** Preserve the nine pure behavior tests using Node's runner; add pinned Playwright Test 1.65.0 for repository-run browser checks. ESLint 10.14.0 with maintained TypeScript ESLint 8.72.2 and official Next/React Hooks plugins; TypeScript 5.9.3 remains compatible with their peer ranges.
+**Decision:** Keep Node's runner for pure behavior tests; add pinned Playwright Test 1.65.0 for repository-run browser checks. ESLint 10.14.0 with maintained TypeScript ESLint 8.72.2 and official Next/React Hooks plugins; TypeScript 5.9.3 remains compatible with their peer ranges.
 
 **Why:** Connected browser tools are useful for inspection but must not be a test-runner prerequisite. Registry installation flagged ESLint 9 unsupported; use the compatible direct plugins instead of carrying the broader preset's legacy peer dependencies. All commands are centralized in README.md. No framework or motion dependency upgrade is hidden in the migration.
 
@@ -158,3 +158,36 @@ Date; decision; context/rationale; alternatives actually considered; consequence
 **Decision:** Collapse focus/fill, native click/submit and bounded recent same-site SPA transition evidence only in generated plans. Keep pop navigation and original evidence. Arm response checks at their selected action, excluding older in-flight requests. Require a completion condition alongside no-page-errors.
 
 **Why:** A duplicate navigation step should not block a usable recording. Chronology is still a heuristic, not proven causality. Controlled standard React/Next exports and positive/negative adapter execution provide stronger evidence than code inspection; they do not certify arbitrary sites or infer expected behavior.
+
+## Report completion and release safeguards - 2026-11-12
+
+**Decision:** Editable descriptive metadata and Open/Resolved use their own optimistic report revision; immutable recording/events/digest and test-plan revisions remain separate. Server search uses literal title/description matches and stable 20-row offset pages with count/rows from one snapshot. Adjacent known-target fill updates are grouped only for display and can be expanded to raw events.
+
+**Why:** Complete everyday triage without inventing teams, assignments or analytics. Existing reports default Open through an additive migration. Offsets are sufficient for the bounded MVP; concurrent inserts between page visits can shift boundaries, so no cross-request snapshot guarantee is claimed.
+
+**Decision:** Anonymous ingestion gets shared PostgreSQL fixed-window budgets (30/minute, 200/UTC day per project), bounded 1,000-report/100 MB project storage, read/upload deadlines and fail-closed public opt-in. Database time determines windows; project locking serializes storage/origin admission and preserves identical retries. Owner-managed retention remains unchanged; no destructive expiry job is introduced. HTTPS replay uses an explicitly separate trusted origin with exact parent/Host checks.
+
+**Why:** Reuse existing persistence rather than add Redis/queues/providers, bound exposure, and avoid trusting per-process rate counters or forged forwarding headers. Edge/global abuse prevention, public certificates/proxy, live Clerk and privacy/retention approval remain release gates; config acknowledgements are not proof of infrastructure. See DEPLOYMENT.md.
+
+**Decision:** Completed non-drag touch taps on launcher/move buttons are handled at pointer-up, with a delayed compatibility click suppressed. Start/Submit remain explicit separate controls. The observed failing Chromium gesture emitted pointer-up without click; the replacement must keep dragging capture-free and preserve keyboard/mouse behavior. Real devices remain unverified.
+
+## 2026-11-12 - Capture corrections, account closure and landing extension
+
+- **Ordinary controls:** retain SVG replay blocking but resolve semantic clicks to safe HTML controls. Add optional masked multi-value selects to existing versioned contracts/plans rather than silently exporting the first value. Missing fields preserve old scalar recordings; strict older servers reject newer fields. Native option-state mutations keep replay evidence self-contained. No privacy default is relaxed.
+- **Account closure (explicit user approval):** disable intake and retain projects/reports/evidence. Use an idempotent owner block and signed Clerk `user.deleted` webhook, with project-lock ordering shared with admission. This avoids destructive retention decisions and per-upload Clerk lookups. Hosted delivery remains an operator gate; no automatic data deletion/recovery is implied.
+- **Landing:** extend the accepted storyboard using HTML/CSS and existing GSAP. Scale the actual request badge in one bounded desktop native-scroll stage; mobile/reduced-motion remain consecutive sections. Reuse the actual plan adapter for synthetic code and preserve the cinematic renderer. A second WebGL scene, new motion library or replacement visual direction would add cost without solving this task.
+- **Verification output:** support a constrained optional `.next-*` output directory so test/build processes can avoid the user's active development output. Transient Neon DNS failures required an ignored process-local DNS cache during verification; TLS remained verified and saved environment/production source were not changed for that workaround. It is not a deployed resilience guarantee.
+
+
+## 2026-11-12 ? Performance without a visual rewrite
+
+Use ResizeObserver-owned ray sizing, a memoized evidence list and elapsed-time-bounded existing quality adaptation. Separate simulation-delta clamping from actual frame diagnostics. These address observed repeated work and extreme-stall response without changing the camera, shader or artwork. Retain the existing adaptive degradation policy; on persistently slow devices it activates sooner. Do not claim FPS gains from short software-WebGL samples or replace effects for benchmark scores. Real-hardware and authenticated verification remain explicit gates; current evidence lives in the performance audit.
+
+
+## 2026-11-12 - Prepare exact shader variants without reducing quality
+
+Use Three compileAsync for the composer offscreen render target and KHR parallel ray-program completion before first-frame reveal. Default-framebuffer precompile prepared different color-space/tone-mapping variants and left first-use stalls. Preserve all visual parameters and generation/disposal boundaries. Measure startup and steady rendering separately; faster startup does not establish smoother scrolling. Keep Clerk DNS failures separate from frontend animation costs and do not bypass its protection. Hardware evidence and remaining acceptance live in the hardware performance audit.
+
+## 2026-11-12 - Local authentication and measured responsiveness
+
+Use a normal-network paired local preview with exact replay parent origin and no application credentials in the player environment. Keep Clerk security and owner enforcement unchanged. Bound private-route prefetch to actual intent and show immediate feedback. Deduplicate project reads only within a server request; use a single SQL snapshot for report count/page rather than persistent private caches. Separate editor document updates from configuration and cache applied-plan analysis. Deliver existing internal artwork through the established Next optimizer. On explicit constrained-resource hints, reuse the static landing with voluntary Enable3D; unknown/capable hardware keeps full quality and reduced motion takes precedence. Numeric timings and whitelisted storage codes support diagnosis without logging evidence or secrets. Cold database latency remains unaccepted; no speculative retries or new infrastructure. Evidence: audits/AUTH_RESPONSIVENESS_2026-11-12.md.

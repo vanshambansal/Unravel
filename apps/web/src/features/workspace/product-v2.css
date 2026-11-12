@@ -27,3 +27,13 @@
 .unravel-workspace .report-timeline{background:#111318;}
 .unravel-workspace .evidence-type{color:#ff969d;font-size:12px;line-height:20px;width:fit-content;background:#262832;border-radius:6px;padding:4px 8px;text-transform:capitalize;}
 .unravel-workspace .ui-investigation-surface.report-grid{margin-top:20px;}
+
+/* Setup owns these rules; keep the first-report checkpoint visible before long code on mobile. */
+.unravel-workspace .setup-boundaries summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;color:var(--product-text);font-weight:500}
+.unravel-workspace .setup-boundaries summary::before{content:"+";color:var(--product-muted)}
+.unravel-workspace .setup-boundaries[open] summary::before{content:"-"}
+.unravel-workspace .setup-boundaries p{margin-top:12px}
+@media(max-width:1050px){.unravel-workspace .setup-progress{grid-row:1}.unravel-workspace .setup-progress ol{gap:8px}}
+
+.unravel-workspace .setup-code header .product-text-link{font-family:inherit;font-size:13px;white-space:nowrap}
+@media(max-width:600px){.unravel-workspace .setup-code header{flex-wrap:wrap;gap:8px}.unravel-workspace .setup-code header .product-text-link{min-height:44px;font-family:'Unravel Product Inter',sans-serif}}

@@ -22,20 +22,21 @@ export function createSubmission(endpoint: string | undefined, notify?: (value: 
       if (receipt) return Promise.resolve({ ...receipt });
       if (pending) return pending;
       frozenBody = body; const ticket = ++generation; controller = new AbortController();
+      const attemptController=controller;let timedOut=false;const timeout=setTimeout(()=>{timedOut=true;attemptController.abort();},30000);
       update({ state: 'submitting', reportId: null, error: null });
       pending = (async () => {
         try {
           const response = await fetch(address, { method: 'POST', mode: 'cors', credentials: 'omit', headers: { 'Content-Type': 'application/json' }, body, signal: controller!.signal });
-          if (!response.ok) throw new Error(response.status === 413 ? 'The server rejected this report as too large.' : response.status === 409 ? 'This recording ID already has different submitted content.' : response.status === 403 ? 'This website origin is not registered for this project.' : response.status === 422 ? 'The recording is incomplete or unsupported. Start a new recording.' : 'Report submission failed. Retry with the same details.');
+          if (!response.ok) throw new Error(response.status === 413 ? 'The server rejected this report as too large.' : response.status === 409 ? 'This recording ID already has different submitted content.' : response.status === 403 ? 'This website origin is not registered for this project.' : response.status === 429 ? 'Report submission is temporarily limited or project storage is full. Keep this recording; ask the developer or retry later.' : response.status === 408 ? 'Report submission timed out. Keep this recording and retry.' : response.status === 503 ? 'Report submission is unavailable. Keep this recording and retry later.' : response.status === 422 ? 'The recording is incomplete or unsupported. Start a new recording.' : 'Report submission failed. Retry with the same details.');
           const value = SubmissionReceiptSchema.parse(await response.json());
           if (ticket !== generation) throw new Error('Submission cancelled.');
           receipt = value; update({ state: 'submitted', reportId: value.reportId, error: null }); return { ...value };
         } catch (error) {
-          const message = error instanceof Error && error.message.startsWith('This ') || error instanceof Error && /^(Report submission|The server|The recording)/.test(error.message) ? (error as Error).message : 'Could not confirm submission. Retry with the same details.';
+          const message = timedOut ? 'Report submission timed out. Retry with the same details.' : error instanceof Error && error.message.startsWith('This ') || error instanceof Error && /^(Report submission|The server|The recording)/.test(error.message) ? (error as Error).message : 'Could not confirm submission. Retry with the same details.';
           if (ticket === generation) update({ state: 'error', reportId: null, error: message });
           // eslint-disable-next-line preserve-caught-error -- Network/parser causes can contain URLs or submitted data.
           throw new Error(message);
-        } finally { if (ticket === generation) { pending = null; controller = null; } }
+        } finally { clearTimeout(timeout);if (ticket === generation) { pending = null; controller = null; } }
       })();
       return pending;
     },

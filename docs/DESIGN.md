@@ -1,6 +1,6 @@
 # Unravel visual direction
 
-Updated: 2026-11-11
+Updated: 2026-11-12
 
 ## Authority and approval
 
@@ -29,7 +29,7 @@ Use A's framed glass workspace and persistent project navigation across product 
 - Materials: distinguish canvas, task surface and floating layer. Use edge light, directional shadows, tonal contrast and selective translucency; do not put every item in another rounded container. Compare candidates with and without atmospheric effects.
 - Navigation: only real destinations. Projects, Reports, SDK setup and Settings must have clear context; no speculative teams, billing or analytics. Candidate A and B may propose different shells.
 - Forms/settings: label-control relationships, useful grouping, clear saved/unsaved/error feedback, origin-change consequences and deliberate destructive confirmation. The name of the task, rather than a decorative eyebrow, establishes hierarchy.
-- Collections: useful project/report metadata, contextual actions and realistic empty/long-list states. Search/status/metadata-edit proposals are explicitly marked planned until implemented.
+- Collections: useful project/report metadata, contextual actions and realistic empty/long-list states. Search, status and metadata editing now use the shared collection/dialog patterns; current verification lives in PROJECT_STATUS.md.
 - Investigation: replay is dominant; event chronology, selected evidence and the next reproduction action are visibly connected. Do not imply a network failure proves backend root cause. Masked and legacy replay limitations remain contextual.
 - Plans/export: readable steps and structured actions/values/assertions lead to JSON and code views. Developer-confirmed expected behavior, missing-safe-value and stale-save states remain visible. Generation is implemented locally, not a planned placeholder.
 - Recorder: complete explicit Start/Starting/Recording/Stop/Describe/Submitting/Retry/Success/discard workflow; show it on a plausible host website and at narrow width. Nothing records before Start, and nothing uploads before Submit.
@@ -48,7 +48,7 @@ Use the existing [Figma workspace](https://www.figma.com/design/aMr55xjZKRkkLBSF
 
 ## Landing boundary
 
-Keep the approved camera journey, rays, light, materials, type and skip/reduced-motion behavior. Remaining product storytelling and diagnostic zoom are a later task. The new internal look must not initialize the marketing renderer on auth/product routes. Existing scene artwork can guide or illustrate auth concepts without importing the full scene runtime.
+Keep the approved camera journey, rays, light, materials, type and skip/reduced-motion behavior. Product storytelling and the same-request diagnostic zoom are now implemented as an extension of the approved Figma storyboard; see LANDING.md. The new internal look must not initialize the marketing renderer on auth/product routes. Existing scene artwork can guide or illustrate auth concepts without importing the full scene runtime.
 
 
 ## Approved A/B composition references
@@ -91,3 +91,9 @@ The user approved a compact, movable widget while retaining A's material/motion 
 ## Review-first generator - 2026-11-12
 
 Preserve Direction A's framed materials; make the reviewed sequence the main working area. A single View code workspace owns Playwright and JSON, with readable syntax, line numbers and explicit JSON Apply/Discard. Expected outcomes appear only for Verify a fix. Direct Edit/Remove, recoverable removed actions and a staged sheet with Cancel/Apply avoid turning the page into a long questionnaire. A reachable sticky footer supplies the next real action, while the post-download guide explains local execution. Neutral Prepared for export / Not run wording distinguishes syntactic readiness from a real test result. No new visual theme or landing change. Runtime evidence lives in PROJECT_STATUS and behavior in TEST_PLANS.
+
+## Landing story extension - 2026-11-12
+
+The existing frame 2:45 supplies the normal recording explanation, diagnostic interface and reveal composition. The browser implementation adds an interactive synthetic recorder preview, same-request-badge native scroll zoom, sequence/plan/code preview, truthful local SDK integration guide, privacy boundaries, FAQ and working workspace CTAs. It preserves the original entrance geometry, materials, camera and ray treatments. No new imagery, renderer, visual world or library was introduced.
+
+Desktop sufficiently tall viewports get one bounded sticky diagnostic journey. Narrow screens and reduced motion show evidence/sequence in ordinary flow. Code and plan examples use synthetic data, and Playwright code comes from the actual adapter. The landing never mounts a recorder or submits a report. Implemented/browser-reviewed is not user aesthetic acceptance. The finish review scored its two bounded corrections resolved (reveal hierarchy and inherited asset-provenance disclosure); exact Figma/runtime certification was not claimed. Current evidence and limits: [landing contract](LANDING.md), [verification](audits/DEFECTS_LANDING_2026-11-12.md).

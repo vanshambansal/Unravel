@@ -6,10 +6,14 @@ import { reportTestPlans } from '../db/schema';
 import { reportServices } from './index';
 import { ApplicationError } from '../errors';
 
-export async function readPlan(owner: string, projectId: string, reportId: string) {
+export async function readPlan(owner: string, projectId: string, reportId: string, timing?: (name: 'evidence'|'draft'|'generation', ms: number) => void) {
+  const started=performance.now();
   const { report, events } = await reportServices().detail(owner, projectId, reportId);
+  const evidence=performance.now();timing?.('evidence',evidence-started);
   const [saved] = await database().select().from(reportTestPlans).where(eq(reportTestPlans.reportId, reportId));
+  const draft=performance.now();timing?.('draft',draft-evidence);
   const generated = generatePlan({ initialUrl: report.recording.initialUrl, events });
+  timing?.('generation',performance.now()-draft);
   return { plan: saved ? TestPlanSchema.parse(saved.plan) : generated, revision: saved?.revision ?? 0, updatedAt: saved?.updatedAt ?? null, generated, targetOrigin: report.recording.initialUrl.origin };
 }
 export async function savePlan(owner: string, projectId: string, reportId: string, input: unknown) {

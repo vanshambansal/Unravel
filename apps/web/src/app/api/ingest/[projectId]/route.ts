@@ -1,3 +1,4 @@
+import {ingestionAllowed} from '@/server/release';
 import { MAX_SUBMISSION_BYTES } from '@unravel/contracts';
 import { reportServices } from '@/server/reports';
 import { boundedJson, errorResponse } from '@/server/http';
@@ -8,7 +9,9 @@ type Context = { params: Promise<{ projectId: string }> };
 
 // This endpoint intentionally fails closed outside loopback. CORS is not authentication.
 function local(request: Request) {
-  if (!['localhost','127.0.0.1','[::1]'].includes(new URL(request.url).hostname)) throw new ApplicationError(503, 'Report ingestion is local-only pending deployment security review.');
+  const configured=process.env.APP_ORIGIN;
+  const canonical=process.env.PUBLIC_INGESTION_ENABLED==='true'&&configured&&request.headers.get('host')===new URL(configured).host?configured+new URL(request.url).pathname:request.url;
+  if (!ingestionAllowed(canonical)) throw new ApplicationError(503, 'Report ingestion is disabled until the release configuration and security review are complete.');
 }
 const cors = (origin: string) => ({ 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '0', Vary: 'Origin', 'Cache-Control': 'no-store' });
 export async function OPTIONS(request: Request, context: Context) {
@@ -24,6 +27,7 @@ export async function POST(request: Request, context: Context) {
   try {
     local(request); const { projectId } = await context.params;
     await reportServices().website(projectId, request.headers.get('origin')); allowed = request.headers.get('origin');
+    await reportServices().consume(projectId);
     if (request.headers.get('content-encoding') && request.headers.get('content-encoding') !== 'identity') throw new ApplicationError(415, 'Compressed submissions are unsupported.');
     const input = await boundedJson(request, MAX_SUBMISSION_BYTES);
     const receipt = await reportServices().submit(projectId, allowed, input);

@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import Link from 'next/link';
+import { IntentLink as Link } from '@/features/workspace/IntentLink';
 import { useId, useRef, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 export function ProjectNavigation({ projects }: { projects: { id: string; name: string }[] }) {

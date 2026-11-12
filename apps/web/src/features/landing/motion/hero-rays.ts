@@ -120,18 +120,27 @@ void main() {
 }`;
 
 
-export function initializeHeroRays(canvas: HTMLCanvasElement) {
+export async function initializeHeroRays(canvas: HTMLCanvasElement, cancelled = () => false) {
   const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, depth: false, antialias: false });
   if (!gl) return undefined;
   const compile = (kind: number, source: string) => {
     const shader = gl.createShader(kind)!; gl.shaderSource(shader, source); gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) { gl.deleteShader(shader); return undefined; }
     return shader;
   };
   const vertex = compile(gl.VERTEX_SHADER, VERTEX), fragment = compile(gl.FRAGMENT_SHADER, FRAGMENT);
   if (!vertex || !fragment) { if (vertex) gl.deleteShader(vertex); if (fragment) gl.deleteShader(fragment); return undefined; }
   const program = gl.createProgram()!; gl.attachShader(program, vertex); gl.attachShader(program, fragment); gl.linkProgram(program);
   gl.deleteShader(vertex); gl.deleteShader(fragment);
+  // A synchronous status query forces driver compilation onto the main thread.
+  // Link status below still validates both shaders after parallel work completes.
+  const parallel = gl.getExtension('KHR_parallel_shader_compile');
+  if (parallel) {
+    while (!gl.isContextLost() && !gl.getProgramParameter(program, parallel.COMPLETION_STATUS_KHR)) {
+      if (cancelled()) { gl.deleteProgram(program); return undefined; }
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+  }
+  if (gl.isContextLost()) { gl.deleteProgram(program); return undefined; }
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { gl.deleteProgram(program); return undefined; }
   const uniforms: Record<string, WebGLUniformLocation | null> = {};
   for (let i = 0; i < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); i++) {
@@ -140,16 +149,20 @@ export function initializeHeroRays(canvas: HTMLCanvasElement) {
   const vao = gl.createVertexArray();
   let time = 0, disposed = false, opening = true;
   const motion = new RayMotion();
+  let aspect = 1;
   const size = () => {
     const rect = canvas.getBoundingClientRect();
+    aspect = rect.width / Math.max(1, rect.height);
     const ratio = Math.min(devicePixelRatio, 1, Math.sqrt(700000 / (rect.width * rect.height)));
     const w = Math.max(1, Math.round(rect.width * ratio)), h = Math.max(1, Math.round(rect.height * ratio));
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
   };
+  size();
+  const resizeObserver = new ResizeObserver(size);
+  resizeObserver.observe(canvas);
   return {
     opening(value: boolean) { if (opening !== value) { opening = value; motion.point(0, 0, false); } },
     pointer(x: number, y: number, inside: boolean) {
-      const rect = canvas.getBoundingClientRect(), aspect = rect.width / rect.height;
       const qx = (x - .5) * aspect, qy = .5 - y;
       const sourceX = opening ? -.28 * aspect : aspect * .5 + .1;
       let angle = Math.atan2(qy - (opening ? .7 : .62), qx - sourceX) - (opening ? -Math.PI / 2 : -2.48);
@@ -158,7 +171,7 @@ export function initializeHeroRays(canvas: HTMLCanvasElement) {
     },
     render(delta: number, paused: boolean) {
       if (disposed || gl.isContextLost()) return;
-      size(); const dt = paused ? 0 : Math.min(.05, delta);
+      const dt = paused ? 0 : Math.min(.05, delta);
       time += dt; motion.update(dt);
       gl.viewport(0, 0, canvas.width, canvas.height); gl.useProgram(program); gl.bindVertexArray(vao);
       const scalar: Record<string, number> = { uTime: time, uBlend: .35, uIntensity: opening ? 3 : 1.8, uSpread: opening ? .28 : .45, uDensity: 5, uSharpness: .5, uFalloff: opening ? 1.2 : 1.6, uGlow: 1.2, uSaturation: 1, uDust: 0, uOpacity: .8, uReveal: 1, uLight: 0, uAim: motion.x, uSway: 1 };
@@ -171,6 +184,6 @@ export function initializeHeroRays(canvas: HTMLCanvasElement) {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
     metrics: () => ({ time, aim: motion.x, focus: motion.focus, opening }),
-    dispose() { disposed = true; gl.deleteVertexArray(vao); gl.deleteProgram(program); },
+    dispose() { disposed = true; resizeObserver.disconnect(); gl.deleteVertexArray(vao); gl.deleteProgram(program); },
   };
 }

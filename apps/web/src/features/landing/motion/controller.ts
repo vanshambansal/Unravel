@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { choreography, journeyTiming, journeyViewports } from './choreography';
 import { initializeHeroRays } from './hero-rays';
 import { PerformanceGuard } from './quality';
+import { conserveSceneResources } from './resource-budget';
 import type { ArchitecturalScene, SceneMetrics } from './scene';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -26,15 +27,17 @@ export function mountLandingMotion(host: HTMLElement): () => void {
   const stage = element('stage'), journey = element('journey'), hero = element('hero');
   const title = element('hero-title'), entrance = element('entrance'), skip = element<HTMLButtonElement>('skip');
   const ambientButton = element<HTMLButtonElement>('ambient'), status = element('status');
+  const enableScene = element<HTMLButtonElement>('enable-scene');
   const replayButton = element<HTMLButtonElement>('replay');
   const canvas = element<HTMLCanvasElement>('scene');
-  let heroRays: ReturnType<typeof initializeHeroRays>;
+  let heroRays: Awaited<ReturnType<typeof initializeHeroRays>>;
   const media = matchMedia('(prefers-reduced-motion: reduce)');
   const performanceGuard = new PerformanceGuard();
   let scene: ArchitecturalScene | undefined, trigger: ScrollTrigger | undefined;
   let progress = 0, paused = false, visible = true, fallback = false, reduced = media.matches;
   let generation = 0, raf = 0, previous = 0, disposed = false;
   let pendingSkip = false;
+  let budgetOverride = false;
   const frameTimes: number[] = [];
 
   function reveal(id: string, value: number, translate = true) {
@@ -66,12 +69,13 @@ export function mountLandingMotion(host: HTMLElement): () => void {
   function render(now: number) {
     raf = 0;
     if (!scene || disposed || document.hidden || !visible) return;
-    const delta = previous ? Math.min((now - previous) / 1000, .25) : 1 / 60;
+    const frameMs = previous ? now - previous : 1000 / 60;
+    const delta = Math.min(frameMs / 1000, .25);
     previous = now;
     try { scene.render(delta); } catch { activateFallback('The architectural preview could not render. Static hero shown.'); return; }
     if (choreography(progress).entrance > .001 || progress >= .73) heroRays?.render(delta, paused);
-    if (frameTimes.length < 1200) frameTimes.push(delta * 1000);
-    if (!paused && performanceGuard.push(delta * 1000)) {
+    if (frameTimes.length < 1200) frameTimes.push(frameMs);
+    if (!paused && performanceGuard.push(frameMs)) {
       if (scene.reduceQuality()) {
         performanceGuard.reset(); status.textContent = 'Lighter rendering active';
       } else { activateFallback('A lighter static view is active for smooth browsing.'); return; }
@@ -93,7 +97,11 @@ export function mountLandingMotion(host: HTMLElement): () => void {
     stop(); trigger?.kill(); trigger = undefined; scene?.dispose(); scene = undefined; heroRays?.dispose(); heroRays = undefined;
     root.classList.remove('rendering');
     reduced = media.matches;
-    if (reduced || fallback) { activateFallback(reduced ? 'Reduced motion Â· static architectural view' : status.textContent ?? 'Static architectural view'); return; }
+    const hints = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean; effectiveType?: string } };
+    const conserved = !budgetOverride && conserveSceneResources({ ...hints.connection, saveData:hints.connection?.saveData, effectiveType:hints.connection?.effectiveType, deviceMemory:hints.deviceMemory, hardwareConcurrency:hints.hardwareConcurrency });
+    enableScene.hidden = !conserved || reduced;
+    ambientButton.hidden = conserved && !reduced;
+    if (reduced || fallback || conserved) { activateFallback(reduced ? 'Reduced motion / static architectural view' : conserved ? 'Lightweight view / 3D is optional' : status.textContent ?? 'Static architectural view'); return; }
     root.classList.remove('static');
     ambientButton.disabled = false; status.textContent = '';
     // HTML/poster remain useful if the renderer chunk cannot load.
@@ -103,7 +111,9 @@ export function mountLandingMotion(host: HTMLElement): () => void {
       const initialized = await initializeScene(canvas, innerWidth <= 700 ? 'mobile' : 'desktop');
       if (ticket !== generation || disposed) { initialized.dispose(); return; }
       scene = initialized; positionEntranceLight();
-      heroRays = initializeHeroRays(element<HTMLCanvasElement>('hero-rays'));
+      const rays = await initializeHeroRays(element<HTMLCanvasElement>('hero-rays'), () => ticket !== generation || disposed);
+      if (ticket !== generation || disposed) { rays?.dispose(); return; }
+      heroRays = rays;
       scene.resize(stage.clientWidth, stage.clientHeight); scene.pauseAmbient(paused);
       trigger = ScrollTrigger.create({ trigger: journey, start: 'top top', end: () => `+=${innerHeight * journeyTiming.cameraViewports}`, onUpdate: self => { present(self.progress); wake(); }, invalidateOnRefresh: true });
       // Same progress and time-zero state used by capture.html. Never reveal an unrendered canvas.
@@ -111,14 +121,18 @@ export function mountLandingMotion(host: HTMLElement): () => void {
       root.classList.add('rendering');
       if (pendingSkip) { pendingSkip = false; skipIntro(); }
       wake();
-    } catch { if (ticket === generation) activateFallback('3D is unavailable Â· static architectural view'); }
+    } catch { if (ticket === generation) activateFallback('3D is unavailable / static architectural view'); }
   }
   function skipIntro() {
     if (!scene && !fallback) pendingSkip = true;
     root.classList.add('preview-hero');
     if (trigger) window.scrollTo({ top: trigger.end, behavior: 'instant' });
+    else stage.scrollIntoView({block:'start',behavior:'instant'});
     present(1); wake(); title.focus({ preventScroll: true });
   }
+  const heroLinks = [...root.querySelectorAll<HTMLAnchorElement>('a[href="#hero"]')];
+  function visitHero(event:Event){event.preventDefault();skipIntro();}
+  for(const link of heroLinks)link.addEventListener('click',visitHero);
   function toggleAmbient() {
     paused = !paused; scene?.pauseAmbient(paused);
     ambientButton.setAttribute('aria-pressed', String(paused));
@@ -146,18 +160,20 @@ export function mountLandingMotion(host: HTMLElement): () => void {
   function pointerLeave() { heroRays?.pointer(.5, .5, false); if (!paused) wake(); }
   function visibility() { if (document.hidden) stop(); else wake(); }
   function preference() { if (disposed) return; fallback = false; void setup(); }
-  function contextLost(event: Event) { event.preventDefault(); activateFallback('Graphics context lost Â· static architectural view'); }
+  function contextLost(event: Event) { event.preventDefault(); activateFallback('Graphics context lost / static architectural view'); }
   function replay() {
     if (reduced || fallback) { title.focus({ preventScroll: false }); return; }
     pendingSkip = false; root.classList.remove('preview-hero');
     window.scrollTo({ top: 0, behavior: 'instant' }); present(0); wake(); skip.focus({ preventScroll: true });
   }
+  function loadScene() { budgetOverride = true; fallback = false; pendingSkip = false; root.classList.remove('preview-hero'); status.textContent = 'Preparing the 3D entrance...'; void setup(); }
   const observer = new IntersectionObserver(entries => {
     visible = entries[0].intersectionRatio >= .01; if (visible) wake(); else stop();
   }, { threshold: [0, .01] }); observer.observe(stage);
   skip.addEventListener('click', skipIntro);
   ambientButton.addEventListener('click', toggleAmbient);
   replayButton.addEventListener('click', replay);
+  enableScene.addEventListener('click', loadScene);
   window.addEventListener('resize', resize);
   window.addEventListener('pointermove', pointer, { passive: true });
   document.documentElement.addEventListener('pointerleave', pointerLeave);
@@ -169,8 +185,10 @@ export function mountLandingMotion(host: HTMLElement): () => void {
   function dispose() {
     if (disposed) return;
     disposed = true; generation++; stop(); trigger?.kill(); scene?.dispose(); heroRays?.dispose(); observer.disconnect();
+    for(const link of heroLinks)link.removeEventListener('click',visitHero);
     skip.removeEventListener('click', skipIntro); ambientButton.removeEventListener('click', toggleAmbient);
     replayButton.removeEventListener('click', replay); window.removeEventListener('resize', resize);
+    enableScene.removeEventListener('click', loadScene);
     window.removeEventListener('pointermove', pointer);
     document.documentElement.removeEventListener('pointerleave', pointerLeave);
     document.removeEventListener('visibilitychange', visibility); media.removeEventListener('change', preference);

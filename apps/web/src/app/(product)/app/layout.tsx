@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import Image, { getImageProps } from 'next/image';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { WorkspaceProvider } from '@/features/workspace/Provider';
@@ -17,11 +17,12 @@ async function ProtectedWorkspace({ children }: { children: React.ReactNode }) {
   try { owner = await requireDeveloper(); }
   catch (error) { if (error instanceof ApplicationError && [401, 503].includes(error.status)) redirect('/sign-in'); throw error; }
   const projects = await projectServices().list(owner);
-  return <WorkspaceProvider><div className="workspace-frame">
+  const artwork=getImageProps({src:'/landing/artwork/hero-atrium.png',alt:'',width:960,height:640}).props.src;
+  return <WorkspaceProvider artwork={artwork}><div className="workspace-frame">
     <MaterialLight />
     <a href="#workspace-content" className="product-skip">Skip to content</a>
     <header className="workspace-header"><Link className="workspace-brand" href="/" prefetch={false}><Image src="/landing/artwork/unravel-mark.svg" width={26} height={26} alt="" />unravel</Link><ProjectNavigation projects={projects.map(p=>({id:p.id,name:p.name}))} /><div className="workspace-header-actions"><AmbientMotionControl /><AccountMenu /></div></header>
     <div className="workspace-body"><WorkspaceSidebar projects={projects.map(p=>({id:p.id,name:p.name}))} /><main id="workspace-content" className="workspace-content" tabIndex={-1}>{children}</main></div>
   </div></WorkspaceProvider>;
 }
-export default function ProductLayout({ children }: { children: React.ReactNode }) { return <Suspense><ProtectedWorkspace>{children}</ProtectedWorkspace></Suspense>; }
+export default function ProductLayout({ children }: { children: React.ReactNode }) { return <Suspense fallback={<section className="product-panel" aria-busy="true"><p role="status">Loading your workspace...</p></section>}><ProtectedWorkspace>{children}</ProtectedWorkspace></Suspense>; }

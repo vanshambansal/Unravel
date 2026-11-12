@@ -1,5 +1,5 @@
 {
-  "sourceHash": "c038cf1878e49b5e0213487e4a0249aa77d03b221910a52a372cb0599668a393",
+  "sourceHash": "830dd5002e4b08755d36097387bbed13c83c676123da153cfba26a2ea5a5f77f",
   "sources": [
     "apps/web/src/features/landing/motion/scene.ts",
     "apps/web/src/features/landing/motion/asset-scene.ts",

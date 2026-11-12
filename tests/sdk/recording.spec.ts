@@ -31,6 +31,16 @@ test('explicit submission retries identical content after response loss and retu
   await expect(page.evaluate(() => window.fixtureRecorder.submit({ title: 'Changed details' }))).rejects.toThrow('same report details');
 });
 
+test('a stalled upload times out without automatic retry and retains its frozen report',async({page})=>{
+  await page.clock.install();let attempts=0;const bodies:string[]=[];
+  await page.route('**/api/ingest/**',route=>{attempts++;bodies.push(route.request().postData()!);if(attempts===1)return;return route.fulfill({status:201,contentType:'application/json',body:JSON.stringify({reportId:'22345678-1234-4234-8234-123456789012',duplicate:false})});});
+  await page.evaluate(async projectId=>{window.fixtureRecorder.destroy();window.fixtureRecorder=window.UnravelSDK.initialize({projectId,submissionUrl:`${location.origin}/api/ingest/${projectId}`});await window.fixtureRecorder.start();window.fixtureRecorder.stop();void window.fixtureRecorder.submit({title:'Stalled upload',description:''}).catch(()=>{});},projectId);
+  await expect.poll(()=>attempts).toBe(1);await page.clock.fastForward(30001);
+  await expect.poll(()=>page.evaluate(()=>window.fixtureRecorder.getSubmissionStatus().state)).toBe('error');
+  expect(await page.evaluate(()=>window.fixtureRecorder.getSubmissionStatus().error)).toContain('timed out');expect(attempts).toBe(1);
+  await page.evaluate(()=>window.fixtureRecorder.submit({title:'Stalled upload',description:''}));expect(attempts).toBe(2);expect(bodies[1]).toBe(bodies[0]);
+});
+
 test('submission is never automatic and destroy cancels pending upload', async ({ page }) => {
   await page.goto('/?debug=1'); let contacted = false;
   await page.route('**/api/ingest/*', async route => { contacted = true; await new Promise(resolve => setTimeout(resolve, 400)); await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ reportId: '22345678-1234-4234-8234-123456789012', duplicate: false }) }).catch(() => {}); });

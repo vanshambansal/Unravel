@@ -138,7 +138,7 @@ export async function initializeScene(canvas: HTMLCanvasElement, quality: Qualit
     renderer.setSize(frame.width, frame.height, false); composer.setSize(frame.width, frame.height);
     antialias.uniforms.resolution.value.set(1 / (frame.width * renderer.getPixelRatio()), 1 / (frame.height * renderer.getPixelRatio())); updateCamera();
   }
-  return {
+  const api: ArchitecturalScene = {
     updateProgress(value) { progress = value; updateCamera(); },
     resize(nextWidth, nextHeight) { width = nextWidth; height = nextHeight; resize(); },
     pauseAmbient(value) { paused = value; },
@@ -167,4 +167,15 @@ export async function initializeScene(canvas: HTMLCanvasElement, quality: Qualit
       environment.dispose(); overhead.shadow.dispose(); bloom.dispose(); output.dispose(); composer.dispose(); renderer.dispose();
     },
   };
+  // Prepare PBR programs through KHR_parallel_shader_compile before the first
+  // visible frame. Keep the poster and controls responsive while the driver works.
+  try {
+    // Match RenderPass's offscreen target: compiling for the default framebuffer
+    // prepares different tone-mapping/color-space variants and stalls again later.
+    renderer.setRenderTarget(composer.readBuffer);
+    await renderer.compileAsync(scene, camera);
+    renderer.setRenderTarget(null);
+    return api;
+  }
+  catch (error) { api.dispose(); throw error; }
 }

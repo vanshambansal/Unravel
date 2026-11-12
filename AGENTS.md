@@ -10,7 +10,7 @@
 - Define acceptance criteria for meaningful features and keep work within the agreed milestone. Do not change unrelated working features without a reason.
 - Never hardcode secrets, commit credentials, or include secrets in logs or documentation.
 - Never fabricate functionality, completed features, or verification results. Distinguish proposals, current implementation, and historical results.
-- Run relevant lint, typecheck, tests, and build checks when available; report actual outcomes and unavailable checks.
+- Run relevant lint, typecheck, tests, and build checks when available; report actual outcomes and unavailable checks. Completion requires the real browser workflow, including recovery/navigation/refresh and independent integration where relevant; passing test counts alone are insufficient.
 - Update status after significant work, append meaningful task/discussion summaries to `docs/PROMPT_LOG.md`, and record important decisions and rationale in `docs/DECISIONS.md`.
 - Keep documentation concise with a clear owner for each fact; link instead of duplicating information. Read detailed architecture/design/plan docs when they exist and are relevant.
 - For internal UI work, read current `docs/DESIGN.md` and `docs/INTERNAL_UI.md`. Preserve working behavior, not weak presentation. Reuse a composition when it serves the task; replace it deliberately during an approved redesign. Earlier Figma approvals are references, not restrictions against improvement.

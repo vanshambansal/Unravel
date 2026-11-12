@@ -1,3 +1,6 @@
 import type { NextConfig } from 'next';
-const config: NextConfig = { reactStrictMode: true, devIndicators: false, agentRules: false, poweredByHeader: false };
+// A private output directory lets verification coexist with the developer server.
+const output = process.env.UNRAVEL_NEXT_OUTPUT;
+if (output && !/^\.next-[a-z0-9-]+$/.test(output)) throw new Error('Invalid verification output directory.');
+const config: NextConfig = { ...(output ? {distDir: output} : {}), reactStrictMode: true, devIndicators: false, agentRules: false, poweredByHeader: false };
 export default config;

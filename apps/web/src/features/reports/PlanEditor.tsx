@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { SemanticEvent } from '@unravel/contracts';
 import { TestPlanSchema,planIssues,stepIssues,assertionIssues,describeStep,describeAssertion,emptyLocator,exportPlaywright,type TestPlan,type PlanStep,type PlanAssertion,type ExportMode } from '@unravel/test-plan';
@@ -17,7 +17,11 @@ export function PlanEditor({projectId,reportId,events,onInspectEvidence}:{projec
   const [raw,setRaw]=useState(''),[selection,setSelection]=useState<Selection|null>(null),[mode,setMode]=useState<ExportMode>('reproduction'),[view,setView]=useState<'steps'|'code'>('steps'),[format,setFormat]=useState<'javascript'|'json'>('javascript');
   const [status,setStatus]=useState('Loading recorded steps...'),[error,setError]=useState(''),[pending,setPending]=useState(false),[conflict,setConflict]=useState(false),[reload,setReload]=useState(0),[navTarget,setNavTarget]=useState<string|null>(null),[resetPrompt,setResetPrompt]=useState<'recording'|'reload'|null>(null),[downloaded,setDownloaded]=useState<{filename:string;mode:ExportMode}|null>(null);
   const bypass=useRef(false),outcomeSelect=useRef<HTMLSelectElement>(null),confirmation=useRef<HTMLInputElement>(null);
-  const plan=history?.value??null,rawDirty=!!plan&&raw!==JSON.stringify(plan,null,2),dirtyPlan=!!plan&&JSON.stringify(plan)!==baseline;
+  const plan=history?.value??null;
+  const serialized=useMemo(()=>plan?JSON.stringify(plan):'', [plan]);
+  const formatted=useMemo(()=>plan?JSON.stringify(plan,null,2):'', [plan]);
+  const rawDirty=!!plan&&raw!==formatted,dirtyPlan=!!plan&&serialized!==baseline;
+  const analysis=useMemo(()=>plan?{issues:planIssues(plan,mode),included:plan.steps.filter(step=>step.included),excluded:plan.steps.filter(step=>!step.included),firstBad:plan.steps.find(step=>stepIssues(step).length),badAssertion:plan.assertions.find(assertion=>assertionIssues(assertion).length)}:null,[plan,mode]);
   const originalSelection=selection&&plan?(selection.kind==='path'?plan.initialPath:selection.kind==='step'?plan.steps.find(step=>step.id===selection.value.id):plan.assertions.find(item=>item.id===selection.value.id)):null;
   const stagedDirty=!!selection&&('isNew' in selection&&!!selection.isNew||JSON.stringify(selection.value)!==JSON.stringify(originalSelection)||selection.kind==='step'&&selection.position!==undefined&&selection.position!==plan?.steps.findIndex(step=>step.id===selection.value.id));
   const dirty=dirtyPlan||rawDirty||stagedDirty;
@@ -41,9 +45,8 @@ export function PlanEditor({projectId,reportId,events,onInspectEvidence}:{projec
   function navigate(href:string,discard=false){if(discard)rememberDraft(key,null);bypass.current=true;setNavTarget(null);const url=new URL(href);if(url.origin===location.origin)router.push(url.pathname+url.search+url.hash);else location.assign(href);}
   async function saveAndLeave(){if(!navTarget)return;setPending(true);setError('');try{await persist();navigate(navTarget,true);}catch(caught){setError(caught instanceof Error?caught.message:'Save failed. Keep editing to retry.');}finally{setPending(false);}}
   function reloadSaved(){rememberDraft(key,null);setSelection(null);setPending(true);setStatus('Loading saved draft...');setResetPrompt(null);setReload(value=>value+1);}
-  if(!plan||!history)return <section className="product-notice"><p role="status">{status}</p>{error&&<><p role="alert">{error}</p><button className="product-button" onClick={()=>setReload(value=>value+1)}>Retry loading</button></>}</section>;
-  const issues=planIssues(plan,mode),included=plan.steps.filter(step=>step.included),excluded=plan.steps.filter(step=>!step.included);
-  const firstBad=plan.steps.find(step=>stepIssues(step).length),badAssertion=plan.assertions.find(assertion=>assertionIssues(assertion).length);
+  if(!plan||!history||!analysis)return <section className="product-notice"><p role="status">{status}</p>{error&&<><p role="alert">{error}</p><button className="product-button" onClick={()=>setReload(value=>value+1)}>Retry loading</button></>}</section>;
+  const {issues,included,excluded,firstBad,badAssertion}=analysis;
   function reviewIssue(){setView('steps');if(issues.some(issue=>issue.startsWith('Initial path')))setSelection({kind:'path',value:plan!.initialPath});else if(firstBad)editStep(firstBad);else if(badAssertion)setSelection({kind:'assertion',value:structuredClone(badAssertion)});else if(!plan!.assertions.length)outcomeSelect.current?.focus();else confirmation.current?.focus();}
   const failures=events.filter(event=>event.kind==='error'||event.kind==='network'&&['http-error','network-error','timeout'].includes(event.outcome));
   const request=failures.find(event=>event.kind==='network'&&event.method!=='OTHER');

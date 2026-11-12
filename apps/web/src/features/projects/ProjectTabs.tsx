@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import { IntentLink as Link } from '@/features/workspace/IntentLink';
 import { usePathname } from 'next/navigation';
 
 export function ProjectTabs() {

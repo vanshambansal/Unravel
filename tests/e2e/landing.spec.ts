@@ -5,7 +5,10 @@ declare global { interface Window { __landingPendingFrames?: () => number } }
 
 async function state(page: Page): Promise<LandingSnapshot> {
   return page.evaluate(() => {
-    const read = window.__unravelStudy;
+    // The global bridge is intentionally stripped from normal production builds.
+    // Read the controller-owned bridge on its mounted root in every build mode.
+    const root=document.querySelector('[data-landing-root]') as (HTMLElement & {__unravelStudy?:()=>LandingSnapshot})|null;
+    const read = root?.__unravelStudy;
     if (!read) throw new Error('Landing is not mounted');
     return read();
   });
@@ -142,18 +145,23 @@ test('client navigation repeatedly cleans up render loops and scoped state', asy
   for (let i = 0; i < 3; i++) {
     await page.getByRole('link', { name: 'Open workspace' }).click();
     await expect(page).toHaveURL(/\/sign-in/);
+    await expect(page.locator('[data-landing-root]')).toHaveCount(0);
     expect(await page.evaluate(() => typeof window.__unravelStudy)).toBe('undefined');
     expect(await page.evaluate(() => window.__landingPendingFrames!())).toBe(0);
     expect(await page.evaluate(() => document.documentElement.style.getPropertyValue('--hero-shade'))).toBe('');
-    await expect(page.getByRole('heading', { name: 'Welcome to Unravel' })).toBeVisible();
+    await expect(page.getByLabel('Email address', { exact: true })).toBeVisible();
     await page.getByRole('link', { name: 'Return to Unravel' }).click(); await ready(page);
     expect(await page.evaluate(() => window.__landingPendingFrames!())).toBeLessThanOrEqual(1);
   }
 });
 
-test('cold application route downloads no landing graphics', async ({ page }) => {
-  const assets: string[] = []; page.on('request', req => { if (/\/landing\/(architecture|artwork)\//.test(req.url())) assets.push(req.url()); });
-  await page.goto('/app'); await expect(page.getByRole('heading', { name: 'Welcome to Unravel' })).toBeVisible();
+test('cold application route downloads no landing scene resources', async ({ page }) => {
+  const assets: string[] = []; page.on('request', req => {
+    const path=new URL(req.url()).pathname;
+    // The shared 26px brand mark is deliberately reused by authentication.
+    if (/\/landing\/(architecture|artwork)\//.test(path)&&path!=='/landing/artwork/unravel-mark.svg') assets.push(path);
+  });
+  await page.goto('/app'); await expect(page.getByLabel('Email address', { exact: true })).toBeVisible();
   expect(assets).toEqual([]); expect(await page.locator('canvas').count()).toBe(0);
 });
 
@@ -162,7 +170,7 @@ test('navigation during pending initialization disposes the stale mount', async 
   await page.route('**/landing/architecture/atrium.glb', async route => { await gate; await route.continue(); });
   try {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => !!window.__unravelStudy);
+    await page.waitForFunction(() => !!(document.querySelector('[data-landing-root]') as HTMLElement & {__unravelStudy?:unknown})?.__unravelStudy);
     await page.getByRole('link', { name: 'Open workspace' }).click(); await expect(page).toHaveURL(/\/sign-in/);
     release(); await page.waitForTimeout(300);
     expect(await page.evaluate(() => typeof window.__unravelStudy)).toBe('undefined');

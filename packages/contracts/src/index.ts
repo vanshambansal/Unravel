@@ -63,7 +63,9 @@ export const ActionSchema = z.strictObject({
   kind: z.literal('action'), ...time,
   action: z.enum(['click', 'fill', 'select', 'check', 'submit']),
   target: LocatorSchema, value: nullableText(10000), redacted: z.boolean(),
-});
+  // Presence means a native multiple selection; null means masked, [] means deselect all.
+  values: z.optional(z.nullable(z.array(text(10000)).check(z.maxLength(100)))),
+}).check(z.refine(event => event.values === undefined || event.action === 'select' && event.value === null && (event.redacted ? event.values === null : event.values !== null), 'Invalid multiple selection.'));
 export const NetworkSchema = z.strictObject({
   kind: z.literal('network'), ...time, requestId: z.uuid(),
   transport: z.enum(['fetch', 'xhr']), method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'OTHER']),

@@ -4,6 +4,7 @@ import { SignIn, SignUp } from '@clerk/nextjs';
 import { Suspense } from 'react';
 import { authConfigured } from '@/server/auth';
 import { AmbientMotionControl, MaterialLight } from './WorkspaceMotion';
+import { AuthAvailability } from '../authentication/AuthAvailability';
 
 export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   return <main className="auth-layout">
@@ -18,6 +19,7 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     <section className="auth-form-section" aria-label="Developer authentication">
       <div className="auth-form-container">
         {authConfigured() ? <Suspense fallback={<p role="status">Loading secure sign-in...</p>}>
+          <AuthAvailability />
           {mode === 'sign-in' ? <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" /> : <SignUp routing="path" path="/sign-up" signInUrl="/sign-in" />}
         </Suspense> : <div className="product-notice" role="status"><h2>Sign-in setup is pending</h2><p>Developer access is not available on this installation yet. No account is required to explore the landing page.</p></div>}
         <p className="auth-privacy"><Image src="/product/shield.svg" width={16} height={16} alt="" />Secure sign-in. Visitors report without an account.</p>

@@ -9,7 +9,7 @@
 .workspace-material-light { position:absolute; inset:0; overflow:hidden; pointer-events:none; border-radius:inherit; z-index:0; }
 .workspace-pointer-light { position:absolute; inset:0; transition:opacity var(--motion-standard); }
 .unravel-workspace .workspace-frame { --product-surface:#191b22; --product-raised:#262832; --product-border:#363640; --ui-surface:#191b22; --ui-surface-inset:#111318; position:relative; isolation:isolate; display:flex; flex-direction:column; min-height:calc(100svh - 40px); margin:20px; border:1px solid #ffffff20; border-radius:20px; background:linear-gradient(130deg,#171a20aa,#15161bd9); box-shadow:0 24px 64px #0007; }
-.workspace-motion:has(.workspace-frame) { display:flow-root; background:linear-gradient(#12121b66,#080a10b3),url('/landing/artwork/hero-atrium.png') center top / cover fixed; }
+.workspace-motion:has(.workspace-frame) { display:flow-root; background:linear-gradient(#12121b66,#080a10b3),var(--workspace-artwork,none) center top / cover fixed; }
 .workspace-header { position:relative; z-index:3; display:flex; align-items:center; gap:24px; min-height:64px; padding:12px 20px; border-bottom:1px solid #ffffff12; border-radius:20px 20px 0 0; background:#25273094; backdrop-filter:blur(16px); }
 .workspace-header>.workspace-brand { width:164px; }
 .workspace-header-actions { display:flex; align-items:center; gap:16px; margin-left:auto; }
@@ -18,7 +18,8 @@
 .workspace-header .product-account-details>span { display:none; }
 .workspace-body { position:relative; z-index:1; display:grid; grid-template-columns:208px minmax(0,1fr); flex:1; }
 .workspace-sidebar { display:flex; flex-direction:column; gap:20px; padding:18px 16px; background:#08090c73; backdrop-filter:blur(12px); border-radius:0 0 0 20px; min-width:0; }
-.workspace-sidebar nav { display:grid; gap:6px; }
+.workspace-sidebar nav { display:grid; grid-template-columns:minmax(0,1fr); gap:6px; min-width:0; width:100%; }
+.workspace-sidebar nav>div { min-width:0; }
 .unravel-workspace .workspace-nav-caption { color:#b4b1bd; font-size:12px; line-height:20px; padding:0 10px; margin-bottom:6px; }
 .unravel-workspace .workspace-nav-project { margin-top:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .unravel-workspace .workspace-nav-link { position:relative; isolation:isolate; display:flex; gap:12px; align-items:center; min-height:46px; border-radius:10px; padding:11px 12px; font-size:14px; color:#b4b1bd; transition:color var(--motion-fast),background var(--motion-fast); }
@@ -130,3 +131,6 @@
   .unravel-workspace .workspace-project-popover { transition:none; transform:none; }
   .workspace-switcher-chevron { transition:none; }
 }
+.unravel-workspace .workspace-intent-link { position:relative; }
+.unravel-workspace .workspace-link-pending { position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0; box-shadow:inset 0 -2px #ef4b53; }
+.unravel-workspace .workspace-link-pending[data-pending="true"] { opacity:1; }

@@ -82,7 +82,16 @@ export function initialize(options: RecorderOptions): Recorder {
           // Reserve envelope/duration/reason growth so the final JSON stays under cap.
           bytes = encoder.encode(JSON.stringify(result)).byteLength + 512;
           state = 'recording';
-          own(instrumentEvents(privacy, at, semantic));
+          own(instrumentEvents(privacy, at, semantic, element => {
+            // rrweb's scalar input state cannot represent a multiple selection.
+            // Record safe option attributes explicitly, including deselection.
+            const allowed = privacy.valueAllowed(element) && [...element.selectedOptions].every(option => privacy.valueAllowed(option));
+            const attributes = [...element.options].flatMap(option => {
+              const id = record.mirror.getId(option);
+              return id < 0 ? [] : [{id, attributes: {selected: allowed && option.selected ? true : null}}];
+            });
+            append({type:3,timestamp:Date.now(),data:{source:0,attributes,texts:[],adds:[],removes:[]}}, true);
+          }));
           if (state !== 'recording') return;
           own(instrumentNetwork(privacy, at, semantic));
           const sanitize = createReplaySanitizer(privacy, id => record.mirror.getNode(id));

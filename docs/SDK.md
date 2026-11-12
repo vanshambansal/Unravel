@@ -118,3 +118,17 @@ This is bounded styled replay, not pixel-perfect browser reconstruction. System 
 The default panel is 376px wide on desktop, bounded to the visual viewport on smaller screens; optional description starts collapsed and reopens with entered text. Drag the launcher, minimized timer or panel header/grip. Keyboard: focus launcher/grip, use arrows to move (Shift = larger steps), Home to reset; the panel also has Reset position. Inputs and buttons keep their normal interactions. A drag never starts recording or opens the panel accidentally.
 
 Position is a per-project normalized coordinate in the host website's session storage, not report/recording storage. Storage denial falls back to in-memory placement. Position clamps across view/state/viewport changes, with visual-viewport handling for keyboard/zoom changes. Recordings/drafts remain in memory; closing/minimizing preserves them, reloading does not. Listeners, capture, observers and animations are owned by the widget lifecycle. Real-phone keyboard behavior still requires device testing. Public API signatures and privacy/capture policy are unchanged.
+
+## Release preparation and interaction reliability
+
+Submission attempts have a 30-second deadline; timeout preserves the frozen recording/details for explicit identical retry. Server rate/storage limits may reject new submissions; the widget explains that the recording remains local and the developer may need to free capacity. No automatic retry or browser persistence of report content is introduced.
+
+Touch drag handles activate a completed non-drag button tap on pointer-up and suppress a delayed duplicate compatibility click. This addresses an observed Chromium sequence with pointer-up but no native click after dragging. It applies to opening/moving controls, not recording or submission buttons. Real phone/software-keyboard behavior still needs verification. Firefox checks exclude Chromium CDP touch injection explicitly. See PROJECT_STATUS.md for current outcomes and DEPLOYMENT.md for public release gates.
+
+## Ordinary controls - 2026-11-12 correction
+
+Semantic capture resolves an SVG child click to its safe containing HTML control, while SVG remains excluded from replay. Private ancestors and formerly blocked subtrees remain blocked. No SVG content or paths are collected for identification.
+
+Native multiple selects use optional `values` in recording-v1 select events: missing means the legacy scalar selection; null means masked multiple values; an array means safe selected values; [] means deliberate deselection. Scalar `value` stays null when `values` is present. Opt-in must cover selected options too. Standard rrweb selected-attribute mutations preserve multiple-selection replay state without enabling additional resources. Existing scalar recordings remain readable; older servers reject the new strict field rather than silently executing one option. Upgrade local SDK/server together.
+
+Actual Chromium/Firefox capture/privacy checks and independent React/Next export execution are recorded in [the completion verification](audits/DEFECTS_LANDING_2026-11-12.md).

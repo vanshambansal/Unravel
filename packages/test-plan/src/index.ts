@@ -5,7 +5,7 @@ import { parse as parseSelector, type Selector } from 'css-what';
 const text = (max: number) => z.string().check(z.maxLength(max));
 export const PlanLocatorSchema = z.strictObject({ kind: z.enum(['testId','label','text','role','css','unresolved']), value: text(500), name: text(200) });
 const legacyStep = { id: text(80), action: z.enum(['click','fill','select','check','navigate','unsupported']), locator: PlanLocatorSchema, value: z.nullable(text(10000)), note: text(500) };
-export const PlanStepSchema = z.strictObject({ ...legacyStep, included: z.boolean(), sourceAt: z.nullable(z.number().check(z.gte(0))) });
+export const PlanStepSchema = z.strictObject({ ...legacyStep, included: z.boolean(), sourceAt: z.nullable(z.number().check(z.gte(0))), values: z.optional(z.nullable(z.array(text(10000)).check(z.maxLength(100)))) }).check(z.refine(step => step.values === undefined || step.action === 'select' && step.value === null, 'Multiple selections require a select action and no scalar value.'));
 const textAssertion = { id: text(80), locator: PlanLocatorSchema, text: text(2000) };
 export const PlanAssertionSchema = z.union([
   z.strictObject({ ...textAssertion, kind: z.literal('text') }),
@@ -19,7 +19,7 @@ const currentSchema = z.strictObject({ version: z.literal(2), initialPath: text(
 const legacySchema = z.strictObject({ version: z.literal(1), initialPath: text(2048), steps: z.array(z.strictObject(legacyStep)).check(z.maxLength(100)), assertions: z.array(z.strictObject(textAssertion)).check(z.maxLength(20)), expectedBehaviorConfirmed: z.boolean() });
 /** Read old plans without rewriting stored evidence or advancing their revision. */
 export const TestPlanSchema = z.pipe(z.union([currentSchema, legacySchema]), z.transform(value => value.version === 2 ? value : {
-  ...value, version: 2 as const, steps: value.steps.map(step => ({ ...step, included: true, sourceAt: null })), assertions: value.assertions.map(assertion => ({ ...assertion, kind: 'text' as const })),
+  ...value, version: 2 as const, steps: value.steps.map(step => ({ ...step, included: true, sourceAt: null, values: undefined as string[] | null | undefined })), assertions: value.assertions.map(assertion => ({ ...assertion, kind: 'text' as const })),
 })).check(z.refine(plan => {
   const ids = [...plan.steps, ...plan.assertions].map(item => item.id);
   return ids.every(id => Boolean(id.trim())) && new Set(ids).size === ids.length;
@@ -47,7 +47,7 @@ export function generatePlan(recording: Pick<Recording, 'initialUrl'> & { events
     const sameTarget = prior && locator.kind !== 'unresolved' && JSON.stringify(prior.locator) === JSON.stringify(locator);
     if (event.action === 'submit' && prior?.action === 'click' && event.at - lastActionAt <= 250 && (sameTarget || event.target.kind === 'unresolved' && event.target.tag === 'form')) continue;
     const submitControl = event.action === 'submit' && (locator.kind === 'testId' || locator.kind === 'css' && / > (?:button|input):nth-of-type\(\d+\)$/.test(locator.value));
-    const step: PlanStep = { id: `step-${steps.length + 1}`, action: event.action === 'submit' ? submitControl ? 'click' : 'unsupported' : event.action, locator, value: event.redacted ? null : event.value, note: event.action === 'submit' && !submitControl ? 'No submit control was identified. Choose an action or remove this step.' : event.redacted ? 'Recorded value was masked. Supply a safe test value.' : '', included: true, sourceAt: event.at };
+    const step: PlanStep = { id: `step-${steps.length + 1}`, action: event.action === 'submit' ? submitControl ? 'click' : 'unsupported' : event.action, locator, value: event.redacted ? null : event.value, ...(event.values !== undefined ? {values:event.redacted ? null : event.values} : {}), note: event.action === 'submit' && !submitControl ? 'No submit control was identified. Choose an action or remove this step.' : event.redacted ? 'Recorded value was masked. Supply a safe test value.' : '', included: true, sourceAt: event.at };
     // Unknown targets are not necessarily the same element. Never merge their input.
     if (sameTarget && (step.action === 'fill' && ['fill','click'].includes(prior.action) || step.action === 'check' && prior.action === 'click')) { step.id = prior.id; steps[steps.length - 1] = step; }
     else steps.push(step);
@@ -83,7 +83,7 @@ export function stepIssues(step: PlanStep): string[] {
   if (step.action === 'unsupported') issues.push('Choose a supported action, or exclude this step.');
   if (step.action === 'navigate') { if (!relativePath(step.value ?? '')) issues.push('Enter a safe relative destination path.'); return issues; }
   const problem = locatorIssue(step.locator); if (problem) issues.push(problem);
-  if (['fill','select'].includes(step.action) && step.value === null) issues.push('Supply a safe replacement value.');
+  if (step.action === 'select' && step.values !== undefined ? step.values === null : ['fill','select'].includes(step.action) && step.value === null) issues.push('Supply a safe replacement value.');
   if (step.action === 'check' && !['true','false'].includes(step.value ?? '')) issues.push('Check value must be true or false.');
   return issues;
 }
@@ -124,7 +124,7 @@ export function describeStep(step: PlanStep): string {
   if (step.action === 'navigate') return `Open ${step.value || '[destination needed]'}`;
   if (step.action === 'unsupported') return 'Review unsupported action';
   if (step.action === 'fill') return `Enter ${step.value === null ? 'a safe test value' : JSON.stringify(step.value)} into ${target}`;
-  if (step.action === 'select') return `Select ${step.value === null ? 'a safe option' : JSON.stringify(step.value)} in ${target}`;
+  if (step.action === 'select') return `Select ${step.values !== undefined ? step.values === null ? 'safe options' : step.values.length ? step.values.map(value => JSON.stringify(value)).join(', ') : 'no options' : step.value === null ? 'a safe option' : JSON.stringify(step.value)} in ${target}`;
   if (step.action === 'check') return `${step.value === 'false' ? 'Uncheck' : 'Check'} ${target}`;
   return `Click ${target}`;
 }
@@ -154,7 +154,7 @@ export function exportPlaywright(input: unknown, mode: ExportMode = 'regression'
     });
     if (step.action === 'navigate') { lines.push(`  await page.goto(${literal(step.value!)});`); continue; }
     const locator = playwrightLocator(step.locator);
-    lines.push(`  await ${locator}.${step.action === 'click' ? 'click()' : step.action === 'fill' ? `fill(${literal(step.value!)})` : step.action === 'select' ? `selectOption(${literal(step.value!)})` : step.value === 'true' ? 'check()' : 'uncheck()'};`);
+    lines.push(`  await ${locator}.${step.action === 'click' ? 'click()' : step.action === 'fill' ? `fill(${literal(step.value!)})` : step.action === 'select' ? `selectOption(${literal(step.values ?? step.value!)})` : step.value === 'true' ? 'check()' : 'uncheck()'};`);
   }
   assertions.forEach((assertion, i) => {
     if (assertion.kind === 'text') lines.push(`  await expect(${playwrightLocator(assertion.locator)}).toHaveText(${literal(assertion.text)});`);
@@ -165,7 +165,7 @@ export function exportPlaywright(input: unknown, mode: ExportMode = 'regression'
   if (assertions.some(a => a.kind === 'no-page-errors')) lines.push("  expect(pageErrors, 'Uncaught errors during reproduced actions; delayed errors are outside this check').toEqual([]);");
   lines.push('});', ''); return lines.join('\n');
 }
-function literal(value: string): string { return JSON.stringify(value).replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'); }
+function literal(value: string | string[]): string { return JSON.stringify(value).replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'); }
 function playwrightLocator(locator: PlanLocator): string {
   if (locator.kind === 'testId') return `page.getByTestId(${literal(locator.value)})`;
   if (locator.kind === 'label') return `page.getByLabel(${literal(locator.value)}, { exact: true })`;

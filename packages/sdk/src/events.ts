@@ -1,20 +1,21 @@
 import type { SemanticEvent, ErrorEvent as CapturedError } from '@unravel/contracts';
 import type { Privacy } from './privacy';
 
-export function instrumentEvents(privacy: Privacy, at: () => number, emit: (event: SemanticEvent) => void): () => void {
+export function instrumentEvents(privacy: Privacy, at: () => number, emit: (event: SemanticEvent) => void, multipleSelection?: (element: HTMLSelectElement) => void): () => void {
   let active = true;
   const cleanup: (() => void)[] = [];
   const send = (event: SemanticEvent) => { if (active) { try { emit(event); } catch { /* Never interrupt host event handlers. */ } } };
   function listen(target: EventTarget, name: string, handler: EventListener) { target.addEventListener(name, handler, true); cleanup.push(() => target.removeEventListener(name, handler, true)); }
   function action(event: Event) {
     const target = event.composedPath()[0];
-    if (!(target instanceof Element) || privacy.blocked(target)) return;
+    if (!(target instanceof Element) || privacy.interactionBlocked(target)) return;
     const submitter = event instanceof SubmitEvent ? event.submitter : null;
     const element = event.type === 'submit' && submitter instanceof Element ? submitter : event.type === 'click' ? target.closest('button,a,input,summary,[role="button"]') : target;
-    if (!element || privacy.blocked(element)) return;
+    if (!(element instanceof HTMLElement) || privacy.blocked(element)) return;
     const input = element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement;
     let kind: 'click' | 'fill' | 'select' | 'check' | 'submit' = event.type === 'submit' ? 'submit' : 'click';
     let value: string | null = null, redacted = false;
+    let values: string[] | null | undefined;
     if (event.type === 'input' || event.type === 'change') {
       if (!input) return;
       const checkbox = element instanceof HTMLInputElement && ['checkbox', 'radio'].includes(element.type);
@@ -23,9 +24,15 @@ export function instrumentEvents(privacy: Privacy, at: () => number, emit: (even
       if (event.type === 'change' && !checkbox && !(element instanceof HTMLSelectElement)) return;
       kind = checkbox ? 'check' : element instanceof HTMLSelectElement ? 'select' : 'fill';
       redacted = !privacy.valueAllowed(element);
-      value = redacted ? null : checkbox ? String((element as HTMLInputElement).checked) : element.value.slice(0, 10000);
+      if (element instanceof HTMLSelectElement) {
+        const selected = [...element.selectedOptions];
+        redacted ||= selected.some(option => !privacy.valueAllowed(option));
+        if (element.multiple) values = redacted ? null : selected.map(option => option.value.slice(0, 10000));
+        else value = redacted ? null : element.value.slice(0, 10000);
+      } else value = redacted ? null : checkbox ? String((element as HTMLInputElement).checked) : element.value.slice(0, 10000);
     }
-    send({ kind: 'action', at: at(), action: kind, target: privacy.locator(element), value, redacted });
+    send({ kind: 'action', at: at(), action: kind, target: privacy.locator(element), value, redacted, ...(values !== undefined ? {values} : {}) });
+    if (values !== undefined && element instanceof HTMLSelectElement) multipleSelection?.(element);
   }
   for (const name of ['click', 'input', 'change', 'submit']) listen(document, name, action);
   const errorTypes = ['Error', 'TypeError', 'RangeError', 'ReferenceError', 'SyntaxError', 'URIError', 'EvalError'];

@@ -32,8 +32,8 @@ test('real PostgreSQL reports: transactions, concurrent deduplication, ownership
     const receipts = await Promise.all([service.submit(project.id, project.origin, input), service.submit(project.id, project.origin, input)]);
     assert.equal(receipts[0].reportId, receipts[1].reportId); assert.equal(receipts.filter(r => !r.duplicate).length, 1);
     const id = receipts[0].reportId;
-    assert.equal((await service.list(owner, project.id)).length, 1);
-    assert.equal((await service.list('other-owner', project.id)).length, 0);
+    assert.equal((await service.list(owner, project.id)).reports.length, 1);
+    assert.equal((await service.list('other-owner', project.id)).reports.length, 0);
     assert.ok(!JSON.stringify(await service.list(owner, project.id)).includes('childNodes'));
     for (const work of [() => service.detail('other-owner', project.id, id), () => service.replay('other-owner', project.id, id), () => service.remove('other-owner', project.id, id)]) await assert.rejects(work(), (e: unknown) => e instanceof ApplicationError && e.status === 404);
     await assert.rejects(service.submit(project.id, project.origin, { ...input, title: 'Changed content' }), (e: unknown) => e instanceof ApplicationError && e.status === 409);
@@ -42,12 +42,34 @@ test('real PostgreSQL reports: transactions, concurrent deduplication, ownership
     const broken = structuredClone(input); broken.recording.id = randomUUID();
     (broken.recording.events as unknown[]) = [BigInt(1)];
     await assert.rejects(reportRepository(db).insert(broken as unknown as import('@unravel/contracts').ReportSubmission, 'broken', 100));
-    assert.equal((await service.list(owner, project.id)).length, 1);
+    assert.equal((await service.list(owner, project.id)).reports.length, 1);
     await pool.end(); pool = new Pool({ connectionString: url, max: 1, connectionTimeoutMillis: 15000 }); db = drizzle(pool, { schema }); service = reportService(reportRepository(db));
     assert.equal((await service.detail(owner, project.id, id)).report.title, 'Synthetic report');
     assert.equal((await service.replay(owner, project.id, id)).replay.length, 2);
+    const beforeEvidence=JSON.stringify(await service.replay(owner,project.id,id));
+    const original=(await service.detail(owner,project.id,id)).report;
+    const edited=await service.update(owner,project.id,id,{title:'Edited searchable title %_literal',description:'Search this description',status:'resolved',revision:original.revision});
+    assert.equal(edited.report.revision,2);assert.equal(edited.report.status,'resolved');
+    assert.equal((await service.list(owner,project.id,{q:'%_literal',status:'resolved',page:1})).total,1);
+    assert.equal((await service.list(owner,project.id,{q:'missing',status:'all',page:1})).total,0);
+    const clamped=await service.list(owner,project.id,{q:'%_literal',status:'resolved',page:999});
+    assert.equal(clamped.page,1);assert.equal(clamped.pages,1);assert.equal(clamped.reports[0].id,id);assert.ok(clamped.reports[0].createdAt instanceof Date);
+    const empty=await service.list(owner,project.id,{q:'missing',status:'all',page:999});
+    assert.equal(empty.page,1);assert.equal(empty.reports.length,0);
+    await assert.rejects(service.update('other-owner',project.id,id,{title:'Foreign',description:'',status:'open',revision:2}),(error:unknown)=>error instanceof ApplicationError&&error.status===404);
+    await assert.rejects(service.update(owner,project.id,id,{title:'Stale',description:'',status:'open',revision:1}),(error:unknown)=>error instanceof ApplicationError&&error.status===409);
+    assert.equal(JSON.stringify(await service.replay(owner,project.id,id)),beforeEvidence);
+    assert.equal((await service.submit(project.id,project.origin,input)).reportId,id);
+    // Shared database attempts remain bounded even under concurrent callers.
+    // A fixed-window limiter intentionally permits a burst across a minute edge.
+    // Keep this single-window atomicity assertion inside one database-time window.
+    const second=Number((await pool.query('select extract(second from clock_timestamp())::float as second')).rows[0].second);
+    if(second>40)await new Promise(resolve=>setTimeout(resolve,(60-second+.25)*1000));
+    const budgets=await Promise.allSettled(Array.from({length:35},()=>service.consume(project.id)));
+    assert.equal(budgets.filter(value=>value.status==='fulfilled').length,30);
+    assert.equal(budgets.filter(value=>value.status==='rejected').length,5);
     await service.remove(owner, project.id, id);
-    assert.equal((await service.list(owner, project.id)).length, 0);
+    assert.equal((await service.list(owner, project.id)).reports.length, 0);
     assert.equal((await pool.query('select count(*)::int as n from report_payloads where report_id = $1', [id])).rows[0].n, 0);
     const retained = await service.submit(project.id, project.origin, { ...input, recording: { ...input.recording, id: randomUUID() } });
     const projectsService = projectService(projectRepository(db));
@@ -63,7 +85,9 @@ test('real PostgreSQL reports: transactions, concurrent deduplication, ownership
     assert.equal((await pool.query('select count(*)::int as n from report_test_plans where report_id = $1', [retained.reportId])).rows[0].n, 0);
   } catch (error) {
     if (error instanceof assert.AssertionError || error instanceof ApplicationError) throw error;
+    const codes:string[]=[];let cause:unknown=error;
+    for(let depth=0;depth<5&&cause&&typeof cause==='object';depth++){const item=cause as {code?:unknown;cause?:unknown};if(typeof item.code==='string'&&/^[A-Z0-9_]{2,30}$/.test(item.code))codes.push(item.code);cause=item.cause;}
     // eslint-disable-next-line preserve-caught-error -- Driver errors can include credentials.
-    throw new Error('Report database integration failed; connection details withheld.');
+    throw new Error('Report database integration failed; connection details withheld. Codes: '+codes.join(', '));
   } finally { try { await pool.query('delete from projects where owner_id = $1', [owner]); } finally { await pool.end(); } }
 });

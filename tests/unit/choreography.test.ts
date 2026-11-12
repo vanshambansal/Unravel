@@ -39,12 +39,12 @@ test('complete hero has a native reading interval before sticky release', () => 
 test('performance fallback requires sustained poor frame times and can reset', () => {
   const guard = new PerformanceGuard();
   for (let i = 0; i < 360; i++) assert.equal(guard.push(16.7), false);
-  for (let i = 0; i < 359; i++) assert.equal(guard.push(55), false);
+  for (let i = 0; i < 110; i++) assert.equal(guard.push(55), false);
   assert.equal(guard.push(55), true);
   guard.reset();
   assert.equal(guard.push(1000), false);
   assert.equal(guard.push(55), false);
   guard.reset();
-  for (let i = 0; i < 359; i++) assert.equal(guard.push(1000), false);
+  for (let i = 0; i < 35; i++) assert.equal(guard.push(1000), false);
   assert.equal(guard.push(1000), true, 'Extremely slow sustained rendering must also fall back');
 });

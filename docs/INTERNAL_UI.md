@@ -18,7 +18,7 @@ The standalone SDK uses its own Shadow DOM styles. Never import React/dashboard 
 
 - Navigation: clear project context and real destinations; keyboard focus and responsive access to the account control. WorkspaceSidebar owns A navigation; ProjectNavigation owns the native project popover. Use actual selected project context.
 - Settings/forms: associated labels, novice-friendly exact-origin guidance, unchanged/unsaved/pending/saved/error states, preserved failed input and deliberate origin/deletion confirmation.
-- Collections: useful rows and contextual actions; actual metadata only. Explain first-use and no-match states. Search/status/metadata-edit designs remain planned until implemented.
+- Collections: useful rows and contextual actions; actual metadata only. Explain first-use and no-match states. Search/status/metadata editing now use the shared collection, inset control and dialog patterns. Verify Clear filters resets visible values as well as results.
 - Investigation: replay/evidence linkage, chronological timing, accessible resize/seek and contextual fidelity limitations. New styled and old structural recordings differ; no root-cause guarantees.
 - Plans: structured and JSON representations of the same versioned data, explicit Apply, safe values, assertions/confirmation, save/conflict/reload and validated export states. Keep evidence immutable. The generator uses one code workspace, staged Cancel/Apply, Undo/Reset and recoverable removed actions; see TEST_PLANS.md.
 - Recorder: explicit consent/start, starting, recording/minimized, stop, details, submit, retry, success, discard, limits and teardown. Closing is not deleting a server report. No auto recording/upload.
@@ -46,3 +46,7 @@ Never retain a live replay iframe to animate its exit. Animate selection and sur
 ## Generator composition
 
 PlanEditor owns review-first sequence/output/outcome/code state; PlanControls owns the contextual native inspector and focused field groups. test-plan.css owns this feature's geometry and sheet motion. Preserve the shared A shell/materials rather than layering another page stylesheet. Technical controls appear only for a selected step/check. One View code workspace contains Playwright and JSON; no separate bottom JSON editor. Native dialog confines keyboard focus while editing, returns it on close, and leaves the working sequence visible behind it. Fixed header/footer keep Cancel/Apply reachable on short screens; the field area scrolls. PlanCode owns the lazy highlighted editor and RunGuide the local-execution handoff. TEST_PLANS.md owns recovery/normalization limits.
+
+## Bounded completion corrections - 2026-11-12
+
+Keep the A/B system. Project navigation must use a shrinkable grid track so long project names cannot widen links into content; product-audit checks link bounds. SDK setup has one copyable local install command, keyboard-scrollable samples, expandable privacy detail and a mobile-first report checkpoint. Investigation uses compact report metadata, original recording aspect ratio and explicit fit/100% guidance. Grouped/raw selected evidence uses the same indices for visual and ARIA state. Distinct report-header/workspace keys preserve React identity. These are refinements of working compositions, not another theme layer or design direction. Actual verification is in PROJECT_STATUS.md.

@@ -60,7 +60,8 @@ test('compact widget supports real drag, keyboard movement, reset, viewport chan
   await page.evaluate(()=>window.fixtureWidget.destroy());await expect(page.locator('[data-unravel-widget]')).toHaveCount(0);
 });
 
-test('touch dragging a launcher moves it without opening or recording', async ({ browser, baseURL }, testInfo) => {
+test('touch dragging a launcher moves it without opening or recording', async ({ browser, baseURL, browserName }, testInfo) => {
+  test.skip(browserName!=='chromium','CDP touch injection is Chromium-only; real-phone behavior needs separate verification.');
   const context=await browser.newContext({baseURL,viewport:{width:390,height:844},hasTouch:true,isMobile:true});
   try{const page=await context.newPage();await openFixture(page);const launcher=page.getByRole('button',{name:'Report a bug',exact:true});const box=(await launcher.boundingBox())!;const session=await context.newCDPSession(page);
     await page.evaluate(()=>{const log: unknown[]=[];Reflect.set(window,'positionQA',log);for(const type of ['pointerdown','pointerup','pointercancel','lostpointercapture','click'])window.addEventListener(type,input=>{const event=input as PointerEvent;const target=event.composedPath()[0] as Element;log.push({type,id:event.pointerId,x:event.clientX,y:event.clientY,tag:target.tagName,action:target.closest?.('[data-action]')?.getAttribute('data-action'),prevented:event.defaultPrevented});},true);});

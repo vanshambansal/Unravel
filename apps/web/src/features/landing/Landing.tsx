@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element -- Preserve the fixed-size local SVG from the approved composition. */
 'use client';
-import Link from 'next/link';
+import {LandingStory} from './LandingStory';
+import type {LandingExample} from './story-example';
 import { useEffect, useRef } from 'react';
 import './landing.css';
 
-export function Landing() {
+export function Landing({example}:{example:LandingExample}) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let cancelled = false;
@@ -22,7 +23,7 @@ export function Landing() {
     return () => { cancelled = true; cleanup?.(); };
   }, []);
   return <div className="unravel-landing" data-landing-root ref={root}>
-    <a className="skip-content" href="#study">Skip to prototype information</a>
+    <a className="skip-content" href="#study">Skip to product information</a>
     <main>
       <section id="journey" aria-label="The Unravel architectural entrance">
         <div id="stage" className="stage">
@@ -34,7 +35,7 @@ export function Landing() {
           <header className="navigation">
             <a className="brand" href="#" aria-label="Unravel, return to entrance"><img src="/landing/artwork/unravel-mark.svg" width="26" height="26" alt="" /><span>unravel</span></a>
             <span className="nav-caption">Browser bugs. Understood.</span>
-            <div className="controls"><button id="ambient" type="button" aria-pressed="false">Pause motion</button><button id="skip" type="button">Skip Intro <span aria-hidden="true">↗</span></button></div>
+            <div className="controls"><button id="enable-scene" type="button" hidden>Enable 3D</button><button id="ambient" type="button" aria-pressed="false">Pause motion</button><button id="skip" type="button">Skip Intro <span aria-hidden="true">↗</span></button></div>
           </header>
           <div className="entrance" id="entrance">
             <p className="eyebrow">01 / THE THRESHOLD</p>
@@ -49,16 +50,11 @@ export function Landing() {
             <div className="actions reveal" id="hero-actions"><a className="button light" href="/app">Get started <span aria-hidden="true">↗</span></a><a className="button quiet" href="#study">See the workflow</a></div>
           </div>
           <ol className="workflow reveal" id="workflow" aria-label="Unravel workflow"><li><span>01</span> Record</li><li><span>02</span> Replay</li><li><span>03</span> Review</li><li><span>04</span> Export</li></ol>
-          <p className="scene-caption">UNRAVEL / ARCHITECTURAL MOTION STUDY</p>
+          <p className="scene-caption">UNRAVEL / FOLLOW THE SEQUENCE</p>
           <p className="status" id="status" role="status"></p>
         </div>
       </section>
-      <section className="study" id="study" tabIndex={-1}>
-        <p className="eyebrow">THE NEXT CHAPTER</p>
-        <h2>Keep the story.<br />Protect the fix.</h2>
-        <p>Your developer workspace is ready. Recording, replay and test generation are still in development.</p>
-        <button id="replay" className="button quiet" type="button">Return to entrance ↑</button>
-      <p><Link href="/app">Open workspace</Link></p></section>
+      <LandingStory example={example}/>
     </main>
 
     <noscript><style>{`.unravel-landing .poster{background-image:url(/landing/artwork/scene-hero-desktop.png)}.unravel-landing .entrance,.unravel-landing #skip,.unravel-landing #ambient{display:none}.unravel-landing .hero,.unravel-landing .reveal{opacity:1!important;visibility:visible!important;transform:none!important}.unravel-landing .stage{position:relative}.unravel-landing #journey{height:100svh}.unravel-landing .workflow{transform:translateX(-50%)!important}@media(max-width:700px){.unravel-landing .poster{background-image:url(/landing/artwork/scene-hero-mobile.png)}}`}</style></noscript>

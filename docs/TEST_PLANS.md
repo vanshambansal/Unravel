@@ -69,3 +69,7 @@ The final case runs six reproduction downloads against buggy sites, then six reg
 ## Adapter checks
 
 After building packages, run `node scripts/verify-plan-adapters.mjs`. It runs actual generated files in Chromium against an intercepted synthetic website: positive and intended negative checks for each outcome plus assertion-free reproduction. It checks failure messages, not merely process exit codes. Artifacts/results live in ignored .cache/plan-adapters. This does not establish arbitrary-site compatibility. The real fixture export still has the separate five/five regression proof above.
+
+## Multiple option selections
+
+The version-2 select step accepts optional `values` with the same masked/array/empty-array semantics as recording events. Reviewers provide safe replacement option values one per line, or use Clear selection to deliberately select none. Export uses `selectOption(array)`; old scalar select steps still export unchanged. This corrects native multi-select only, not arbitrary custom dropdowns. Tests cover schema rejection, escaping, masking, deselection and real downloaded execution on ordinary React/Next sites; see [current verification](audits/DEFECTS_LANDING_2026-11-12.md).

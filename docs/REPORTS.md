@@ -62,6 +62,22 @@ Do not use 4190: Fetch/browser port blocking rejects it even though Node can lis
 
 For the explicit restart proof, first run the report suite to retain a synthetic report, actually stop/restart the application, and start its configured isolated player. Set REPORTS_BASE_URL to that running application and run `corepack pnpm test:report-restart`. This separate test starts no server and creates no replacement report; it reopens the retained ID in a fresh authenticated session and records the actual app/player origins in the ignored proof file.
 
-Public deployment remains out of scope. A genuinely separate trusted replay origin, HTTPS/cookie policy, upload/abuse controls, domain/provider setup, retention/privacy review and hosting-specific limits must be reviewed before release. The current loopback binding/URL checks are a local-development boundary, not a complete reverse-proxy or public-ingestion security design. No deployment provider or paid service is selected here.
+Public deployment is not verified. Release preparation and operator gates are owned by [DEPLOYMENT.md](DEPLOYMENT.md). A genuinely separate trusted replay origin, HTTPS/cookie policy, upload/abuse controls, domain/provider setup, retention/privacy review and hosting-specific limits must be reviewed before release. The current loopback binding/URL checks are a local-development boundary, not a complete reverse-proxy or public-ingestion security design. No deployment provider or paid service is selected here.
 
 Plan persistence and private export are owned by TEST_PLANS.md. The player origin remains isolated; inline presentation does not authorize original stylesheet/image/font requests. Reload the fixture to load the new SDK and make a fresh recording for styled playback.
+
+## Report triage and retrieval - 2026-11-12
+
+New and existing reports start Open. Owners may edit title/description and resolve/reopen through the report header. Cancel leaves saved metadata intact; failed saves retain input. Revision conflicts require reloading saved details explicitly. Dirty dialogs warn on full refresh/unload; bounded memory-only recovery survives local SPA navigation. Metadata revisions are separate from test-plan revisions. Original replay/events/digest remain immutable; idempotent visitor retries do not undo owner edits.
+
+The reports list supports literal title/description search, All/Open/Resolved filters and stable 20-row pages ordered by created time then UUID. Query state stays in the URL and the report's All reports link. Count/rows use one SELECT statement snapshot (totals plus a lateral, clamped page), never replay payloads. Invalid query values are explained; no-match and initial-empty states differ. Dataset changes between page requests can shift offset boundaries; stability is verified on a fixed dataset, not a concurrent-write snapshot across navigation.
+
+The timeline groups only adjacent fill updates of the same identified control within 1.5 seconds. Diagnostics/navigation interrupt a group. Selecting a group seeks its final update; Show every typing event restores raw per-event inspection. No recording or generated plan is rewritten by this display preference.
+
+Reviewed additive migration 0003_workable_viper adds metadata status/revision/update time, an index and shared ingestion budgets. It contains no evidence rewrite/deletion. Local limits, upload deadlines, HTTPS replay options and public fail-closed gates are described in DEPLOYMENT.md; owner-managed retention remains unchanged pending public review.
+
+## Account closure and inspection updates
+
+Approved account closure rejects new intake and retains existing projects/reports/evidence. It requires a delivered, signed Clerk `user.deleted` event; local handler/tests are implemented, hosted delivery is a release gate. See SERVICE_SETUP.md for setup and DEPLOYMENT.md for operator obligations. No automatic data expiry or destructive account cascade was added.
+
+The player caches unchanged fit calculations and omits duplicate idle time messages. Timeline grouping is memoized, and selection remains consistent when switching between raw/grouped events. Fit presents the full captured viewport;100% lets users inspect small content without pretending a desktop capture is mobile-responsive. Current latency and device limits belong to PROJECT_STATUS.md.

@@ -3,7 +3,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
-const root=resolve('.cache/standard-proof'),hosts=['react','next'],scenarios=['navigation-button','form-click','form-enter'];
+const root=resolve('.cache/standard-proof'),hosts=['react','next'],scenarios=['navigation-button','form-click','form-enter','multi-icon'];
 const hash=data=>createHash('sha256').update(data).digest('hex');
 const cases=[];
 for(const host of hosts)for(const scenario of scenarios){const name=`${host}-${scenario}`,metadata=JSON.parse(await readFile(resolve(root,`${name}.json`),'utf8'));cases.push({...metadata,name,sha256:hash(await readFile(resolve(root,`${name}-regression.spec.ts`)))});}
@@ -16,7 +16,7 @@ async function run(label,mode,fixed){
  const report=JSON.parse(await readFile(resolve(root,`${label}.json`),'utf8')),results=[];
  function visit(suite){for(const spec of suite.specs??[])for(const test of spec.tests)for(const result of test.results)results.push({title:spec.title,...result});for(const child of suite.suites??[])visit(child);}
  for(const suite of report.suites)visit(suite);
- if(results.length!==6||results.some(item=>item.retry!==0))throw Error(`${label}: expected six runs, no retries`);
+ if(results.length!==cases.length||results.some(item=>item.retry!==0))throw Error(`${label}: expected all exported cases, no retries`);
  const expectedFailure=label==='buggy-regression';
  if(expectedFailure?(code===0||results.some(item=>item.status!=='failed'||!item.errors?.some(error=>/toHaveText/.test(error.message)))):(code!==0||results.some(item=>item.status!=='passed')))throw Error(`${label}: unexpected result; inspect ${root}`);
  for(const item of cases)if(hash(await readFile(resolve(root,`${item.name}-regression.spec.ts`)))!==item.sha256)throw Error('An exported file changed during execution');

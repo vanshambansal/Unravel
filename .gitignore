@@ -6,6 +6,7 @@
 node_modules/
 .pnpm-store/
 .next/
+.next-*/
 dist/
 build/
 .cache/
@@ -18,3 +19,6 @@ test-results/
 *.blend[0-9]
 .clerk/
 playwright/.auth/
+
+# Local interface review captures
+.impeccable/review/

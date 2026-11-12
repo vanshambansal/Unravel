@@ -88,3 +88,18 @@ test('response subscriptions bind to an included action and page-error checks ne
   assert.throws(()=>exportPlaywright({...plan,assertions:[{id:'e',kind:'no-page-errors'}]}));
   assert.doesNotThrow(()=>exportPlaywright({...plan,assertions:[...plan.assertions,{id:'e',kind:'no-page-errors'}]}));
 });
+
+
+test('multiple selections preserve arrays, explicit deselection, masking and standalone export',()=>{
+ const initialUrl={origin:'https://example.com',path:'/'};
+ const event={kind:'action' as const,at:1,action:'select' as const,target:{kind:'testId' as const,value:'channels'},value:null,values:['alpha','beta'],redacted:false};
+ const plan=generatePlan({initialUrl,events:[event]});
+ assert.deepEqual(plan.steps[0].values,['alpha','beta']);
+ assert.match(exportPlaywright(plan,'reproduction'),/selectOption\(\["alpha","beta"\]\)/);
+ assert.ok(readableSteps(plan).some(step=>step.includes('alpha')&&step.includes('beta')));
+ const cleared=generatePlan({initialUrl,events:[{...event,values:[]}]});
+ assert.match(exportPlaywright(cleared,'reproduction'),/selectOption\(\[\]\)/);
+ const masked=generatePlan({initialUrl,events:[{...event,values:null,redacted:true}]});
+ assert.throws(()=>exportPlaywright(masked,'reproduction'),/safe replacement/);
+ assert.equal(TestPlanSchema.safeParse({...plan,steps:[{...plan.steps[0],action:'fill'}]}).success,false);
+});

@@ -65,3 +65,19 @@ Read-only checks confirmed valid Clerk backend access and empty development/test
 Two approved synthetic Clerk development users and E2E-labelled project rows remain for repeatable tests, scoped to those accounts. Their local email variables and all credentials are ignored by Git. Do not remove real user data or revoke keys during routine cleanup.
 
 The pinned pg 8 driver emitted a forward-compatibility notice about sslmode=require aliases. Current connections use its certificate-verifying behavior; TLS verification was not disabled. Review explicit verify-full semantics when intentionally upgrading the driver; do not automatically rewrite the user's connection secrets.
+
+## Passwordless reconciliation - 2026-11-12
+
+The user confirmed changing the existing Clerk Development settings to email verification codes + Google, with password signup disabled. A fresh anonymous browser inspection subsequently showed email, Continue and Google, with zero password inputs. This verifies the rendered signup configuration, not fresh email delivery, OAuth or recovery. Historical first-factor user confirmation remains recorded above; repeat those journeys before public launch.
+
+## Account closure webhook
+
+The approved policy is **disable new intake; retain existing projects/reports/evidence**. Configure a Clerk endpoint at the deployed application's `/api/webhooks/clerk`, subscribe to `user.deleted`, and enter its signing secret in the server-only `CLERK_WEBHOOK_SIGNING_SECRET` environment variable. Never paste it into chat or use a NEXT_PUBLIC variable. Keep the raw signed body intact at the proxy. No endpoint or secret has been provisioned by this task.
+
+The handler verifies the bounded raw body with Clerk's maintained verifier. Missing configuration fails closed, invalid/expired signatures fail, unrelated signed events are acknowledged without a write, and repeated deletion events are idempotent. It records an owner intake block without removing data. Admission and account closure share project locks: requests already admitted may finish before closure acknowledgement; later submissions are rejected after the block commits. Existing owner APIs still require Clerk authentication; this is not an account-recovery mechanism or a data-retention deletion policy.
+
+Real PostgreSQL tests use a synthetic signed event and preserve/compare an existing replay across closure. Hosted webhook delivery, retries and public ingress remain unverified until a real HTTPS endpoint is configured. Production preflight requires the secret but cannot prove actual delivery. Do not delete a real Clerk user to test routine development.
+
+## Local production preview continuation
+
+Use README's `preview:local` recipe from a normal-network terminal. It checks the existing Clerk HTTPS/database connection, then pairs3020 with separate4191 allowing exactly3020. It does not provision/migrate or enable public ingestion. Restricted agent execution previously caused Clerk handshake EACCES. Protection-probe DNS warnings alone did not establish the login cause. The user confirmed Google and email-code on the corrected local preview; no Clerk Dashboard action is currently required for it. Hosted/live-domain/recovery setup remains a separate release gate. Rebuild when changing public environment configuration. See [measured continuation](audits/AUTH_RESPONSIVENESS_2026-11-12.md).

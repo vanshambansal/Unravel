@@ -6,11 +6,15 @@ let player: Replayer | null = null, channel: string | null = null, duration = 0;
 const allowedParents = (document.querySelector('meta[name="unravel-parent-origins"]')?.getAttribute('content') ?? '').split(' ').filter(Boolean);
 let parentOrigin: string | null = null;
 let fitted = true;
+let fittedKey = '', lastTime = -1;
 const root = document.getElementById('replay')!;
 function post(type: string, values: Record<string, unknown> = {}) { if (parentOrigin) parent.postMessage({ type, channel, ...values }, parentOrigin); }
 function fit() {
   if (!player) return;
   const frame = player.iframe, width = Number(frame.width) || 1280, height = Number(frame.height) || 720;
+  const key = `${width}:${height}:${innerWidth}:${innerHeight}:${fitted}`;
+  if (key === fittedKey) return;
+  fittedKey = key;
   const scale = fitted ? Math.min(innerWidth / width, innerHeight / height, 1) : 1;
   document.documentElement.style.overflow = fitted ? 'hidden' : 'auto'; document.body.style.overflow = fitted ? 'hidden' : 'auto';
   player.wrapper.style.transformOrigin = 'top left'; player.wrapper.style.transform = `scale(${scale})`;
@@ -41,5 +45,6 @@ window.addEventListener('message', event => {
 });
 window.addEventListener('resize', fit);
 window.addEventListener('pagehide', () => { player?.destroy(); player = null; });
-setInterval(() => { if (player) { fit(); post('time', { offset: Math.min(duration, player.getCurrentTime()) }); } }, 100);
+const clock=setInterval(() => { if (player) { fit(); const offset=Math.min(duration,player.getCurrentTime()); if(offset!==lastTime){lastTime=offset;post('time',{offset});} } }, 100);
+window.addEventListener('pagehide',()=>clearInterval(clock),{once:true});
 for (const origin of allowedParents) parent.postMessage({ type: 'ready' }, origin);

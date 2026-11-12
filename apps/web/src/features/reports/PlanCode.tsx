@@ -7,6 +7,7 @@ export function PlanCode({ value, language, readOnly, label, onChange }: { value
   const root=useRef<HTMLDivElement>(null), editor=useRef<View|null>(null), config=useRef<Configuration|null>(null);
   const latest=useRef({value,language,readOnly,label,onChange}), external=useRef(false);
   const [failed,setFailed]=useState(false);
+  const [ready,setReady]=useState(false);
   const noHistory=useRef<import('@codemirror/state').Annotation<boolean>|null>(null);
   useEffect(()=>{latest.current={value,language,readOnly,label,onChange};},[value,language,readOnly,label,onChange]);
   useEffect(()=>{
@@ -23,11 +24,15 @@ export function PlanCode({ value, language, readOnly, label, onChange }: { value
       // Reconfigure without remounting; JSON undo history survives workspace switches.
       config.current=settings;
       configuration.current=()=>settings.reconfigure(extensions());
+      setReady(true);
     }
     void mount().catch(()=>{if(active)setFailed(true);});
     return()=>{active=false;editor.current?.destroy();editor.current=null;config.current=null;configuration.current=null;};
   },[]);
   const configuration=useRef<(()=>import('@codemirror/state').StateEffect<unknown>)|null>(null);
-  useEffect(()=>{const instance=editor.current;if(!instance)return;external.current=true;try{const effect=configuration.current?.();instance.dispatch({...(instance.state.doc.toString()!==value?{changes:{from:0,to:instance.state.doc.length,insert:value}}:{}),effects:effect?[effect]:[],annotations:noHistory.current?[noHistory.current]:[]});}finally{external.current=false;}},[value,language,readOnly,label]);
-  return <div className="plan-code-editor"><div ref={root} />{failed&&<label>Editor unavailable; plain text fallback<textarea aria-label={label} value={value} readOnly={readOnly} onChange={event=>onChange(event.target.value)} spellCheck={false}/></label>}</div>;
+  // Keystrokes already changed the editor document. Do not rebuild its language,
+  // compartments and parse state when React receives that same document back.
+  useEffect(()=>{const instance=editor.current;if(!instance||instance.state.doc.toString()===value)return;external.current=true;try{instance.dispatch({changes:{from:0,to:instance.state.doc.length,insert:value},annotations:noHistory.current?[noHistory.current]:[]});}finally{external.current=false;}},[value]);
+  useEffect(()=>{const instance=editor.current,effect=configuration.current?.();if(instance&&effect)instance.dispatch({effects:[effect]});},[language,readOnly,label]);
+  return <div className="plan-code-editor">{!ready&&!failed&&<p role="status">Preparing code editor...</p>}<div ref={root} />{failed&&<label>Editor unavailable; plain text fallback<textarea aria-label={label} value={value} readOnly={readOnly} onChange={event=>onChange(event.target.value)} spellCheck={false}/></label>}</div>;
 }

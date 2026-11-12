@@ -235,3 +235,56 @@ Intermediate failures were not hidden: ordinary Next snapshots contained unsuppo
 Evidence: ignored .playwright-mcp/generator-workflow.webm, generator-finished-* and generator-code-viewport-desktop.png; .cache/standard-proof/, .cache/regression-proof/ and .cache/plan-adapters/. Real browser code was inspected at 14px with line numbers and read-only Playwright. Original 52-file prototype and poster checks passed; only the dependency stamp was refreshed, no recapture claimed. Credential-pattern scan of 147 source/document files found no hits; both local environment files stay ignored. No commit/push or real developer evidence deletion. Whitespace and all local links in the 11 reviewed Markdown files passed. Only the owned verification preview was stopped; existing app/fixture/player health checks returned HTTP 200.
 
 Follow-up: user review; fresh recordings get default identifiers, old edited plans can deliberately Rebuild from recording. Structural paths, heuristic navigation grouping, delayed errors/custom controls, shadow/iframe fidelity, durable draft recovery and broader browser/site coverage remain limited. Report triage/public-release/remaining marketing are separate tasks; no deployment readiness claim.
+
+
+## 2026-11-12 / REPORT-MANAGEMENT-AND-RELEASE-PREPARATION
+
+Request: finish everyday report management, prepare safe public-use boundaries, investigate touch-after-drag/Clerk signup and then proceed directly to an independent full-product audit. Completion must reflect real browser workflows, not test counts.
+
+Implemented: additive reviewed 0003 migration, owner/same-origin/revision-protected report edits and Open/Resolved, literal search and stable pagination, display-only typing groups/raw mode, recovery/cancel/error states and preserved player/evidence. Added shared PostgreSQL attempt/storage admission, bounded read/upload deadlines, default-closed public-ingestion configuration and HTTPS isolated-host support. Corrected the reproduced missing touch compatibility-click path and the Firefox SDK-lab mount readiness race. Existing retention stays owner-managed pending public review. No provider/Docker provisioning, public deployment or npm publication.
+
+Files: report pages/header/viewer/management/timeline/replay-origin/styles; server schema/repository/service/HTTP/release/ingestion and report APIs; migration 0003/journal/snapshot; SDK submission/widget-position; replay/release/TLS/standard-consumer scripts and browser/integration/unit configuration/tests; README, environment example and feature/architecture/decision/development/release docs.
+
+Verification: actual production visitor submission to metadata cancel/failure/save/conflict/reload, owner isolation, immutable evidence, grouped/raw inspection, 23-report pagination/filters and 1440/390/320px controls passed. Unit 40 and both real PostgreSQL integration files passed; concurrent budgets admitted 30/rejected 5. SDK Chromium 23 passed, Firefox 22 passed/one Chromium-only touch case skipped; ten focused touch gesture runs passed. Separate npm-installed React SDK plus standard Next capture/download/execution scenarios passed: six reproductions, six intended buggy regression failures then six identical fixed passes. Local self-signed HTTPS replay isolation passed Chromium/Firefox with certificate errors explicitly ignored. Fresh fixture export also produced five intended buggy failures/five fixed passes, identical hash, retries 0. Exact conditions and intermediate failures are in audits/VERIFICATION_2026-11-12.md.
+
+Final combined report verification was not first-pass clean: a seek measured 582 ms against 500 ms, navigation/provider waits timed out, and a plan API check used a closed original context. Explicit visible-control readiness and the active review context corrected the harness. Four combined report cases passed; the complete generator case passed separately without video after diagnosing a video-context teardown stall. All workflow assertions remain. Video capture is opt-in and its teardown issue remains unresolved; no fresh successful walkthrough video is claimed. Final lint/typecheck passed; build/handoff outcome is recorded in PROJECT_STATUS.md.
+
+Public release remains blocked by real hosting/edge/provider/privacy/distribution work. Clerk signup still visibly requires Password; no unsupported API or CSS workaround was applied. No original developer projects/reports/evidence were deleted; synthetic test rows can remain. No commit/push/deploy.
+
+## 2026-11-12 / INDEPENDENT-PRODUCT-AUDIT
+
+Reviewed current SDK, contracts, backend/database/auth, isolated replay, investigation, plan/export, release configuration, repository organization and documentation. Used current browser captures at desktop/mobile, real interaction/recovery checks and new default-SDK control probes. Read the earlier generator audit against current behavior; no separately identifiable Antigravity artifact was available to verify.
+
+Created audits/PRODUCT_AUDIT_2026-11-12.md and audits/VERIFICATION_2026-11-12.md with numbered user journey, screenshot evidence, affected files, severity, limits, prior-finding reconciliation, Must Fix/High Impact/Nice to Have/Skip roadmap and portfolio assessment. Confirmed semantic SVG-button clicks are omitted and multi-select captures only its first value. Recorded replay latency variability, selector/fidelity/assertion boundaries, provider/release/account-closure risks and investigation/onboarding/mobile usability opportunities. These audit findings were not silently implemented after the agreed stopping boundary.
+
+Consolidated current status and preserved the previous full snapshot as PROJECT_STATUS_HISTORY.md. Corrected stale planned/unimplemented statements in current design/decision/development records, added real-workflow completion guidance to AGENTS.md and linked the audit from README. Historical logs remain preserved. No application-wide redesign, Figma mutation, provider change, credential transfer, deployment or Git publication. Next recommendation: review the two ordinary-control capture fixes, then a focused investigation/onboarding pass and independent synthetic demo/release gates; avoid another broad rebuild or marketing-only polish cycle.
+
+## 2026-11-12 / DEFECT-CORRECTIONS-AND-LANDING
+
+User authorized correcting audit defects then completing the approved landing story. They confirmed Clerk email-code/Google settings and explicitly approved blocking intake on account closure while retaining existing data.
+
+Corrected SVG-child semantic clicks and native multi-select end to end, added real ordinary-control/privacy and independent React/Next export execution, prepared signed idempotent account closure with additive migration0004, improved investigation/rendering work and SDK onboarding, and fixed report reconciliation/navigation overflow. Extended the approved landing with synthetic interactive product examples and native diagnostic discovery; preserved scene, artwork and Vite reference. Updated current contracts/setup/design/decisions and verification documents. No new product framework/dependency, provider provisioning, Docker, commit, push or deployment.
+
+Actual verification and intermediate failures: [completion record](audits/DEFECTS_LANDING_2026-11-12.md). Eight real reproduction exports passed; the same eight regressions failed against buggy targets and passed after fixes, with hashes unchanged and retries disabled. Generator recovery walkthrough passed with fresh video. All PostgreSQL integration files, unit, lint, typecheck and isolated production build passed. Concurrent software-WebGL seek missed500ms; isolated pipeline passed unchanged target. Final landing check outcomes and service cleanup are maintained in PROJECT_STATUS.md. Public-provider, real-device and distribution limits remain explicit.
+
+## 2026-11-12 / CROSS-CHAT-HANDOFF
+
+User requested a durable context handoff before switching conversations. Inspected current status, root instructions and Git changes; created HANDOFF.md with reading map, latest stopping point, remaining priorities, provider/verification limits, uncommitted-work warning and a restart prompt. Linked it from PROJECT_STATUS.md. No application change, runtime verification, commit or infrastructure operation was performed in this documentation task. Prior verification remains dated evidence rather than a new rerun.
+
+
+## 2026-11-12 / MEASURED PERFORMANCE PASS
+
+User requested measured performance fixes across the application while preserving visuals. Inspected current docs/source and profiled desktop/mobile software-WebGL and a production-React synthetic investigation clock. Removed per-frame ray layout reads, bounded existing quality adaptation by elapsed time and isolated evidence rows from clock rerenders. Evidence, files, measurements, checks and incomplete authenticated verification are in audits/PERFORMANCE_2026-11-12.md. No new provider/service setup, dependency, visual redesign, commit or publication. Whole-app premium smoothness remains unverified.
+
+
+## 2026-11-12 / REAL GPU CHROME CONTINUATION
+
+User rejected efficiency counts as smoothness acceptance and requested hardware dev/production profiling. Installed headed Chrome confirmed Intel Iris Xe/D3D11. Profiled public entrance/scroll/hero/diagnostic/example controls; identified shader first-use stalls and implemented offscreen-target compileAsync plus parallel ray linking with generation/cancellation cleanup. Three-run startup improvement, unchanged steady-state limitations, exact poster parity, checks and Clerk DNS blocker are documented in audits/HARDWARE_PERFORMANCE_2026-11-12.md. No whole-app smoothness claim. User handoff requires restoring the normal Clerk form and signing in locally, without sharing credentials. No quality reduction, provider setup, commit or publication.
+
+## 2026-11-12 - Local auth, private responsiveness and constrained devices
+
+User clarified production means localhost:3020 and confirmed both email-code and Google login. Corrected restricted-network preview and matched replay origin; implemented bounded route intent/loading feedback, per-request read deduplication, single-statement pagination, editor lifecycle/analysis improvements, optimized existing artwork and explicit resource-conserving landing start. Verified headed hardware Chrome workflows across focused runs, final desktop/mobile artwork, reduced motion and constrained simulations. Retained cold multi-second storage outliers, harness failures and unverified physical-device acceptance; no claim that the full app is universally smooth. No provision/deploy/commit/push/provider security change. Full evidence and next bounded investigation: audits/AUTH_RESPONSIVENESS_2026-11-12.md.
+
+## 2026-11-12 - User-requested checkpoint and continuation list
+
+User asked to commit progress so far and retain unfinished work for later. Updated HANDOFF with the ordered remaining-work checklist, latest local auth/preview facts, acceptance gaps and exact next bounded investigation. This authorizes one local checkpoint of accumulated source/tests/docs, not push/deploy/provisioning. Local secrets, generated outputs and review screenshots remain excluded. No implementation or test rerun is implied by this documentation checkpoint.

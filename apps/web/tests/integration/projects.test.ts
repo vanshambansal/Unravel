@@ -60,8 +60,10 @@ test('real PostgreSQL persistence, owner isolation, atomic uniqueness and reconn
     await assert.rejects(service.remove(a, project.id, removal), (e: unknown) => e instanceof ApplicationError && e.status === 404);
   } catch (error) {
     if (error instanceof assert.AssertionError || error instanceof ApplicationError) throw error;
+    const codes:string[]=[];let cause:unknown=error;
+    for(let depth=0;depth<5&&cause&&typeof cause==='object';depth++){const item=cause as {code?:unknown;cause?:unknown};if(typeof item.code==='string'&&/^[A-Z0-9_]{2,30}$/.test(item.code))codes.push(item.code);cause=item.cause;}
     // eslint-disable-next-line preserve-caught-error -- Driver causes may expose connection credentials in test logs.
-    throw new Error('Database integration failed. Check the isolated test database configuration; connection details were withheld.');
+    throw new Error('Database integration failed. Check the isolated test database configuration; connection details were withheld. Codes: '+codes.join(', '));
   } finally {
     try { if (migrated && pool) await pool.query('delete from projects where owner_id = any($1::text[])', [[a, b]]); }
     catch { assert.fail('Could not clean this run\'s synthetic project rows. Connection details withheld; inspect the test database.'); }

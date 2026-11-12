@@ -5,7 +5,7 @@ type PositionOptions = { host: HTMLElement; shadow: ShadowRoot; projectId: strin
 export function widgetPosition({ host, shadow, projectId, signal, cancelMotion, announce }: PositionOptions) {
   const key = `unravel.widget-position.${projectId}`;
   let preferred: Anchor | null = null;
-  let drag: { id: number; startX: number; startY: number; left: number; top: number; original: Anchor | null; active: boolean } | null = null;
+  let drag: { id: number; startX: number; startY: number; left: number; top: number; original: Anchor | null; active: boolean; handle:HTMLElement } | null = null;
   let suppressClickUntil = 0;
   let suppressedPointer: number | null = null;
   try {
@@ -50,7 +50,7 @@ export function widgetPosition({ host, shadow, projectId, signal, cancelMotion, 
     const control = event.target.closest('button,input,textarea,select,a,summary');
     if (!handle || (control && control !== handle)) return;
     const bounds = host.getBoundingClientRect();
-    drag = { id: event.pointerId, startX: event.clientX, startY: event.clientY, left: bounds.left, top: bounds.top, original: preferred, active: false };
+    drag = { id: event.pointerId, startX: event.clientX, startY: event.clientY, left: bounds.left, top: bounds.top, original: preferred, active: false,handle };
   }, { signal });
   window.addEventListener('pointermove', event => {
     if (!drag || drag.id !== event.pointerId) return;
@@ -61,8 +61,18 @@ export function widgetPosition({ host, shadow, projectId, signal, cancelMotion, 
   }, { signal, passive: false });
   window.addEventListener('pointerup', event => {
     if (!drag || drag.id !== event.pointerId) return;
+    const pointer=drag;
     if (drag.active) { suppressClickUntil = performance.now() + 350; suppressedPointer = event.pointerId; remember(); announce('Bug reporter moved. Use Home on its move control to reset.'); }
     release();
+    // Chromium can drop the compatibility click immediately after a touch drag.
+    // A completed tap on a drag-button opens controls only; Start/Submit are not handles.
+    if(!pointer.active&&event.pointerType==='touch'&&pointer.handle instanceof HTMLButtonElement&&pointer.handle.isConnected){
+      const box=pointer.handle.getBoundingClientRect();
+      if(event.clientX>=box.left&&event.clientX<=box.right&&event.clientY>=box.top&&event.clientY<=box.bottom){
+        pointer.handle.click();
+        suppressClickUntil=performance.now()+350;suppressedPointer=event.pointerId;
+      }
+    }
   }, { signal });
   window.addEventListener('pointercancel', event => { if(event.pointerId === drag?.id) cancelled(); }, { signal });
   // Touch starts with implicit capture on the inner SVG/button. Transferring it

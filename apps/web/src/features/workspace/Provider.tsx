@@ -1,4 +1,5 @@
 import { ClerkProvider } from '@clerk/nextjs';
+import type { CSSProperties } from 'react';
 import { authConfigured } from '@/server/auth';
 import { WorkspaceMotion } from './WorkspaceMotion';
 import './workspace.css';
@@ -7,8 +8,8 @@ import './compositions.css';
 import './product-materials.css';
 import './workspace-shell.css';
 
-export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const content = <div className="unravel-workspace"><WorkspaceMotion>{children}</WorkspaceMotion></div>;
+export function WorkspaceProvider({ children, artwork }: { children: React.ReactNode; artwork?: string }) {
+  const content = <div className="unravel-workspace" style={artwork?{'--workspace-artwork':`url("${artwork}")`} as CSSProperties:undefined}><WorkspaceMotion>{children}</WorkspaceMotion></div>;
   if (!authConfigured()) return content;
   return <ClerkProvider signInUrl="/sign-in" signUpUrl="/sign-up" afterSignOutUrl="/sign-in"
     localization={{ signIn: { start: { title: 'Welcome back', subtitle: 'Sign in to your developer workspace.' } }, signUp: { start: { title: 'Create your account', subtitle: 'Start investigating with Unravel.' } } }}

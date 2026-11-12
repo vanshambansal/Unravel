@@ -39,9 +39,9 @@ Approved direction: Next.js + TypeScript, pnpm workspaces, retained vanilla Thre
 ## Product completion roadmap (approved after V2)
 
 1. Project management and onboarding: complete locally. Rename/origin settings, typed permanent deletion, owner/same-origin/stale-edit checks and visible fixture setup passed production browser and database checks. No new migration or automatic changes to existing data. Actual outcomes are in PROJECT_STATUS.md.
-2. Report management: Open/Resolved, editable title/description, server-side search/pagination and presentation-only typing consolidation.
+2. Report management: implemented and browser-verified locally (2026-11-12): Open/Resolved, editable title/description, URL-preserved server search/pagination and display-only typing groups. See REPORTS.md.
 3. Styled replay: bounded sanitized layout/CSS, preserved masking and separate-origin isolation; fresh recordings required for new fidelity. Images/fonts deferred.
-4. Resume the regression milestone below, then release preparation.
+4. Regression workflow is implemented locally; follow the current audit for remaining reliability gaps, then release preparation.
 
 Each implementation task stops after actual checks and documentation. Current outcomes live in PROJECT_STATUS.md.
 
@@ -50,26 +50,34 @@ Each implementation task stops after actual checks and documentation. Current ou
 - Readable deterministic steps, persisted editable version 1 JSON plan, explicit developer-confirmed expected behavior and validated standalone Playwright export are implemented. See TEST_PLANS.md.
 - Actual downloaded export: five expected assertion failures against the HTTP-500 fixture, then five passes against the isolated source-patched HTTP-200 fixture, retries disabled and file SHA-256 unchanged. Artifacts retained; current outcomes live in PROJECT_STATUS.md.
 
-## 6. Finish presentation and release preparation - planned
+## 6. Presentation implemented; operator release preparation remains
 
-- Hybrid Figma/code process; complete storytelling and diagnostic zoom using the same readable request element, then reveal sequence/plan/export.
+- Hybrid Figma/code process; storytelling and diagnostic zoom are implemented using the same readable request element, then sequence/plan/export.
 - Maintain honest previews. Verify responsive/accessibility, supported browsers, deployment limits, privacy and public-ingestion protections.
 
 Keep marketing work bounded. No milestone authorizes the next one implicitly.
 
 Internal UI completion work uses the compositions and browser review criteria in INTERNAL_UI.md. Settings, registration and resource-list recipes are implemented; reuse them as report management and plan editing are added, without treating a presentation refactor as a completed product milestone.
 
-Latest steering prioritized styled replay and regression generation ahead of report triage. Report Open/Resolved, metadata editing and search/pagination remain unimplemented; do not claim those tasks complete. Public release preparation remains separate.
+Report triage is now implemented locally. Public preparation has code/configuration safeguards, but hosted acceptance remains blocked; see DEPLOYMENT.md and the current audit. Historical milestone exclusions describe their original boundaries, not missing current features.
 
 
 ## Internal product direction and motion implementation (2026-11-11)
 
 Previous preparation produced two independent Figma directions covering authentication, projects/settings, investigation, recorder, mobile and workflow patterns. That design-only task did not change application behavior. The subsequent approval and runtime implementation are described below; DESIGN.md owns the composition references.
 
-The user selected B authentication and A product compositions and approved coordinated motion. Shell/auth, investigation and recorder motion are implemented; see PROJECT_STATUS for current checks and artifacts. Next gate: review actual browser behavior and aesthetics, then address only consequential findings. Planned report management controls in the concepts remain unimplemented. Public-release and remaining landing work stay separate.
+The user selected B authentication and A product compositions and approved coordinated motion. Shell/auth, investigation and recorder motion are implemented; see PROJECT_STATUS for current checks and artifacts. Next gate: review actual browser behavior and aesthetics, then address only consequential findings. Report management controls are implemented; current verification is in PROJECT_STATUS.md. Public release remains separate from local landing completion.
 
 ## Review-first generator - implementation 2026-11-11
 
 Readable steps, contextual technical editing, reversible inclusion/reorder, Steps/Playwright/JSON preview and assertion-free reproduction export are implemented. Regression checks require confirmed intended outcomes. Version 2 remains compatible with old saved plans; original evidence and ownership/revision checks remain unchanged. No LLM or second adapter. PROJECT_STATUS owns actual checks and remaining limits; user runtime/aesthetic review is a separate gate.
 
 Next bounded completion choice: report triage/metadata/search/pagination, then remaining presentation and release protections. Do not start these automatically or claim public readiness.
+
+## Current authorized task - functional completion then independent audit
+
+The user authorized report/release preparation followed automatically by a broad independent audit, with no intervening approval gate. Local report workflows and release safeguards are implemented. Provider/domain/edge/privacy decisions remain explicit deployment blockers, not completed services. Audit the current code and actual browser workflows; test counts support, but never establish, user-facing completion. Do not begin a major redesign, push or deploy after the audit. Current outcomes are in PROJECT_STATUS.md; release commitments are in DEPLOYMENT.md.
+
+## Latest authorized completion - 2026-11-12
+
+The user authorized audit-defect corrections followed by the complete landing story. Ordinary-control capture, account intake closure, investigation clarity and onboarding refinements are implemented. The owner reconciled Clerk development signup. The approved cinematic scene/reference remains unchanged. Current verification and open operator/device limits live in PROJECT_STATUS.md; do not infer public readiness from local completion or start deployment/publication automatically.

@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { ReportSubmission } from '../../packages/contracts/dist/index.js';
-export function syntheticSubmission(projectId = randomUUID(), origin = 'http://127.0.0.1:4185'): ReportSubmission {
+export function syntheticSubmission(projectId: string = randomUUID(), origin = 'http://127.0.0.1:4185'): ReportSubmission {
   const startedAt = Date.now();
   return { version: 1, title: 'Synthetic question fails', description: 'HTTP failure', recording: {
     version: 1, id: randomUUID(), projectId, startedAt, durationMs: 1000, initialUrl: { origin, path: '/' }, stopReason: 'manual', truncated: false, hasFullSnapshot: true, filteredReplayEvents: 0,
