@@ -132,3 +132,5 @@ Semantic capture resolves an SVG child click to its safe containing HTML control
 Native multiple selects use optional `values` in recording-v1 select events: missing means the legacy scalar selection; null means masked multiple values; an array means safe selected values; [] means deliberate deselection. Scalar `value` stays null when `values` is present. Opt-in must cover selected options too. Standard rrweb selected-attribute mutations preserve multiple-selection replay state without enabling additional resources. Existing scalar recordings remain readable; older servers reject the new strict field rather than silently executing one option. Upgrade local SDK/server together.
 
 Actual Chromium/Firefox capture/privacy checks and independent React/Next export execution are recorded in [the completion verification](audits/DEFECTS_LANDING_2026-11-12.md).
+
+Stopping a minimized recording with a usable full snapshot opens the details/submission form immediately. This transition keeps capture stopped and submission explicit. The same behavior applies when a recording reaches its configured limit.

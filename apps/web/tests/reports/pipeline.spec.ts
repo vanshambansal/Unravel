@@ -80,13 +80,14 @@ test('record → response-loss retry → private persisted replay → seek → o
     const frame = owner.frameLocator('iframe[title="Session replay"]');
     await expect(frame.frameLocator('iframe').locator('body')).toContainText('Submit question');
     // Measure the actual input-to-player acknowledgement, not Playwright polling/transport overhead.
-    await owner.evaluate(() => {
+    const playerOriginForSeek = new URL((await owner.locator('iframe[title="Session replay"]').getAttribute('src'))!).origin;
+    await owner.evaluate(playerOrigin => {
       const measure = {started: 0, elapsed: -1};
       Object.assign(window, {seekMeasurement: measure});
       document.addEventListener('click', () => {measure.started=performance.now();}, {once:true,capture:true});
-      const receive=(event:MessageEvent)=>{if(event.origin==='http://127.0.0.1:4191'&&event.data?.type==='seeked'&&measure.started){measure.elapsed=performance.now()-measure.started;window.removeEventListener('message',receive);}};
+      const receive=(event:MessageEvent)=>{if(event.origin===playerOrigin&&event.data?.type==='seeked'&&measure.started){measure.elapsed=performance.now()-measure.started;window.removeEventListener('message',receive);}};
       window.addEventListener('message',receive);
-    });
+    }, playerOriginForSeek);
     await owner.getByRole('button', { name: /network.*POST.*api\/questions.*500/ }).click();
     await expect.poll(async () => Math.abs(Number(await owner.locator('.report-player').getAttribute('data-replay-time')) - network.at)).toBeLessThanOrEqual(500);
     await expect.poll(()=>owner.evaluate(()=>(window as unknown as {seekMeasurement:{elapsed:number}}).seekMeasurement.elapsed)).toBeGreaterThanOrEqual(0);

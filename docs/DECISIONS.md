@@ -191,3 +191,86 @@ Use Three compileAsync for the composer offscreen render target and KHR parallel
 ## 2026-11-12 - Local authentication and measured responsiveness
 
 Use a normal-network paired local preview with exact replay parent origin and no application credentials in the player environment. Keep Clerk security and owner enforcement unchanged. Bound private-route prefetch to actual intent and show immediate feedback. Deduplicate project reads only within a server request; use a single SQL snapshot for report count/page rather than persistent private caches. Separate editor document updates from configuration and cache applied-plan analysis. Deliver existing internal artwork through the established Next optimizer. On explicit constrained-resource hints, reuse the static landing with voluntary Enable3D; unknown/capable hardware keeps full quality and reduced motion takes precedence. Numeric timings and whitelisted storage codes support diagnosis without logging evidence or secrets. Cold database latency remains unaccepted; no speculative retries or new infrastructure. Evidence: audits/AUTH_RESPONSIVENESS_2026-11-12.md.
+
+## 2026-11-13 - Phase 0: Bug fixes, database query optimization and replay state retention
+
+- **Sticky footer clearance:** Added `padding-bottom: 96px;` to `.unravel-workspace .test-generator` so bottom step actions and editor lines scroll completely above `.generator-action-footer` (`position: sticky; bottom: 16px; height: 78px;`), eliminating click blocking.
+- **SDK widget dock stop:** Transitioning to `describe` guarantees `opened = true` so stopping recording from the minimized dock displays the description/submission form rather than collapsing back to the launcher pill.
+- **Database query optimization in `plans.ts`:** Created lightweight `assertOwned` check in `repository.ts` / `service.ts` to assert report ownership without downloading the heavy `events` JSONB column in `savePlan`. In `readPlan`, parallelized the report detail and test plan draft queries with `Promise.all`.
+- **Replay player state retention and offline fallback:** Kept `ReportViewer` mounted in the DOM across `ReportWorkspace` tab switches (using CSS `display: none` when hidden) to preserve player scrub position and frame channel. Added a clean dark fallback UI with `pnpm replay:dev` guidance when `127.0.0.1:4192` is offline, hiding the raw Chromium connection-refused iframe.
+- **Reports search soft navigation:** Created client search form `ReportSearchForm.tsx` using `useTransition` and `router.push`, preserving 100% server-side query execution and pagination while eliminating full-document browser reloads.
+
+## 2026-11-13 - Phase 1: Translucent smoked glass, Raycast button craftsmanship & route skeletons
+
+- **Reversion of rejected 3D mockup:** Reverted the experimental 3D deconstruction stage on `/sign-in` and landing louvers. Restored the authentic spacious two-column layout and architectural atrium background (`hero-atrium.png`).
+- **Smoked glass depth & hairline borders:** Transformed `--ui-surface` to translucent smoked glass (`rgba(16, 18, 24, 0.68)`) with `backdrop-filter: blur(20px) saturate(160%)` and replaced heavy opaque borders with crisp hairline borders (`1px solid rgba(255, 255, 255, 0.08)` and `inset 0 1px 0 0 rgba(255, 255, 255, 0.08)`). The architectural hallway and ambient `MaterialLight` now glow softly through surfaces without reducing text legibility.
+- **Raycast-style interactive controls:** Solid pure white (`#ffffff`) primary action buttons with black text (`#0a0a0c`), 8px radius, subtle hover lift (`translateY(-1px)`), and soft depth shadow. Translucent smoked glass secondary buttons and non-underlined muted text links.
+- **Route prefetching skeletons:** Created matching layout skeletons in `projects/loading.tsx` and `projects/[projectId]/reports/loading.tsx` with subtle shimmer animation (`@keyframes ui-skeleton-shimmer`) for instant visual feedback on navigation.
+
+## 2026-11-13 - Phase 2: Investigation Workbench & Test Studio Polish (Options B & C Eliminated)
+
+- **Permanent elimination of Options B & C:** Per user directive, Option B (landing hero lighting blades / louvers) and Option C (authentication 3D stack / contraptions) are permanently eliminated. The landing hero doorway and Three.js entrance sequence remain 100% original, and the sign-in screen remains authentic, calm, and spacious.
+- **Replay player frame & obsidian background:** Replaced the unstyled `#eeeeeb` container in `.report-player` with deep obsidian `#08090d`, a 1px hairline border `rgba(255, 255, 255, 0.08)`, and a subtle inner shadow. When the isolated replay host (`127.0.0.1:4192`) is running, recorded DOM viewports render cleanly without white staging flashes.
+- **Multi-track timeline & telemetry badges:** Refined `.report-timeline` and `.report-controls` with smoked glass background (`rgba(10, 12, 16, 0.70)`), warm crimson scrubber accent (`#ff4d61`), hairline borders, and Raycast-style segmented filter buttons (`All`, `Actions`, `Network`, `Errors`, `Navigation`). Telemetry badges use subtle semantic tints rather than heavy boxes.
+- **Test Plan Studio & CodeMirror editor theme:** Refined `.report-workspace-tabs`, `.generator-sequence`, and `.generator-action-footer` with smoked glass containers and top specular edge highlights. Rebuilt the CodeMirror Playwright editor theme in `PlanCode.tsx` with translucent obsidian background (`rgba(10, 12, 16, 0.72)`), dark gutter strip (`rgba(8, 10, 14, 0.85)`), muted line numbers, pure white caret, clean selection background (`rgba(255, 255, 255, 0.12)`), and crisp syntax token coloring.
+- **Verification:** Verified live in headless Chromium via Clerk authentication. All 43 unit tests and TypeScript typecheck passed with 0 errors. Captured live screenshots: `live-investigate-phase2.png`, `live-plan-phase2.png`, and `live-plan-code-phase2.png`.
+
+## 2026-11-13 - Phase 3: Mobile viewport verification, CSS token consolidation & Tailwind decision
+
+- **Mobile Viewport Verification (`390Ãƒâ€”844` on iPhone 14 Profile):** Completed end-to-end audit across all internal screens (`/app/projects`, `/app/projects/[projectId]/reports`, `/reports/[reportId]` Investigation & Test Plan steps/code, `/setup`, `/settings`). Verified `scrollWidth <= clientWidth` on every route with 0 horizontal overflow. Confirmed touch targets, CodeMirror scrolling, and sticky footer positioning on narrow screens.
+- **CSS Token Consolidation:** Unified root `--product-*` and `--ui-*` tokens at `.unravel-workspace` in `workspace.css`. Replaced legacy opaque `#111318` surface and `#30343e` border defaults with authoritative translucent smoked glass (`rgba(16, 18, 24, 0.68)`), hairline border (`rgba(255, 255, 255, 0.08)`), and warm crimson highlight (`#ff4d61`).
+- **Tailwind & shadcn Migration Declined:** Explicitly confirmed with user not to migrate to Tailwind or shadcn. Retaining native modern CSS custom properties and `motion/react` preserves Unravel's distinctive architectural depth ([hero-atrium.png](hero-atrium.png)), avoids 50+ npm dependencies, maintains 1.6s Turbopack builds, and eliminates generic SaaS template look.
+- **Verification:** `corepack pnpm test` (43/43 pass), `corepack pnpm typecheck` (0 errors), and `corepack pnpm build` (clean Turbopack production build in 1.6s).
+
+## 2026-11-13 - Hydration Error Resolution & Raycast-Grade Search Bar Upgrade
+
+- **Next.js Hydration Error Resolution:**
+  - Resolved `In HTML, <div> cannot be a descendant of <p>` during client hydration at `reports/loading.tsx`.
+  - Updated `PageHeader` in `apps/web/src/features/workspace/compositions.tsx` to conditionally render `<p>` only when `context` or `description` is a string, and `<div>` for arbitrary React nodes/JSX.
+  - Updated `apps/web/src/app/(product)/app/projects/[projectId]/reports/loading.tsx` to use inline elements (`<span className="ui-skeleton" style={{ display: 'inline-block' }} />`) for text placeholders.
+  - Verified 0 hydration errors in Chromium via live Playwright test.
+
+- **Raycast / Linear-Grade Search Bar Upgrade:**
+  - Upgraded `ReportSearchForm.tsx` from clunky static form inputs into a unified translucent smoked-glass command bar (`rgba(16, 18, 24, 0.68)`, `backdrop-filter: blur(20px)`, `border: 1px solid rgba(255, 255, 255, 0.08)`).
+  - Integrated SVG magnifying glass icon, subtle placeholder (`Search reports by title or descriptionÃ¢â‚¬Â¦`), and `<kbd>/</kbd>` shortcut pill.
+  - Implemented debounced live search (220ms) as the user types using React 19 `useTransition` and `router.push`, keeping the input focused and responsive without page reloads.
+  - Implemented instant auto-filter on status dropdown change (`All statuses`, `Open`, `Resolved`).
+  - Added quick clear button (`Ã¢Å“â€¢`) inside the search field to reset text and re-trigger search in one click.
+  - Added global `/` keycap shortcut to focus search from anywhere on the page, and `Escape` to clear/blur.
+  - Added active filter chips row (`Active: Query: "..." Ã¢Å“â€¢   Status: Open Ã¢Å“â€¢   Clear all`) with one-click individual filter removal and global reset.
+  - Verified full responsive collapse on mobile (390Ãƒâ€”844) with zero horizontal overflow.
+  - Verified `corepack pnpm test` (43/43 passing), `corepack pnpm typecheck` (0 errors), and `corepack pnpm build` (1.8s Turbopack build).
+
+## 2026-11-13 - Interaction lifecycle and native-scroll camera motion
+
+The user explicitly requested implementation beyond the Antigravity audit. Cancel debounced search when leaving, retain replay position while explicitly pausing the inactive panel, and provide delayed-host recovery and manual retry. The player clock runs during playback. Concurrent query timings measure each operation independently. Keep native scroll as the target and follow the existing camera path with refresh-rate-independent exponential interpolation. Skip and Replay snap immediately. Upload ray constants on initialization or shape/size changes and upload time/pointer values per frame. These changes address reproduced navigation, idle work and uneven movement. A depth-prepass experiment was removed after inconsistent end-to-end timing. The approved scene and posters keep their existing renderer output. No dependency or infrastructure change.
+
+## 2026-11-13 - Measured intermediate GPU tier
+
+Keep full rendering on fast devices. After warmup and two sustained poor-frame windows, reduce scene resolution gradually toward an absolute0.8 pixel ratio while retaining cinematic effects. The90Hz panel and GPU probes justified testing this tradeoff. Standard-DPI alternating samples improved median cadence and high-DPI samples improved median and p95. Tail spikes remain documented. Four full-resolution captures matched the baseline byte-for-byte, and existing poster binaries were retained with refreshed provenance. Live search also tracks request intent and local edit versions to protect concurrent typing. Replay loading feedback appears promptly and its60-second retrieval bound allows slow bounded recordings to recover.
+
+## 2026-11-13 - Optimized fallback-image delivery
+
+Use the existing Next image optimizer at quality90 for desktop/mobile scene posters, including reduced-motion and JavaScript-disabled views. Hardware Chrome measured about95% lower hero transfer sizes. Preserve original PNG reference assets and native UI/3D rendering. Rendered fallback images were visually inspected. No codec dependency or hosted CDN setup was added.
+
+## 2026-11-13 - Approved native-like responsiveness and entrance fidelity
+
+The user approved the complete performance discussion and implementation. Retain the architectural scene and product identity while repairing motion, light and edge consistency; this supersedes earlier literal entrance-preservation wording. No new infrastructure, provider, dependency, replacement scene, deployment or commit is selected.
+
+Stream authorized workspace chrome independently of project navigation data. Share bounded route-preparation readiness inside one authorized workspace; Next owns its authenticated browser-memory payload cache. Prepare one likely project destination at idle and other destinations on shorter hover/focus/touch intent, respecting resource hints. Use Next's invalidation callback; successful report edits refresh the router cache. One report instance may anticipate and share a plan read for10s; explicit reload, expiry, failure and teardown discard it. No private evidence/draft storage or persistent server data cache is added.
+
+Read owner-joined evidence and the optional saved plan in one database snapshot/lease. Numeric connection/query/generation timings distinguish acquisition from execution without SQL or identities. Observed reconnects near560ms versus warm query90ms justify extending the same maximum-five-client pool's idle reuse from30s to120s, with a300s connection lifetime and no background keepalive query. Truly cold acquisition remains a network cost.
+
+Camera following uses48/s and presentation follows the same visual progress. Keep Skip/Replay immediate and native reverse scrolling. Anchor fixture lighting and reflection strength, slow and neutralize the pale procedural shafts, retain moving haze, restore full FXAA edge search and improve reflection sampling. Render fresh reflections on every camera change; at rest reuse them for at most100ms of ambient time. Allocate65% linear raster size to broad bloom independently of the main scene. A full-scene multisampling trial showed no speed advantage and was removed. Regenerate the four scene-derived fallback posters; preserve the original Vite reference. Verification and limits belong to the implementation audit/status.
+
+A controlled same-page compositor comparison isolated the two intersecting ray-canvas CSS masks: normal median22.2ms versus11.4ms with masking removed, reproduced when masks were restored; removing navigation blur had little effect. Preserve the aperture by applying equivalent CSS-coordinate alpha ramps in the existing ray fragment shader, updated only on shape/font/size changes. This removes compositor mask surfaces without removing the light or its framing. Measure the shipped shader implementation separately from this diagnostic ablation.
+
+## 2026-11-13 - Search simplicity, cached primary navigation and steady architecture
+
+The user requested concrete search/loading/flicker fixes, more convincing entrance materials and sustained/reverse-motion investigation, with later landing changes limited to ideas. Remove nested search borders and duplicate browser/custom clear controls; retain URL-based server search and keyboard/race behavior. Honor explicit full prefetch on the two primary sidebar routes using stable Next Link behavior rather than enabling experimental staleTimes globally. Check cached revisits and logout isolation; preserve explicit refresh after mutations.
+
+Anchor pale light time/sway and opening pointer illumination, align narrowed emitters to authored boundaries/depth, reduce excessive bloom/spill and use bounded anisotropic PBR filtering. Normal scene resolution now floors at1.0 for stable edges; this supersedes the earlier0.8 normal tier, while severe fallback remains. Replace drifting haze with fixed architectural atmosphere and reuse the completed room image when camera/viewport/quality are unchanged. Rays repaint on shape/pointer changes only. This directly removes stationary GPU work without a new renderer or dependency; ambient bookkeeping/pause remains separate from drawing. Record moving-frame costs honestly rather than equating idle rAF cadence with rendered FPS. No replacement scene or landing copy redesign is selected.
+
+## 2026-11-13 - Keep completed collections visible while navigating
+
+Production full prefetch already reused collection data, but development does not run that prefetch and per-collection loading boundaries replaced completed views with skeletons. Retain the skeleton components as reusable feature code and remove their automatic route registration. Keep the first-workspace/auth loading and error boundaries. The existing transition now holds useful content until destination data is ready, with immediate link pending feedback. Preserve stable full prefetch and refresh-on-mutation; do not introduce experimental global cache settings or an additional private-data cache merely to mimic production prefetch in development. Real delayed-response and repeated-navigation tests own acceptance.

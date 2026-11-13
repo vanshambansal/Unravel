@@ -107,7 +107,7 @@ test('widget supplies the complete visitor flow, excludes itself, isolates CSS a
   await page.getByRole('button',{name:'Start recording',exact:false}).click();await expect(page.getByText('RECORDING',{exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Minimize bug reporter'}).click();await expect(page.getByRole('button',{name:'Open recording controls'})).toBeVisible();
   await page.locator('#question').fill('Synthetic widget question');await page.locator('#private-value').fill('WIDGET_PASSWORD_SENTINEL');await page.locator('#submit-question').click();await expect(page.locator('#feedback')).toContainText('could not submit');
-  await page.getByRole('button',{name:'Stop recording',exact:true}).click();await page.getByRole('button',{name:'Report a bug',exact:true}).click();
+  await page.getByRole('button',{name:'Stop recording',exact:true}).click();await expect(page.getByLabel('Report title',{exact:true})).toBeVisible();
   await page.getByLabel('Report title',{exact:true}).fill('Widget report title');await page.getByText('Add details (optional)', {exact:true}).click();await page.getByLabel('What happened / expected?',{exact:false}).fill('Synthetic report context');
   await page.getByRole('button',{name:'Send bug report',exact:false}).click();await expect(page.getByRole('button',{name:'Retry submission'})).toBeVisible();
   await page.getByRole('button',{name:'Retry submission'}).click();await expect(page.getByRole('heading',{name:'Thanks for helping us fix it.'})).toBeVisible();

@@ -1,7 +1,7 @@
 @font-face{font-family:'Unravel Product Inter';src:url('/landing/fonts/inter-regular.ttf') format('truetype');font-weight:400;font-display:swap}
 @font-face{font-family:'Unravel Product Manrope';src:url('/landing/fonts/manrope-semibold.ttf') format('truetype');font-weight:600;font-display:swap}
 @font-face{font-family:'Unravel Product Mono';src:url('/landing/fonts/plex-mono-regular.ttf') format('truetype');font-weight:400;font-display:swap}
-.unravel-workspace{--product-bg:#08090b;--product-surface:#111318;--product-raised:#191c23;--product-border:#30343e;--product-text:#f3f2ee;--product-muted:#a6aab3;--product-crimson:#ef4b53;min-height:100svh;background:var(--product-bg);color:var(--product-text);font-family:'Unravel Product Inter',Arial,sans-serif;font-size:16px;line-height:1.6;color-scheme:dark}
+.unravel-workspace{--product-bg:#07080a;--product-surface:rgba(16,18,24,0.68);--product-raised:rgba(255,255,255,0.05);--product-border:rgba(255,255,255,0.08);--product-text:#f3f2ee;--product-muted:#a6aab3;--product-crimson:#ff4d61;min-height:100svh;background:var(--product-bg);color:var(--product-text);font-family:'Unravel Product Inter',Arial,sans-serif;font-size:16px;line-height:1.6;color-scheme:dark}
 .unravel-workspace *{box-sizing:border-box}
 .unravel-workspace :is(h1,h2,h3,p){margin:0}
 .unravel-workspace :is(h1,h2,h3){font-family:'Unravel Product Manrope',Arial,sans-serif;font-weight:600;line-height:1.25;letter-spacing:-.025em;overflow-wrap:anywhere}
@@ -16,12 +16,15 @@
 .unravel-workspace .product-eyebrow{font:400 12px/1.6 'Unravel Product Mono',monospace;letter-spacing:.025em}
 .unravel-workspace .accent{color:var(--product-crimson)}
 .unravel-workspace .product-small{font-size:13px;line-height:1.6}
-.unravel-workspace .product-text-link{font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;background:none;border:0;padding:0;color:var(--product-muted)}
-.unravel-workspace .product-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 24px;border:1px solid var(--product-text);border-radius:8px;background:var(--product-text);color:#0c0d10;font-size:14px;line-height:20px;white-space:normal;text-align:center;transition:background .15s,border-color .15s}
-.unravel-workspace .product-button:hover{background:#dcdad5}
-.unravel-workspace .product-button.secondary{background:var(--product-surface);color:var(--product-text);border-color:var(--product-border)}
-.unravel-workspace .product-button.secondary:hover{background:var(--product-raised)}
-.unravel-workspace .product-button:disabled{opacity:.65;cursor:wait}
+.unravel-workspace .product-text-link{font:inherit;font-size:13px;line-height:20px;text-decoration:none;background:transparent;border:0;padding:6px 10px;border-radius:6px;color:rgba(255,255,255,0.50);transition:color .14s ease,background .14s ease}
+.unravel-workspace .product-text-link:hover{color:#ffffff;background:rgba(255,255,255,0.05)}
+.unravel-workspace .product-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 18px;border:1px solid rgba(255,255,255,0.22);border-radius:8px;background:#ffffff;color:#0a0a0c;font-size:13px;font-weight:500;line-height:20px;letter-spacing:-.01em;white-space:nowrap;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.2),0 0 0 1px rgba(255,255,255,0.08);transition:background-color .14s ease,color .14s ease,border-color .14s ease,transform .14s cubic-bezier(.16,1,.3,1),box-shadow .14s ease}
+.unravel-workspace .product-button:hover{background:#f0f0f0;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.12)}
+.unravel-workspace .product-button:active{transform:translateY(0);background:#e4e4e4}
+.unravel-workspace .product-button.secondary{background:rgba(255,255,255,0.04);color:#ededed;border:1px solid rgba(255,255,255,0.08);box-shadow:inset 0 1px 0 0 rgba(255,255,255,0.05)}
+.unravel-workspace .product-button.secondary:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.16);color:#ffffff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.25)}
+.unravel-workspace .product-button.secondary:active{transform:translateY(0);background:rgba(255,255,255,0.05)}
+.unravel-workspace .product-button:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
 .unravel-workspace .product-account{margin-top:auto;display:flex;align-items:center;gap:12px;font-size:13px;min-width:0}
 .unravel-workspace .product-account>div{display:grid;gap:4px}
 .unravel-workspace .product-account button{text-align:left;width:max-content}

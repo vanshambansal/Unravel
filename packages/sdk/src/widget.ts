@@ -46,7 +46,9 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
       if (status.state === 'recording') update('recording');
       if (status.state === 'stopped' && recorder) {
         error = status.reason !== 'manual' ? `Recording stopped: ${status.reason}. Review this partial recording before sending.` : '';
-        update(recorder.getRecording()?.hasFullSnapshot ? 'describe' : 'ready');
+        const hasRecording = recorder.getRecording()?.hasFullSnapshot;
+        if (hasRecording) opened = true;
+        update(hasRecording ? 'describe' : 'ready');
       }
     },
     onSubmissionChange(status) { options.onSubmissionChange?.(status); },

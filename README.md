@@ -127,9 +127,11 @@ For verification alongside a developer server, set `UNRAVEL_NEXT_OUTPUT=.next-ve
 From a normal-network PowerShell terminal with the existing ignored local development credentials configured:
 
 ```powershell
-$env:UNRAVEL_NEXT_OUTPUT = '.next-responsive-complete'
+$env:UNRAVEL_NEXT_OUTPUT = '.next-navigation13'
+$env:PREVIEW_PORT = '3032'
+$env:PREVIEW_REPLAY_PORT = '4194'
 corepack pnpm build
 corepack pnpm preview:local
 ```
 
-Keep the same output name for build/start. This uses localhost:3020 and a separate127.0.0.1:4191 replay host allowing exactly that dashboard. Stop this task's existing preview before starting another on those ports. The runner checks existing Clerk/database connectivity and does not provision services, migrate data or enable public ingestion. It passes no application credentials to the replay process. `node --experimental-strip-types scripts/preview-local.mjs --check` performs only connectivity checks. Use development Clerk keys locally; hosted production configuration is separate. Actual verification and remaining latency: [audit](docs/audits/AUTH_RESPONSIVENESS_2026-11-12.md).
+Keep the same output name for build/start. These settings use localhost:3032 and a separate127.0.0.1:4194 replay host allowing exactly that dashboard;3020/4191 remains the earlier comparison preview. Stop this task's existing preview before starting another on those ports. The runner checks existing Clerk/database connectivity and does not provision services, migrate data or enable public ingestion. It passes no application credentials to the replay process. `node --experimental-strip-types scripts/preview-local.mjs --check` performs only connectivity checks. Use development Clerk keys locally; hosted production configuration is separate. Actual verification and remaining latency: [audit](docs/audits/FLUIDITY_IMPLEMENTATION_2026-11-13.md).

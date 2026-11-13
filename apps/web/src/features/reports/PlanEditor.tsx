@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import type { SemanticEvent } from '@unravel/contracts';
 import { TestPlanSchema,planIssues,stepIssues,assertionIssues,describeStep,describeAssertion,emptyLocator,exportPlaywright,type TestPlan,type PlanStep,type PlanAssertion,type ExportMode } from '@unravel/test-plan';
 import { motion } from 'motion/react';
+import type { PlanResponse } from './plan-loader';
 import { PlanInspector,PlanPrompt,StepFields,OutcomeFields,outcomeNames,newAssertion } from './PlanControls';
 import { PlanCode } from './PlanCode';
 import { RunGuide } from './RunGuide';
@@ -11,7 +12,7 @@ import { startHistory,commitHistory,undoHistory,redoHistory,readDraft,rememberDr
 
 type Selection=PlanSelection & {position?:number};
 function downloadText(text:string,name:string,type='text/plain'){const url=URL.createObjectURL(new Blob([text],{type})),link=document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-export function PlanEditor({projectId,reportId,events,onInspectEvidence}:{projectId:string;reportId:string;events:SemanticEvent[];onInspectEvidence(at:number):void}) {
+export function PlanEditor({projectId,reportId,events,onInspectEvidence,loadPlan}:{projectId:string;reportId:string;events:SemanticEvent[];onInspectEvidence(at:number):void;loadPlan?:(fresh?:boolean)=>Promise<PlanResponse>}) {
   const router=useRouter(),key=`${projectId}/${reportId}`,endpoint=`/api/projects/${projectId}/reports/${reportId}/plan`;
   const [history,setHistory]=useState<PlanHistory|null>(null),[baseline,setBaseline]=useState(''),[revision,setRevision]=useState(0),[generated,setGenerated]=useState<TestPlan|null>(null),[targetOrigin,setTargetOrigin]=useState('');
   const [raw,setRaw]=useState(''),[selection,setSelection]=useState<Selection|null>(null),[mode,setMode]=useState<ExportMode>('reproduction'),[view,setView]=useState<'steps'|'code'>('steps'),[format,setFormat]=useState<'javascript'|'json'>('javascript');
@@ -27,10 +28,10 @@ export function PlanEditor({projectId,reportId,events,onInspectEvidence}:{projec
   const dirty=dirtyPlan||rawDirty||stagedDirty;
   useEffect(()=>{
     const controller=new AbortController();let active=true;
-    fetch(endpoint,{cache:'no-store',signal:controller.signal}).then(async response=>{if(!response.ok)throw new Error();const data=await response.json(),saved=TestPlanSchema.parse(data.plan),original=TestPlanSchema.parse(data.generated??data.plan),cached=readDraft(key);if(!active)return;
+    (loadPlan?loadPlan(reload>0):fetch(endpoint,{cache:'no-store',signal:controller.signal}).then(async response=>{if(!response.ok)throw new Error();return await response.json() as PlanResponse;})).then(data=>{const saved=TestPlanSchema.parse(data.plan),original=TestPlanSchema.parse(data.generated??data.plan),cached=readDraft(key);if(!active)return;
       setHistory(startHistory(cached?.plan??saved));setRaw(cached?.raw??JSON.stringify(saved,null,2));setBaseline(cached?.baseline??JSON.stringify(saved));setRevision(cached?.revision??data.revision);setGenerated(original);setTargetOrigin(data.targetOrigin??'');setMode(cached?.mode??(saved.assertions.length?'regression':'reproduction'));setSelection(cached?.selection??null);setConflict(!!cached&&cached.revision!==data.revision);setPending(false);setError(cached&&cached.revision!==data.revision?'The saved version changed while your local draft was open. Keep a JSON copy before reloading.':'');setStatus(cached?'Recovered unsaved draft in this tab':data.revision?'Saved draft loaded':'Steps generated from the recording');
     }).catch(()=>{if(active){setPending(false);setError('Could not load the plan. Retry; existing saved data has not changed.');}});return()=>{active=false;controller.abort();};
-  },[endpoint,key,reload]);
+  },[endpoint,key,reload,loadPlan]);
   useEffect(()=>{if(plan)rememberDraft(key,dirty?{plan,raw,baseline,revision,mode,selection}:null);},[plan,raw,baseline,revision,mode,selection,key,dirty]);
   useEffect(()=>{if(!dirty)return;function unload(event:BeforeUnloadEvent){if(!bypass.current){event.preventDefault();event.returnValue='';}}function click(event:MouseEvent){if(bypass.current||event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||!(event.target instanceof Element))return;const link=event.target.closest<HTMLAnchorElement>('a[href]');if(!link||link.download||link.target&&link.target!=='_self')return;let url:URL;try{url=new URL(link.href,location.href);}catch{return;}if(!['http:','https:'].includes(url.protocol)||url.origin===location.origin&&url.pathname===location.pathname&&url.search===location.search)return;event.preventDefault();event.stopImmediatePropagation();setNavTarget(url.href);}window.addEventListener('beforeunload',unload);document.addEventListener('click',click,true);return()=>{window.removeEventListener('beforeunload',unload);document.removeEventListener('click',click,true);};},[dirty]);
   function commit(next:TestPlan,clearConfirmation=true){if(!history||pending)return;if(rawDirty){setError('Apply or discard JSON edits before changing the reviewed steps.');setView('code');setFormat('json');return;}const value=clearConfirmation?{...next,expectedBehaviorConfirmed:false}:next;setHistory(commitHistory(history,value));setRaw(JSON.stringify(value,null,2));setStatus('Unsaved changes');setError('');}

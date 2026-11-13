@@ -12,14 +12,19 @@ import { framing } from './framing';
 import { loadArchitecture } from './architecture';
 import type { Quality } from './quality';
 
+/** Broad glow does not need the scene's fine-edge raster budget. */
+class ArchitecturalBloom extends UnrealBloomPass {
+  override setSize(width: number, height: number) { super.setSize(Math.max(1, Math.round(width * .65)), Math.max(1, Math.round(height * .65))); }
+}
+
 export interface SceneMetrics {
-  drawCalls: number; triangles: number; quality: Quality; pixelRatio: number;
+  drawCalls: number; triangles: number; quality: Quality; pixelRatio: number; resolutionScale: number;
   camera: number[]; ambientTime: number; bloom: number; renderer: string; asset: string;
   environment: { crimsonIntensity: number; edgeIntensity: number; hazeOffset: number; reflectionStrength: number };
 }
 export interface ArchitecturalScene {
   updateProgress(progress: number): void; resize(width: number, height: number): void;
-  pauseAmbient(paused: boolean): void; reduceQuality(): boolean;
+  pauseAmbient(paused: boolean): void; reduceResolution(): boolean; reduceQuality(): boolean;
   render(delta: number): void; metrics(): SceneMetrics; dispose(): void;
 }
 
@@ -45,6 +50,12 @@ export async function initializeScene(canvas: HTMLCanvasElement, quality: Qualit
   // shadow map produced hard moving floor bands, unlike a broad ceiling aperture.
   renderer.shadowMap.enabled = false;
   renderer.info.autoReset = false;
+  architecture.root.traverse(node => {
+    if (!(node instanceof THREE.Mesh)) return;
+    for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
+      for (const value of Object.values(material)) if (value instanceof THREE.Texture) value.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+    }
+  });
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#05090d');
   scene.fog = new THREE.FogExp2('#0a141b', .01); scene.add(architecture.root);
   const camera = new THREE.PerspectiveCamera(53, 1, .15, 180);
@@ -79,9 +90,10 @@ export async function initializeScene(canvas: HTMLCanvasElement, quality: Qualit
   const rear = new THREE.PointLight('#d80b27', 45, 40, 1.4); rear.position.set(14, 5, -58); scene.add(rear);
 
   let reflection: Reflector | undefined;
+  let reflectionDirty = true, reflectedAt = -1;
   const roughness = architecture.floor?.roughnessMap;
   if (quality === 'desktop' && roughness) {
-    reflection = new Reflector(new THREE.PlaneGeometry(84, 144), { color: 0x626c77, textureWidth: 640, textureHeight: 400, clipBias: .004, multisample: 0 });
+    reflection = new Reflector(new THREE.PlaneGeometry(84, 144), { color: 0x626c77, textureWidth: 768, textureHeight: 512, clipBias: .004, multisample: 2 });
     reflection.rotation.x = -Math.PI / 2; reflection.position.set(3, -.035, -28);
     const shader = reflection.material as THREE.ShaderMaterial;
     shader.transparent = true; shader.depthWrite = false;
@@ -101,6 +113,13 @@ export async function initializeScene(canvas: HTMLCanvasElement, quality: Qualit
       `)
       .replace('gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );', 'gl_FragColor = vec4(base.rgb, reflectionStrength * (1.0 - rough * .7));');
     scene.add(reflection);
+    const updateReflection = reflection.onBeforeRender.bind(reflection);
+    reflection.onBeforeRender = (...args) => {
+      // Every moving-camera frame is fresh. At rest, only the very slow haze
+      // changes; reuse its reflection briefly instead of rendering the room twice.
+      if (!reflectionDirty && ambient - reflectedAt < .1) return;
+      updateReflection(...args); reflectionDirty = false; reflectedAt = ambient;
+    };
   }
 
   const atmosphere = atmosphereTexture();
@@ -112,54 +131,61 @@ export async function initializeScene(canvas: HTMLCanvasElement, quality: Qualit
   // Canvas antialiasing cannot smooth geometry rendered into the composer's target.
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), .24, .65, 1.15); composer.addPass(bloom);
+  const bloom = new ArchitecturalBloom(new THREE.Vector2(512, 512), .18, .65, 1.25); composer.addPass(bloom);
   const output = new OutputPass(); composer.addPass(output);
-  const antialias = new ShaderPass(FXAAShader); // Preserve fine PBR texture; reserve the edge search for architectural contrast.
-  antialias.material.fragmentShader = antialias.material.fragmentShader
-    .replace('#define EDGE_STEP_COUNT 6', '#define EDGE_STEP_COUNT 3')
-    .replace('#define EDGE_STEPS 1.0, 1.5, 2.0, 2.0, 2.0, 4.0', '#define EDGE_STEPS 1.0, 2.0, 4.0')
-    .replace('_ContrastThreshold = 0.0312', '_ContrastThreshold = 0.08')
-    .replace('_RelativeThreshold = 0.063', '_RelativeThreshold = 0.18');
+  const antialias = new ShaderPass(FXAAShader);
+  // Full edge search keeps narrow architectural highlights continuous.
   composer.addPass(antialias);
-  let progress = 0, ambient = 0, paused = false, disposed = false;
+  let progress = 0, ambient = 0, paused = false, disposed = false, sceneDirty = true;
   let currentQuality = quality, width = 1, height = 1;
+  const originalRatio = renderer.getPixelRatio();
+  let resolutionScale = 1;
   const context = renderer.getContext(), debug = context.getExtension('WEBGL_debug_renderer_info');
   const rendererName = debug ? String(context.getParameter(debug.UNMASKED_RENDERER_WEBGL)) : 'WebGL2';
   function updateCamera() {
     const frame = choreography(progress);
     const x = framing(width, height, innerWidth).mobile ? 1.5 + 1.5 * ((frame.camera.x + 3.5) / 6.5) : frame.camera.x;
     camera.position.set(x, frame.camera.y, frame.camera.z); camera.lookAt(frame.look.x, frame.look.y, frame.look.z);
-    bloom.strength = (quality === 'desktop' ? .24 : .16) + frame.glow * .32;
-    doorway.intensity = 5 + frame.glow * 6;
+    bloom.strength = (quality === 'desktop' ? .18 : .12) + frame.glow * .16;
+    doorway.intensity = 5 + frame.glow * 3;
   }
   function resize() {
+    reflectionDirty = sceneDirty = true;
     const frame = framing(width, height, innerWidth);
     camera.aspect = frame.aspect; camera.fov = frame.fov; camera.updateProjectionMatrix();
     renderer.setSize(frame.width, frame.height, false); composer.setSize(frame.width, frame.height);
     antialias.uniforms.resolution.value.set(1 / (frame.width * renderer.getPixelRatio()), 1 / (frame.height * renderer.getPixelRatio())); updateCamera();
   }
   const api: ArchitecturalScene = {
-    updateProgress(value) { progress = value; updateCamera(); },
+    updateProgress(value) { if (value === progress) return; reflectionDirty = sceneDirty = true; progress = value; updateCamera(); },
     resize(nextWidth, nextHeight) { width = nextWidth; height = nextHeight; resize(); },
     pauseAmbient(value) { paused = value; },
+    reduceResolution() {
+      const minimumScale = Math.min(1, 1 / originalRatio);
+      if (currentQuality === 'low' || resolutionScale <= minimumScale) return false;
+      resolutionScale = Math.max(minimumScale, Math.round((resolutionScale - .1) * 10) / 10);
+      renderer.setPixelRatio(originalRatio * resolutionScale);
+      composer.setPixelRatio(originalRatio * resolutionScale);
+      resize();
+      return true;
+    },
     reduceQuality() {
       if (currentQuality === 'low') return false;
-      currentQuality = 'low'; if (reflection) reflection.visible = false;
+      currentQuality = 'low'; resolutionScale = .75 / originalRatio; if (reflection) reflection.visible = false;
       renderer.shadowMap.enabled = false; bloom.enabled = false;
       renderer.setPixelRatio(.75); composer.setPixelRatio(.75); resize(); return true;
     },
     render(delta) {
       if (disposed) return;
       if (!paused) ambient += Math.min(delta, .05);
-      crimson.intensity = 4 + Math.sin(ambient * .25) * .5;
-      crimson.position.z = -25 + Math.sin(ambient * .12) * 3;
-
-      architecture.edges.forEach(material => { material.emissiveIntensity = 1.3 + Math.sin(ambient * .18) * .035; });
-      if (reflection) (reflection.material as THREE.ShaderMaterial).uniforms.reflectionStrength.value = .3 + Math.sin(ambient * .24) * .025;
-      haze.forEach((mesh, i) => { mesh.position.x = (i ? 15 : -9) + Math.sin(ambient * .08 + i) * 1.6; });
-      renderer.info.reset(); composer.render(delta);
+      if (!sceneDirty) { renderer.info.reset(); return; }
+      // Anchored illumination and haze reuse their last frame until input changes.
+      crimson.intensity = 4;
+      architecture.edges.forEach(material => { material.emissiveIntensity = 1.3; });
+      haze.forEach((mesh, i) => { mesh.position.x = (i ? 15 : -9) + Math.sin(i) * 1.6; });
+      renderer.info.reset(); composer.render(delta); sceneDirty = false;
     },
-    metrics() { return { drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, quality: currentQuality, pixelRatio: renderer.getPixelRatio(), camera: camera.position.toArray(), ambientTime: ambient, bloom: bloom.enabled ? bloom.strength : 0, renderer: rendererName, asset: 'Blender architecture-v1 / scanned PBR + indirect/AO atlases', environment: { crimsonIntensity: crimson.intensity, edgeIntensity: architecture.edges[0]?.emissiveIntensity ?? 0, hazeOffset: haze[0].position.x, reflectionStrength: reflection ? (reflection.material as THREE.ShaderMaterial).uniforms.reflectionStrength.value : 0 } }; },
+    metrics() { return { drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, quality: currentQuality, pixelRatio: renderer.getPixelRatio(), resolutionScale, camera: camera.position.toArray(), ambientTime: ambient, bloom: bloom.enabled ? bloom.strength : 0, renderer: rendererName, asset: 'Blender architecture-v1 / scanned PBR + indirect/AO atlases', environment: { crimsonIntensity: crimson.intensity, edgeIntensity: architecture.edges[0]?.emissiveIntensity ?? 0, hazeOffset: haze[0].position.x, reflectionStrength: reflection ? (reflection.material as THREE.ShaderMaterial).uniforms.reflectionStrength.value : 0 } }; },
     dispose() {
       if (disposed) return; disposed = true; architecture.dispose();
       haze.forEach(mesh => { mesh.geometry.dispose(); mesh.material.dispose(); }); atmosphere.dispose();

@@ -15,7 +15,7 @@ function label(event: SemanticEvent): string {
   if (event.kind === 'error') return `${event.errorType} · ${event.message ?? 'message masked'}`;
   return `Navigate · ${event.url.path ?? '[path masked]'}`;
 }
-export function ReportViewer({ projectId, reportId, events, durationMs, startedAt, replayOrigin, styled = false, initialOffset, onReviewPlan }: { projectId: string; reportId: string; events: SemanticEvent[]; durationMs: number; startedAt: number; replayOrigin: string; styled?: boolean; initialOffset?: number; onReviewPlan?: () => void }) {
+export function ReportViewer({ projectId, reportId, events, durationMs, startedAt, replayOrigin, styled = false, initialOffset, seekRequest = 0, isActive = true, onReviewPlan }: { projectId: string; reportId: string; events: SemanticEvent[]; durationMs: number; startedAt: number; replayOrigin: string; styled?: boolean; initialOffset?: number; seekRequest?: number; isActive?: boolean; onReviewPlan?: () => void }) {
   const container = useRef<HTMLDivElement>(null), bridge = useRef<(type: string, offset?: number) => void>(() => {});
   const [state, setState] = useState('Loading replay'), [offset, setOffset] = useState(0), [playing, setPlaying] = useState(false);
   const [selected, setSelected] = useState<number | null>(null), [error, setError] = useState('');
@@ -28,13 +28,34 @@ export function ReportViewer({ projectId, reportId, events, durationMs, startedA
   const visible = useMemo(() => entries.filter(({event})=>filter==='all'||event.kind===filter), [entries,filter]);
   const chosen = selected === null ? null : events[selected];
   const router = useRouter();
+  const [attempt, setAttempt] = useState(0);
+  const cursor = useRef(initialOffset ?? 0);
+  const seek = useCallback((at: number) => { cursor.current = Math.max(0, Math.min(durationMs, at)); setPlaying(false); setOffset(cursor.current); bridge.current('seek', cursor.current); }, [durationMs]);
+  const selectEvidence = useCallback((index: number, at: number) => { setSelected(index); seek(at); }, [seek]);
+  const lastRequest = useRef<{ at: number; request: number } | null>(null);
   useEffect(() => {
+    if (!isActive || state !== 'Replay ready' || initialOffset === undefined) return;
+    if (lastRequest.current?.at === initialOffset && lastRequest.current.request === seekRequest) return;
+    lastRequest.current = { at: initialOffset, request: seekRequest };
+    seek(initialOffset);
+    const index = events.findIndex(event => event.at === initialOffset);
+    setSelected(index < 0 ? null : index);
+  }, [initialOffset, seekRequest, isActive, state, events, seek]);
+  useEffect(() => {
+    const pause = () => { bridge.current('pause', cursor.current); setPlaying(false); };
+    if (!isActive) pause();
+    const visibility = () => { if (document.hidden) pause(); };
+    document.addEventListener('visibilitychange', visibility);
+    return () => document.removeEventListener('visibilitychange', visibility);
+  }, [isActive]);
+  useEffect(() => {
+    setState('Loading replay'); setError(''); setPlaying(false);
     const root = container.current!; const frame = document.createElement('iframe');
     if (!validReplayOrigin(replayOrigin,location.origin)) { setError('Configure an isolated HTTPS replay origin (or separate loopback development origin).'); return; }
     // Permissions apply to a separate trusted origin, never to the dashboard or recorded document.
     frame.title = 'Session replay'; frame.setAttribute('sandbox', 'allow-scripts allow-same-origin'); frame.referrerPolicy = 'no-referrer'; frame.src = replayOrigin + '/';
-    const controller = new AbortController(), channel = crypto.randomUUID(); let ready = false, active = true, initialized = false;
-    const startup = window.setTimeout(() => { if (active && !ready) { setState('Replay unavailable'); setError('The isolated replay host is unavailable. Start pnpm replay:dev, then reload. Your report and timeline are still saved.'); } }, 10000);
+    const controller = new AbortController(), channel = crypto.randomUUID(); let ready = false, active = true, initialized = false, acknowledged = false;
+    const startup = window.setTimeout(() => { if (active && !acknowledged) { frame.style.display = 'none'; setState('Replay taking longer'); setError('The replay is taking longer than usual. You can wait or retry. Your report and timeline are saved.'); } }, 4000);
     let replay: unknown[] | null = null, baseline = 0;
     function send(type: string, at = 0) { frame.contentWindow?.postMessage({ type, channel, offset: Math.max(0, at - baseline) }, replayOrigin); }
     bridge.current = send;
@@ -45,25 +66,24 @@ export function ReportViewer({ projectId, reportId, events, durationMs, startedA
       if (!active || event.origin !== replayOrigin || event.source !== frame.contentWindow || !event.data || typeof event.data !== 'object') return;
       if (event.data.type === 'ready') { ready = true; initialize(); return; }
       if (event.data.channel !== channel) return;
-      if (event.data.type === 'initialized') { clearTimeout(startup); setState('Replay ready'); if (initialOffset !== undefined) { send('seek', Math.min(durationMs, initialOffset)); setSelected(events.findIndex(event => event.at === initialOffset)); } }
+      if (event.data.type === 'initialized') { acknowledged = true; clearTimeout(startup); frame.style.display = ''; setError(''); setState('Replay ready'); send('seek', Math.min(durationMs, cursor.current)); }
       else if (event.data.type === 'finished') { setPlaying(false); setOffset(durationMs); }
-      else if (event.data.type === 'failure') { setState('Replay unavailable'); setError('This masked recording could not be replayed. Its timeline is still available.'); }
+      else if (event.data.type === 'failure') { setPlaying(false); frame.style.display = 'none'; setState('Replay unavailable'); setError('This masked recording could not be replayed. Its timeline is still available.'); }
       else if (['time','seeked'].includes(event.data.type) && typeof event.data.offset === 'number' && Number.isFinite(event.data.offset)) {
-        const actual = Math.min(durationMs, Math.max(0, event.data.offset + baseline)); root.dataset.replayTime = String(actual); setOffset(actual);
+        const actual = Math.min(durationMs, Math.max(0, event.data.offset + baseline)); root.dataset.replayTime = String(actual); cursor.current = actual; setOffset(actual);
       }
     }
     window.addEventListener('message', message); frame.addEventListener('load', () => send('ping')); root.append(frame);
+    const requestTimeout = window.setTimeout(() => controller.abort(), 60000);
     fetch(`/api/projects/${projectId}/reports/${reportId}/replay`, { signal: controller.signal, cache: 'no-store' }).then(async response => {
       if (!response.ok) throw new Error(); const data = await response.json();
       if (!active || !Array.isArray(data.replay)) return;
       const viewport=data.replay.find((event:{type:number})=>event.type===4)?.data;
       if(viewport?.width>0&&viewport?.height>0)setRatio(`${viewport.width} / ${viewport.height}`);
       replay = data.replay; baseline = Math.max(0, Number(data.replay[0]?.timestamp ?? startedAt) - startedAt); initialize();
-    }).catch(() => { if (active) { setError('Could not load the recording. Reload to retry.'); setState('Replay unavailable'); } });
-    return () => { active = false; clearTimeout(startup); controller.abort(); window.removeEventListener('message', message); frame.remove(); bridge.current = () => {}; };
-  }, [projectId, reportId, durationMs, startedAt, replayOrigin, initialOffset, events]);
-  const seek = useCallback((at: number) => { setPlaying(false); setOffset(at); bridge.current('seek', at); }, []);
-  const selectEvidence = useCallback((index: number, at: number) => { setSelected(index); seek(at); }, [seek]);
+    }).catch(() => { if (active) { frame.style.display = 'none'; setError('Could not load the recording. Retry the replay to try again.'); setState('Replay unavailable'); } }).finally(() => clearTimeout(requestTimeout));
+    return () => { active = false; clearTimeout(startup); clearTimeout(requestTimeout); controller.abort(); window.removeEventListener('message', message); frame.remove(); bridge.current = () => {}; };
+  }, [projectId, reportId, durationMs, startedAt, replayOrigin, events, attempt]);
   async function remove() {
     setDeleting(true); setError('');
     try { const response = await fetch(`/api/projects/${projectId}/reports/${reportId}`, { method: 'DELETE' }); if (!response.ok) throw new Error(); router.push(`/app/projects/${projectId}/reports`); router.refresh(); }
@@ -74,8 +94,21 @@ export function ReportViewer({ projectId, reportId, events, durationMs, startedA
     <InvestigationSurface className="report-grid" ref={grid} style={{'--replay-share':`${share}%`} as CSSProperties}>
       <section id="report-replay" className="report-replay" aria-label="Recorded session">
         <PanelHeading title="Session replay" status={<span role="status" className="product-small">{state}</span>} />
-        <div className="report-player" ref={container} style={{aspectRatio:ratio}} />
-        <div className="report-controls"><button className="product-button secondary" disabled={state !== 'Replay ready'} onClick={() => { const next = !playing && offset >= durationMs - 20 ? 0 : offset; bridge.current(playing ? 'pause' : 'play', next); setOffset(next); setPlaying(!playing); }}>{playing ? 'Pause replay' : 'Play replay'}</button><button className="product-button secondary" disabled={state !== 'Replay ready'} aria-pressed={actualSize} onClick={() => { bridge.current(actualSize ? 'fit' : 'actual'); if(actualSize) container.current?.scrollIntoView({block:'nearest',behavior:'instant'}); setActualSize(!actualSize); }}>{actualSize ? 'Fit recording' : '100% size'}</button><output data-testid="replay-time" aria-live="off">{timestamp(offset)} / {timestamp(durationMs)}</output></div>
+        <div className="report-player" ref={container} style={{aspectRatio:ratio}}>
+          {(state === 'Replay unavailable' || state === 'Replay taking longer') && (
+            <div className="report-offline-fallback" role="region" aria-label="Replay unavailable">
+              <div className="report-offline-badge">
+                <span className="report-offline-dot" aria-hidden="true" />
+                <span>Replay unavailable</span>
+              </div>
+              <h3>The replay is not ready yet</h3>
+              <p>Check the configured isolated player at <code>{replayOrigin}</code>, then retry. The local production preview uses its paired player; development uses <code>pnpm replay:dev</code>.</p>
+              <button type="button" className="product-button secondary" onClick={() => setAttempt(value => value + 1)}>Retry replay</button>
+              <small>All recorded timeline events, actions, and network calls below remain fully interactive.</small>
+            </div>
+          )}
+        </div>
+        <div className="report-controls"><button className="product-button secondary" disabled={state !== 'Replay ready'} onClick={() => { const next = !playing && offset >= durationMs - 20 ? 0 : offset; bridge.current(playing ? 'pause' : 'play', next); cursor.current = next; setOffset(next); setPlaying(!playing); }}>{playing ? 'Pause replay' : 'Play replay'}</button><button className="product-button secondary" disabled={state !== 'Replay ready'} aria-pressed={actualSize} onClick={() => { bridge.current(actualSize ? 'fit' : 'actual'); if(actualSize) container.current?.scrollIntoView({block:'nearest',behavior:'instant'}); setActualSize(!actualSize); }}>{actualSize ? 'Fit recording' : '100% size'}</button><output data-testid="replay-time" aria-live="off">{timestamp(offset)} / {timestamp(durationMs)}</output></div>
         <p className="product-small">{actualSize?'Scroll inside the recording to inspect it at its original size.':'Fit shows the complete viewport. Use 100% size to inspect small details.'}</p>
         <label className="product-small" htmlFor="replay-position">Replay position</label>
         <input id="replay-position" type="range" min="0" max={durationMs} step="10" value={offset} onChange={event => seek(Number(event.target.value))} disabled={state !== 'Replay ready'} />

@@ -1,6 +1,6 @@
 import { and, desc, eq, inArray, ilike, or, count, sql, isNull } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { projects, reports, reportPayloads, ingestionBudgets, accountIntakeBlocks, type Report } from '../db/schema.ts';
+import { projects, reports, reportPayloads, reportTestPlans, ingestionBudgets, accountIntakeBlocks, type Report } from '../db/schema.ts';
 import type * as schema from '../db/schema.ts';
 import type { ReportSubmission } from '@unravel/contracts';
 import { REPORT_PAGE_SIZE, type ReportQuery, type ReportStatus } from '../../features/reports/management.ts';
@@ -54,8 +54,21 @@ export function reportRepository(db: NodePgDatabase<typeof schema>) {
       const [row]=await db.insert(ingestionBudgets).values({projectId,minute,minuteCount:1,day,dayCount:1}).onConflictDoUpdate({target:ingestionBudgets.projectId,set:{minute,day,minuteCount:sql`case when ${ingestionBudgets.minute} = ${minute} then ${ingestionBudgets.minuteCount} + 1 else 1 end`,dayCount:sql`case when ${ingestionBudgets.day} = ${day} then ${ingestionBudgets.dayCount} + 1 else 1 end`},setWhere:sql`(${ingestionBudgets.minute} <> ${minute} or ${ingestionBudgets.minuteCount} < 30) and (${ingestionBudgets.day} <> ${day} or ${ingestionBudgets.dayCount} < 200)`}).returning({id:ingestionBudgets.projectId});
       if(!row)throw new ApplicationError(429,'This project has reached its submission-attempt limit. Keep your recording and retry later.');
     },
+    async assertOwned(ownerId: string, projectId: string, reportId: string): Promise<boolean> {
+      const [row] = await db.select({ id: reports.id }).from(reports).innerJoin(projects, eq(projects.id, reports.projectId)).where(and(owned(ownerId, projectId), eq(reports.id, reportId))).limit(1);
+      return Boolean(row);
+    },
     async detail(ownerId: string, projectId: string, reportId: string) {
       const [row] = await db.select({ report: reports, events: reportPayloads.events }).from(reports).innerJoin(projects, eq(projects.id, reports.projectId)).innerJoin(reportPayloads, eq(reportPayloads.reportId, reports.id)).where(and(owned(ownerId, projectId), eq(reports.id, reportId))).limit(1);
+      return row;
+    },
+    async planContext(ownerId: string, projectId: string, reportId: string) {
+      // One authorized snapshot, one connection; replay bytes are not selected.
+      const [row] = await db.select({ report: reports, events: reportPayloads.events, saved: reportTestPlans }).from(reports)
+        .innerJoin(projects, eq(projects.id, reports.projectId))
+        .innerJoin(reportPayloads, eq(reportPayloads.reportId, reports.id))
+        .leftJoin(reportTestPlans, eq(reportTestPlans.reportId, reports.id))
+        .where(and(owned(ownerId, projectId), eq(reports.id, reportId))).limit(1);
       return row;
     },
     async replay(ownerId: string, projectId: string, reportId: string) {

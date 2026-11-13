@@ -1,8 +1,50 @@
 # Project status
 
-Updated: 2026-11-12 (India time).
+Updated: 2026-11-13 (India time).
 
 New conversation: start with [HANDOFF.md](HANDOFF.md) for the reading map, stopping point and proposed remaining order.
+
+## Collection navigation continuity - 2026-11-13
+
+Reproduced the user's remaining loading complaint on development3000: production prefetch is absent there, and nested collection loading boundaries were replacing completed views with skeletons. Moved those placeholders to reusable feature components so ordinary navigation retains the current page until destination data is ready; first-workspace/auth loading and error/retry remain. [Cause, implementation and real delayed-response evidence](audits/NAVIGATION_CONTINUITY_2026-11-13.md).
+
+Original3000 passed a500ms held-response check and three round trips without skeletons (development still made route requests). Updated production3032 passed three round trips with0 additional collection RSC requests and no skeletons; search/shared generator and replay recovery also passed,3/3 total. Build/TypeScript/focused lint/whitespace checks passed. Production3032 now uses `.next-navigation13`, paired with the same isolated4194. Source changes are already on original3000; no new deployment/dependency/private cache or database change.
+
+## Search, repeat navigation and steady entrance follow-up - 2026-11-13
+
+Implemented the user's screenshot-led search cleanup, full prefetch for the two primary navigation destinations, steady opening light, aligned narrower emitters, reduced bloom/spill, clearer PBR sampling and normal raster floor1. A settled room/unchanged rays reuse completed GPU images with anchored haze. [Changes, production checks, measurements and limits](audits/CINEMA_SEARCH_NAVIGATION_2026-11-13.md).
+
+Production search test passed three All projects/Reports round trips without additional RSC reads for either collection. Search keyboard/clear/history/mobile and replay recovery checks passed. Final landing lifecycle11/11 and auth refresh/logout/Back/API401 checks passed. Build/TypeScript/lint/unit47, posters and original52-file integrity passed. Desktop search/entrance images were inspected. Stationary scheduling improved to11.1ms median/11.2-11.4ms p95 over a one-minute hero session using cached scene images. Sustained reversals remain22.2/55.6ms median/p95; moving60fps and physical-device strip/aesthetic acceptance remain open. Later landing simplification is proposed, not implemented.
+
+Current preview `.next-cinema13`:3032 with isolated4194. Earlier3031/4193 is a comparison. No new keys/dependencies/infrastructure, commit or deployment; temporary3030 stopped.
+
+## Implemented approved responsiveness and entrance refinement - 2026-11-13
+
+The user approved the complete discussion. Implemented streamed authorized chrome, bounded earlier route preparation, a shared report-local anticipated plan read, one ownership-checked plan-context query, attributed connection/query timings and longer bounded idle connection reuse. Camera tracking is tighter and synchronized with reveals; fixtures/reflections are anchored, pale light is quieter/cooler, edges/reflections and bloom budgets are refined, posters regenerated and startup crossfades. A controlled comparison isolated ray CSS-mask compositor overhead; the same aperture now runs in the shader. [Implementation, measurements, failed experiments and limits](audits/FLUIDITY_IMPLEMENTATION_2026-11-13.md).
+
+Production build, TypeScript, lint, unit47 and real PostgreSQL report integration passed. Hardware Chrome management/pipeline/generator workflows passed; separate read-only prepared navigation, Back/refresh/mobile and delayed-host/17-second recording recovery passed. The shader-aperture landing lifecycle suite passed11/11, followed by final rendering/recovery smoke3/3 after the transparent-pixel early return. Desktop/mobile product and entrance images were visually inspected. Prepared navigation measured153ms with no fallback/duplicate route read; a35s-idle plan read fell613 to152ms. The final entrance sample at0.8 ratio measured11.3ms median/33.2ms p95 against a matched baseline22.3/33.7ms. Whole-scene results remain variable; consistent60fps and physical-phone/user aesthetic acceptance are not established. Earlier harness selection/locator/reload-timing failures remain in the audit.
+
+Current local production preview: `.next-fluid13` at3031, isolated replay4193. Prior3020/4191 remains a comparison; temporary3030 development preview is stopped. No new API keys, dependencies, provisioned resources, commits or deployment. Preserve all uncommitted work.
+
+## Earlier performance and entrance discussion - 2026-11-13
+
+The user requested a discussion of native-like responsiveness, loading continuity and entrance lighting/edge stability. [Current source findings, fresh hardware-browser samples and proposed scope](audits/PERFORMANCE_DISCUSSION_2026-11-13.md) distinguish established behavior from suspected rendering causes. No application changes or new smoothness acceptance; the implemented preview and remaining limits below still apply.
+
+## Implemented Antigravity follow-up and performance work - 2026-11-13
+
+The user authorized implementation beyond the initial review. Fixed stale/concurrent search navigation, mobile hit areas, hidden replay advancement, late-host/request recovery, idle replay polling and fractional mobile fitting. Improved native dialog timing, batched CodeMirror updates and paint scheduling, minimized-widget Stop feedback and concurrent server timing attribution. Added interpolated camera motion, reduced ray uniform uploads21 to3 per frame, measured adaptive scene resolution and optimized poster delivery. Antigravity's valid UI/server work is preserved. See [implementation, measurements and remaining limits](audits/SMOOTHNESS_FIXES_2026-11-13.md).
+
+Final production build, lint, repository TypeScript, unit45/45, poster integrity/freshness and original prototype52-file integrity passed. Hardware Chrome authenticated management/pipeline/responsiveness/generator workflows passed4/4, followed by2/2 covering the last search/editor changes and17-second replay recovery. Final landing/fallback cases passed6/6 and standalone widget cases3/3. Generated regression proof passed against the fixed fixture5/5 and failed on the intended assertion against the buggy copy5/5, unchanged export/retries0. Session/refresh/logout/private-navigation checks passed on3020. Google and email-code first factors retain the user's Nov12 manual confirmation. Desktop/mobile final images were visually inspected.
+
+Alternating standard-DPI scene samples improved median22.0-22.2 to11.5-12.8ms. Tail-frame spikes persisted at about45ms p95. A high-DPI paired sample improved33.3/33.7ms median/p95 to22.2/22.6ms. Adaptive tiers lower only scene raster resolution toward0.8 after sustained slow frames and retain effects. Four full-resolution captures matched baseline exactly. Hero poster transfers fell about95%. Final controlled click samples improved dialog428 to184ms and JSON195 to107ms, while View code85 to151ms was slower and generator497 to476ms only modestly improved. Small samples vary with cache and scheduling. Consistent60fps and universally instant cold network operations are still unaccepted.
+
+Final constrained repeat measured desktop CPU4x readiness5.2s and22.3/44.7ms median/p95, mobile CPU6x/1.5Mbps readiness25.1s and22.2/33.6ms, and SaveData static readiness7.9s with zero architecture downloads. These flags are separate from complete image paint and physical-device acceptance.
+
+Current preview uses `.next-final-perf13` on3020 with isolated4191. Source/tests/docs remain uncommitted. Next bounded work is tracing a reproduced cold slow request and remaining tail-frame spikes, followed by physical-device and independent installation acceptance. Public setup requires approval. The initial audit below is historical.
+
+## Antigravity review - 2026-11-13
+
+Antigravity changes are uncommitted since5a0c28b. Fresh isolated production build/TypeScript, poster integrity and unit43 passed; lint fails on unused search page and replay effect dependency. Headed Intel Iris Xe Chrome reproduced stale search navigation after leaving Reports, hidden replay advancement and delayed-host recovery showing Replay ready with a hidden iframe. Mobile search input measures16.5px high despite no document overflow. Current cinematic median frame interval33ms and scroll p9589ms do not meet smooth60fps; later HTML story is much faster. No application fixes were made in this review. See [review and ordered technique plan](audits/ANTIGRAVITY_REVIEW_2026-11-13.md). Next: bounded lifecycle/clickability repair before separate GPU pass optimization and SDK installation verification. Earlier completion claims below remain historical.
 
 ## Authentication and internal responsiveness continuation - 2026-11-12
 
@@ -22,7 +64,7 @@ Three targeted fixes are implemented: ray sizing no longer reads layout every fr
 
 ## Current phase
 
-Unravel has a working bounded local visitor-to-developer-to-regression pipeline, and the complete landing story is implemented after the approved cinematic entrance. Current task paused at a user-requested checkpoint: local authentication is verified; cold request latency, consistent cinematic scrolling and whole-app smoothness acceptance remain unresolved. Public release is **not ready**. The full completion evidence and intermediate failures are in [this record](audits/DEFECTS_LANDING_2026-11-12.md); older status is [historical](PROJECT_STATUS_HISTORY.md).
+Unravel has a working bounded local visitor-to-developer-to-regression pipeline, and the complete landing story is implemented after the approved cinematic entrance. Local implementation and browser verification for the Nov13 follow-up are recorded above. Cold request latency, tail-frame consistency, physical-device and whole-app smoothness acceptance remain open. Public release is **not ready**. The full completion evidence and intermediate failures are in [this record](audits/DEFECTS_LANDING_2026-11-12.md); older status is [historical](PROJECT_STATUS_HISTORY.md).
 
 ## Implemented
 

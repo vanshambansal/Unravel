@@ -30,7 +30,22 @@ uniform vec3 uSource;
 uniform float uAim;
 uniform vec3 uFocus;
 uniform float uSway;
+uniform vec3 uMaskRect;
+uniform vec2 uMaskFade;
+uniform float uOpening;
 out vec4 fragColor;
+
+// Apply the same CSS-space aperture in this existing draw. Two intersecting CSS
+// masks otherwise require additional full-canvas compositor surfaces each frame.
+float aperture() {
+  vec2 p = vec2(gl_FragCoord.x / uResolution.x, 1.0 - gl_FragCoord.y / uResolution.y);
+  if (uOpening > 0.5) {
+    return clamp((p.x - uMaskRect.x) / uMaskFade.x, 0.0, 1.0)
+      * clamp((uMaskRect.y - p.x) / uMaskFade.x, 0.0, 1.0)
+      * clamp((uMaskRect.z - p.y) / uMaskFade.y, 0.0, 1.0);
+  }
+  return clamp((p.y - 0.08) / 0.14, 0.0, 1.0) * clamp((0.94 - p.y) / 0.19, 0.0, 1.0);
+}
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
@@ -73,6 +88,8 @@ float motes(vec2 p, float cell, float t, float seed) {
 }
 
 void main() {
+  float mask = aperture();
+  if (mask <= 0.0) { fragColor = vec4(0.0); return; }
   float aspect = uResolution.x / uResolution.y;
   vec2 q = (gl_FragCoord.xy - 0.5 * uResolution) / uResolution.y;
   if (uFrame.x > 0.5) q.x = -q.x;
@@ -107,7 +124,7 @@ void main() {
   if (uLight > 0.5) {
     vec3 ink = pow(light / max(peak, 1e-4), vec3(2.0)) * 0.75;
     float alpha = clamp(pow(1.0 - exp(-peak * 2.6), 2.5) * 0.9 * uOpacity + grain, 0.0, 1.0);
-    fragColor = vec4(pow(ink, vec3(1.0 / 2.2)) * alpha, alpha);
+    fragColor = vec4(pow(ink, vec3(1.0 / 2.2)) * alpha, alpha) * mask;
     return;
   }
   float mapped = 1.0 - exp(-peak);
@@ -116,7 +133,7 @@ void main() {
   vec3 shown = clamp(tone * uOpacity, 0.0, 1.0);
   float alpha = max(shown.r, max(shown.g, shown.b));
   vec3 color = clamp(shown * alpha + grain, 0.0, 1.0);
-  fragColor = vec4(min(color, vec3(alpha)), alpha);
+  fragColor = vec4(min(color, vec3(alpha)), alpha) * mask;
 }`;
 
 
@@ -149,19 +166,44 @@ export async function initializeHeroRays(canvas: HTMLCanvasElement, cancelled = 
   const vao = gl.createVertexArray();
   let time = 0, disposed = false, opening = true;
   const motion = new RayMotion();
-  let aspect = 1;
+  let aspect = 1, needsPaint = true, paintedAim = Number.NaN, paintedFocus = Number.NaN;
+  let cssWidth = 1, cssHeight = 1;
+  let clip = { left: 0, right: 1e6, bottom: 1e6 };
+  // The shader's colors and shape settings are constant during a frame sequence.
+  gl.useProgram(program);
+  const constants = { uBlend: .55, uDensity: 5, uSharpness: .35, uGlow: .85, uSaturation: 1, uDust: 0, uOpacity: .65, uReveal: 1, uLight: 0, uSway: 0 };
+  for (const [name, value] of Object.entries(constants)) gl.uniform1f(uniforms[name], value);
+  gl.uniform3f(uniforms.uColorA, .73, .79, .85); gl.uniform3f(uniforms.uColorB, .92, .94, .96);
+  gl.uniform3f(uniforms.uFrame, 0, 0, 0);
+  const updateShape = () => {
+    needsPaint = true;
+    gl.useProgram(program);
+    gl.uniform1f(uniforms.uIntensity, opening ? 1.8 : 1.5);
+    gl.uniform1f(uniforms.uSpread, opening ? .28 : .45);
+    gl.uniform1f(uniforms.uFalloff, opening ? 1.2 : 1.6);
+    const rasterAspect = canvas.width / canvas.height;
+    gl.uniform3f(uniforms.uSource, opening ? -.28 * rasterAspect : rasterAspect * .5 + .1, opening ? .7 : .62, opening ? -Math.PI / 2 : -2.48);
+    gl.uniform2f(uniforms.uResolution, canvas.width, canvas.height);
+    gl.uniform1f(uniforms.uOpening, opening ? 1 : 0);
+    gl.uniform3f(uniforms.uMaskRect, clip.left / cssWidth, clip.right / cssWidth, clip.bottom / cssHeight);
+    gl.uniform2f(uniforms.uMaskFade, 70 / cssWidth, 70 / cssHeight);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  };
   const size = () => {
     const rect = canvas.getBoundingClientRect();
+    cssWidth = Math.max(1, rect.width); cssHeight = Math.max(1, rect.height);
     aspect = rect.width / Math.max(1, rect.height);
     const ratio = Math.min(devicePixelRatio, 1, Math.sqrt(700000 / (rect.width * rect.height)));
     const w = Math.max(1, Math.round(rect.width * ratio)), h = Math.max(1, Math.round(rect.height * ratio));
     if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    updateShape();
   };
   size();
   const resizeObserver = new ResizeObserver(size);
   resizeObserver.observe(canvas);
   return {
-    opening(value: boolean) { if (opening !== value) { opening = value; motion.point(0, 0, false); } },
+    clip(left: number, right: number, bottom: number) { clip = { left, right, bottom }; updateShape(); },
+    opening(value: boolean) { if (opening !== value) { opening = value; motion.point(0, 0, false); updateShape(); } },
     pointer(x: number, y: number, inside: boolean) {
       const qx = (x - .5) * aspect, qy = .5 - y;
       const sourceX = opening ? -.28 * aspect : aspect * .5 + .1;
@@ -173,14 +215,13 @@ export async function initializeHeroRays(canvas: HTMLCanvasElement, cancelled = 
       if (disposed || gl.isContextLost()) return;
       const dt = paused ? 0 : Math.min(.05, delta);
       time += dt; motion.update(dt);
-      gl.viewport(0, 0, canvas.width, canvas.height); gl.useProgram(program); gl.bindVertexArray(vao);
-      const scalar: Record<string, number> = { uTime: time, uBlend: .35, uIntensity: opening ? 3 : 1.8, uSpread: opening ? .28 : .45, uDensity: 5, uSharpness: .5, uFalloff: opening ? 1.2 : 1.6, uGlow: 1.2, uSaturation: 1, uDust: 0, uOpacity: .8, uReveal: 1, uLight: 0, uAim: motion.x, uSway: 1 };
-      for (const [name, value] of Object.entries(scalar)) gl.uniform1f(uniforms[name], value);
-      gl.uniform2f(uniforms.uResolution, canvas.width, canvas.height);
-      gl.uniform3f(uniforms.uColorA, .94, .54, .61); gl.uniform3f(uniforms.uColorB, .86, .89, .94);
-      const aspect = canvas.width / canvas.height;
-      gl.uniform3f(uniforms.uSource, opening ? -.28 * aspect : aspect * .5 + .1, opening ? .7 : .62, opening ? -Math.PI / 2 : -2.48);
-      gl.uniform3f(uniforms.uFrame, 0, 0, 0); gl.uniform3f(uniforms.uFocus, 0, .1125, motion.focus * 1.4);
+      const aim = opening ? 0 : motion.x, focus = opening ? 0 : motion.focus;
+      if (!needsPaint && Math.abs(aim - paintedAim) < .0001 && Math.abs(focus - paintedFocus) < .0001) return;
+      needsPaint = false; paintedAim = aim; paintedFocus = focus;
+      gl.useProgram(program); gl.bindVertexArray(vao);
+      gl.uniform1f(uniforms.uTime, 0);
+      gl.uniform1f(uniforms.uAim, aim);
+      gl.uniform3f(uniforms.uFocus, 0, .1125, focus * 1.4);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
     metrics: () => ({ time, aim: motion.x, focus: motion.focus, opening }),

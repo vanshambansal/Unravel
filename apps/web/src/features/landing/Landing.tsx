@@ -2,10 +2,10 @@
 'use client';
 import {LandingStory} from './LandingStory';
 import type {LandingExample} from './story-example';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import './landing.css';
 
-export function Landing({example}:{example:LandingExample}) {
+export function Landing({example,posters}:{example:LandingExample;posters:Record<'startDesktop'|'heroDesktop'|'startMobile'|'heroMobile',string>}) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     let cancelled = false;
@@ -22,7 +22,10 @@ export function Landing({example}:{example:LandingExample}) {
     });
     return () => { cancelled = true; cleanup?.(); };
   }, []);
-  return <div className="unravel-landing" data-landing-root ref={root}>
+  return <div className="unravel-landing" data-landing-root ref={root} style={{
+    '--poster-start-desktop': `url("${posters.startDesktop}")`, '--poster-hero-desktop': `url("${posters.heroDesktop}")`,
+    '--poster-start-mobile': `url("${posters.startMobile}")`, '--poster-hero-mobile': `url("${posters.heroMobile}")`,
+  } as CSSProperties}>
     <a className="skip-content" href="#study">Skip to product information</a>
     <main>
       <section id="journey" aria-label="The Unravel architectural entrance">
@@ -57,6 +60,6 @@ export function Landing({example}:{example:LandingExample}) {
       <LandingStory example={example}/>
     </main>
 
-    <noscript><style>{`.unravel-landing .poster{background-image:url(/landing/artwork/scene-hero-desktop.png)}.unravel-landing .entrance,.unravel-landing #skip,.unravel-landing #ambient{display:none}.unravel-landing .hero,.unravel-landing .reveal{opacity:1!important;visibility:visible!important;transform:none!important}.unravel-landing .stage{position:relative}.unravel-landing #journey{height:100svh}.unravel-landing .workflow{transform:translateX(-50%)!important}@media(max-width:700px){.unravel-landing .poster{background-image:url(/landing/artwork/scene-hero-mobile.png)}}`}</style></noscript>
+    <noscript><style>{`.unravel-landing .poster{background-image:var(--poster-hero-desktop,url(/landing/artwork/scene-hero-desktop.png))}.unravel-landing .entrance,.unravel-landing #skip,.unravel-landing #ambient{display:none}.unravel-landing .hero,.unravel-landing .reveal{opacity:1!important;visibility:visible!important;transform:none!important}.unravel-landing .stage{position:relative}.unravel-landing #journey{height:100svh}.unravel-landing .workflow{transform:translateX(-50%)!important}@media(max-width:700px){.unravel-landing .poster{background-image:var(--poster-hero-mobile,url(/landing/artwork/scene-hero-mobile.png))}}`}</style></noscript>
   </div>;
 }

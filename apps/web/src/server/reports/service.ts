@@ -37,8 +37,16 @@ export function reportService(repository: ReportRepository) {
       if(!await repository.detail(ownerId,projectId,reportId))throw new ApplicationError(404,'Report not found.');
       throw new ApplicationError(409,'This report changed in another tab. Reload its saved details before saving again.');
     },
+    async assertOwned(subject: string | null, projectId: string, reportId: string) {
+      const isOwned = await repository.assertOwned(owner(subject, projectId, reportId), projectId, reportId);
+      if (!isOwned) throw new ApplicationError(404, 'Report not found.');
+    },
     async detail(subject: string | null, projectId: string, reportId: string) {
       const row = await repository.detail(owner(subject, projectId, reportId), projectId, reportId);
+      if (!row) throw new ApplicationError(404, 'Report not found.'); return row;
+    },
+    async planContext(subject: string | null, projectId: string, reportId: string) {
+      const row = await repository.planContext(owner(subject, projectId, reportId), projectId, reportId);
       if (!row) throw new ApplicationError(404, 'Report not found.'); return row;
     },
     async replay(subject: string | null, projectId: string, reportId: string) {

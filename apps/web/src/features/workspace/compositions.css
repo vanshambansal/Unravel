@@ -6,14 +6,14 @@
   --ui-space-4: 16px;
   --ui-space-5: 24px;
   --ui-space-6: 32px;
-  --ui-surface: #14161b;
-  --ui-surface-inset: #101216;
-  --ui-surface-control: #1d2027;
-  --ui-line: #ffffff12;
-  --ui-line-strong: #ffffff20;
+  --ui-surface: rgba(16, 18, 24, 0.68);
+  --ui-surface-inset: rgba(10, 12, 16, 0.72);
+  --ui-surface-control: rgba(255, 255, 255, 0.04);
+  --ui-line: rgba(255, 255, 255, 0.06);
+  --ui-line-strong: rgba(255, 255, 255, 0.08);
   --ui-radius: 14px;
-  --ui-shadow: 0 1px 1px #0005, 0 14px 40px #0002;
-  --ui-inner-light: inset 0 1px 0 #ffffff07;
+  --ui-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  --ui-inner-light: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 .unravel-workspace .ui-page { width: 100%; margin: 0 auto; }
@@ -83,24 +83,23 @@
 .unravel-workspace .ui-dialog-actions .product-button { font-size: 13px; min-height: 42px; padding: 10px 16px; }
 
 /* Resource collections: one surface, repeatable rows, a quiet toolbar and footer. */
-.unravel-workspace .ui-resource-collection { border: 1px solid var(--ui-line-strong); background: var(--ui-surface); border-radius: var(--ui-radius); box-shadow: var(--ui-inner-light), var(--ui-shadow); overflow: hidden; }
-.unravel-workspace .ui-collection-heading { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 14px 24px; border-bottom: 1px solid var(--ui-line); background: #ffffff02; }
-.unravel-workspace .ui-collection-heading h2 { font: 500 12px/20px 'Unravel Product Inter', sans-serif; color: #bfc2ca; }
-.unravel-workspace .ui-count { color: var(--product-muted); font: 11px/18px 'Unravel Product Mono', monospace; border: 1px solid var(--ui-line); border-radius: 5px; padding: 0 5px; }
+.unravel-workspace .ui-resource-collection { border: 1px solid var(--ui-line-strong); background: var(--ui-surface); border-radius: var(--ui-radius); box-shadow: var(--ui-inner-light), var(--ui-shadow); overflow: hidden; backdrop-filter: blur(20px) saturate(160%); }
+.unravel-workspace .ui-collection-heading { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 12px 22px; border-bottom: 1px solid var(--ui-line); background: rgba(255, 255, 255, 0.02); }
+.unravel-workspace .ui-collection-heading h2 { font: 500 12px/20px 'Unravel Product Inter', sans-serif; color: rgba(255, 255, 255, 0.65); letter-spacing: .01em; }
+.unravel-workspace .ui-count { color: rgba(255, 255, 255, 0.50); font: 11px/18px 'Unravel Product Mono', monospace; border: 1px solid var(--ui-line); border-radius: 6px; padding: 1px 6px; background: rgba(255, 255, 255, 0.04); }
 .unravel-workspace .ui-resource-collection ul { padding: 0; margin: 0; list-style: none; }
 .unravel-workspace .ui-resource-collection li + li { border-top: 1px solid var(--ui-line); }
-.unravel-workspace .ui-resource-row { position:relative; isolation:isolate; display: flex; gap: 18px; align-items: center; padding: 22px 24px; min-width: 0; transition: background .15s; }
+.unravel-workspace .ui-resource-row { position:relative; isolation:isolate; display: flex; gap: 16px; align-items: center; padding: 18px 22px; min-width: 0; transition: background .16s cubic-bezier(.16,1,.3,1); }
 .unravel-workspace .ui-resource-row > :not(.workspace-material-light) { position:relative; z-index:1; }
 .unravel-workspace .ui-resource-row .workspace-material-light { opacity:0; transition:opacity var(--motion-standard); }
 .unravel-workspace .ui-resource-row:is(:hover,:focus-within) .workspace-material-light { opacity:1; }
-.unravel-workspace .ui-resource-row:hover, .unravel-workspace .ui-resource-row:focus-within { background: #ffffff04; }
-.unravel-workspace .ui-resource-icon { width: 40px; height: 40px; flex-shrink: 0; display: grid; place-items: center; border: 1px solid var(--ui-line-strong); box-shadow: var(--ui-inner-light); background: linear-gradient(145deg, #ffffff09, transparent), #1d2026; border-radius: 10px; font: 600 17px/24px 'Unravel Product Manrope', sans-serif; }
+.unravel-workspace .ui-resource-row:hover, .unravel-workspace .ui-resource-row:focus-within { background: rgba(255, 255, 255, 0.03); }
+.unravel-workspace .ui-resource-icon { width: 38px; height: 38px; flex-shrink: 0; display: grid; place-items: center; border: 1px solid var(--ui-line-strong); box-shadow: var(--ui-inner-light); background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)), #161820; border-radius: 10px; font: 600 15px/22px 'Unravel Product Manrope', sans-serif; color: #ffffff; }
 .unravel-workspace .ui-resource-identity { min-width: 0; flex: 1; }
-.unravel-workspace .ui-resource-identity h2 { font-size: 17px; line-height: 26px; margin-bottom: 4px; }
-.unravel-workspace .ui-resource-description { font-size: 12px; line-height: 20px; color: var(--product-muted); overflow-wrap: anywhere; }
-.unravel-workspace .ui-resource-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
-.unravel-workspace .ui-resource-actions .product-button { min-height: 40px; padding: 9px 14px; border-radius: 8px; font-size: 13px; }
-.unravel-workspace .ui-collection-footer { font-size: 12px; color: var(--product-muted); padding: 14px 24px; border-top: 1px solid var(--ui-line); background: #0001; }
+.unravel-workspace .ui-resource-identity h2 { font-size: 16px; line-height: 24px; font-weight: 600; color: #ffffff; letter-spacing: -.015em; margin-bottom: 2px; }
+.unravel-workspace .ui-resource-description { font-size: 12px; line-height: 18px; color: rgba(255, 255, 255, 0.45); overflow-wrap: anywhere; }
+.unravel-workspace .ui-resource-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.unravel-workspace .ui-collection-footer { font-size: 12px; line-height: 20px; color: rgba(255, 255, 255, 0.45); padding: 12px 22px; border-top: 1px solid var(--ui-line); background: rgba(0, 0, 0, 0.15); }
 .unravel-workspace .ui-resource-link { display: block; }
 .unravel-workspace .ui-resource-link:hover h2 { color: #fff; }
 .unravel-workspace .ui-empty { display: grid; justify-items: center; gap: 16px; text-align: center; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-surface); padding: 40px 28px; box-shadow: var(--ui-inner-light); }
@@ -124,5 +123,21 @@
 .unravel-workspace .ui-investigation-surface { box-shadow: var(--ui-inner-light), var(--ui-shadow); }
 .unravel-workspace .ui-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .unravel-workspace .ui-panel-heading h2 { font-size: 16px; line-height: 24px; }
+
+/* Refined Raycast skeleton states for instant route prefetching feedback */
+.unravel-workspace .ui-skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: ui-skeleton-shimmer 2s ease-in-out infinite;
+  border-radius: 6px;
+  pointer-events: none;
+}
+@keyframes ui-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media(prefers-reduced-motion:reduce){
+  .unravel-workspace .ui-skeleton { animation: none; background: rgba(255,255,255,0.05); }
+}
 
 @media(max-width:700px){.unravel-workspace .ui-resource-row[data-has-icon=true] .ui-resource-actions{padding-left:54px}}

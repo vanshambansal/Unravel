@@ -19,3 +19,24 @@ export class PerformanceGuard {
   }
   reset() { this.samples = []; this.badWindows = 0; this.elapsed = 0; }
 }
+
+/** Require repeated missed frame budgets before a small resolution adjustment. */
+export class ResolutionGuard {
+  private samples: number[] = [];
+  private poorWindows = 0;
+  private warmup = 30;
+  push(milliseconds: number): boolean {
+    if (!Number.isFinite(milliseconds) || milliseconds <= 0) return false;
+    if (this.warmup > 0) { this.warmup--; return false; }
+    this.samples.push(milliseconds);
+    if (this.samples.length < 60) return false;
+    this.samples.sort((a, b) => a - b);
+    const slow = this.samples[45] > 20;
+    this.samples = [];
+    this.poorWindows = slow ? this.poorWindows + 1 : 0;
+    if (this.poorWindows < 2) return false;
+    this.poorWindows = 0;
+    return true;
+  }
+  reset() { this.samples = []; this.poorWindows = 0; this.warmup = 30; }
+}

@@ -81,3 +81,7 @@ Reviewed additive migration 0003_workable_viper adds metadata status/revision/up
 Approved account closure rejects new intake and retains existing projects/reports/evidence. It requires a delivered, signed Clerk `user.deleted` event; local handler/tests are implemented, hosted delivery is a release gate. See SERVICE_SETUP.md for setup and DEPLOYMENT.md for operator obligations. No automatic data expiry or destructive account cascade was added.
 
 The player caches unchanged fit calculations and omits duplicate idle time messages. Timeline grouping is memoized, and selection remains consistent when switching between raw/grouped events. Fit presents the full captured viewport;100% lets users inspect small content without pretending a desktop capture is mobile-responsive. Current latency and device limits belong to PROJECT_STATUS.md.
+
+## Replay activity and recovery - 2026-11-13
+
+Switching to the plan retains the isolated frame and position and pauses playback explicitly. Backgrounding pauses it as well. The clock runs during playback and stops on pause/finish/teardown. Slow initialization can recover after the initial warning. Retry creates a fresh frame/channel and aborts the old request. Recording retrieval has a60-second deadline. A loading or payload error uses recovery guidance for the configured player origin. Normal development and local production can have different paired origins. Evidence and security validation remain owned by the existing replay boundary.

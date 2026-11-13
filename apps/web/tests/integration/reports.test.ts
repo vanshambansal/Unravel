@@ -32,6 +32,11 @@ test('real PostgreSQL reports: transactions, concurrent deduplication, ownership
     const receipts = await Promise.all([service.submit(project.id, project.origin, input), service.submit(project.id, project.origin, input)]);
     assert.equal(receipts[0].reportId, receipts[1].reportId); assert.equal(receipts.filter(r => !r.duplicate).length, 1);
     const id = receipts[0].reportId;
+    const context = await service.planContext(owner, project.id, id);
+    assert.equal(context.saved, null);
+    assert.deepEqual(context.events, input.recording.events);
+    assert.equal('replay' in context, false);
+    await assert.rejects(service.planContext('other-owner', project.id, id), (e: unknown) => e instanceof ApplicationError && e.status === 404);
     assert.equal((await service.list(owner, project.id)).reports.length, 1);
     assert.equal((await service.list('other-owner', project.id)).reports.length, 0);
     assert.ok(!JSON.stringify(await service.list(owner, project.id)).includes('childNodes'));
@@ -78,6 +83,7 @@ test('real PostgreSQL reports: transactions, concurrent deduplication, ownership
     assert.equal((await service.website(project.id, updated.origin)).id, project.id);
     assert.equal((await service.detail(owner, project.id, retained.reportId)).report.recording.initialUrl.origin, project.origin);
     await db.insert(schema.reportTestPlans).values({ reportId: retained.reportId, plan: { version: 2, initialPath: '/', steps: [], assertions: [], expectedBehaviorConfirmed: false } });
+    assert.equal((await service.planContext(owner, project.id, retained.reportId)).saved?.revision, 1);
     assert.equal((await db.select().from(schema.reportTestPlans)).filter(p => p.reportId === retained.reportId).length, 1);
     await projectsService.remove(owner, project.id, { expected: { name: updated.name, origin: updated.origin }, confirmation: updated.name });
     assert.equal((await pool.query('select count(*)::int as n from reports where project_id = $1', [project.id])).rows[0].n, 0);

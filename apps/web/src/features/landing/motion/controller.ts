@@ -2,7 +2,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { choreography, journeyTiming, journeyViewports } from './choreography';
 import { initializeHeroRays } from './hero-rays';
-import { PerformanceGuard } from './quality';
+import { PerformanceGuard, ResolutionGuard } from './quality';
+import { advanceScroll } from './scroll-motion';
 import { conserveSceneResources } from './resource-budget';
 import type { ArchitecturalScene, SceneMetrics } from './scene';
 
@@ -33,8 +34,10 @@ export function mountLandingMotion(host: HTMLElement): () => void {
   let heroRays: Awaited<ReturnType<typeof initializeHeroRays>>;
   const media = matchMedia('(prefers-reduced-motion: reduce)');
   const performanceGuard = new PerformanceGuard();
+  const resolutionGuard = new ResolutionGuard();
   let scene: ArchitecturalScene | undefined, trigger: ScrollTrigger | undefined;
-  let progress = 0, paused = false, visible = true, fallback = false, reduced = media.matches;
+  let progress = 0, visualProgress = 0, paused = false, visible = true, fallback = false, reduced = media.matches;
+  let presentedProgress = Number.NaN;
   let generation = 0, raf = 0, previous = 0, disposed = false;
   let pendingSkip = false;
   let budgetOverride = false;
@@ -48,7 +51,8 @@ export function mountLandingMotion(host: HTMLElement): () => void {
     node.inert = value < .99;
   }
   function present(p: number) {
-    progress = p;
+    if (p === presentedProgress) return;
+    presentedProgress = p;
     const frame = choreography(p);
     root.style.setProperty('--hero-shade', String(frame.title));
     stage.style.setProperty('--hero-rays', String(Math.max(frame.entrance, frame.title)));
@@ -63,24 +67,28 @@ export function mountLandingMotion(host: HTMLElement): () => void {
     reveal('workflow', frame.actions, false);
     hero.inert = p < .75;
     skip.hidden = frame.actions === 1;
-    scene?.updateProgress(p);
+
   }
-  function stop() { cancelAnimationFrame(raf); raf = 0; previous = 0; performanceGuard.reset(); }
+  function stop() { cancelAnimationFrame(raf); raf = 0; previous = 0; performanceGuard.reset(); resolutionGuard.reset(); }
   function render(now: number) {
     raf = 0;
     if (!scene || disposed || document.hidden || !visible) return;
     const frameMs = previous ? now - previous : 1000 / 60;
     const delta = Math.min(frameMs / 1000, .25);
     previous = now;
+    visualProgress = advanceScroll(visualProgress, progress, delta);
+    present(visualProgress);
+    scene.updateProgress(visualProgress);
     try { scene.render(delta); } catch { activateFallback('The architectural preview could not render. Static hero shown.'); return; }
-    if (choreography(progress).entrance > .001 || progress >= .73) heroRays?.render(delta, paused);
+    if (choreography(visualProgress).entrance > .001 || visualProgress >= .73) heroRays?.render(delta, paused);
     if (frameTimes.length < 1200) frameTimes.push(frameMs);
+    if (!paused && resolutionGuard.push(frameMs) && scene.reduceResolution()) status.textContent = 'Adaptive rendering active';
     if (!paused && performanceGuard.push(frameMs)) {
       if (scene.reduceQuality()) {
         performanceGuard.reset(); status.textContent = 'Lighter rendering active';
       } else { activateFallback('A lighter static view is active for smooth browsing.'); return; }
     }
-    if (!paused) raf = requestAnimationFrame(render);
+    if (!paused || visualProgress !== progress) raf = requestAnimationFrame(render);
   }
   function wake() {
     if (!raf && scene && !document.hidden && visible && !disposed) raf = requestAnimationFrame(render);
@@ -90,10 +98,11 @@ export function mountLandingMotion(host: HTMLElement): () => void {
     scene?.dispose(); scene = undefined; heroRays?.dispose(); heroRays = undefined;
     root.classList.remove('rendering');
     root.classList.add('static');
-    present(1); ambientButton.disabled = true; status.textContent = message;
+    progress = visualProgress = 1; present(1); ambientButton.disabled = true; status.textContent = message;
   }
   async function setup() {
     const ticket = ++generation;
+    presentedProgress = Number.NaN;
     stop(); trigger?.kill(); trigger = undefined; scene?.dispose(); scene = undefined; heroRays?.dispose(); heroRays = undefined;
     root.classList.remove('rendering');
     reduced = media.matches;
@@ -114,10 +123,11 @@ export function mountLandingMotion(host: HTMLElement): () => void {
       const rays = await initializeHeroRays(element<HTMLCanvasElement>('hero-rays'), () => ticket !== generation || disposed);
       if (ticket !== generation || disposed) { rays?.dispose(); return; }
       heroRays = rays;
+      positionEntranceLight();
       scene.resize(stage.clientWidth, stage.clientHeight); scene.pauseAmbient(paused);
-      trigger = ScrollTrigger.create({ trigger: journey, start: 'top top', end: () => `+=${innerHeight * journeyTiming.cameraViewports}`, onUpdate: self => { present(self.progress); wake(); }, invalidateOnRefresh: true });
+      trigger = ScrollTrigger.create({ trigger: journey, start: 'top top', end: () => `+=${innerHeight * journeyTiming.cameraViewports}`, onUpdate: self => { progress = self.progress; wake(); }, invalidateOnRefresh: true });
       // Same progress and time-zero state used by capture.html. Never reveal an unrendered canvas.
-      present(pendingSkip ? 1 : trigger.progress); scene.render(0); heroRays?.render(0, true);
+      progress = pendingSkip ? 1 : trigger.progress; visualProgress = progress; present(visualProgress); scene.updateProgress(visualProgress); scene.render(0); heroRays?.render(0, true);
       root.classList.add('rendering');
       if (pendingSkip) { pendingSkip = false; skipIntro(); }
       wake();
@@ -128,7 +138,7 @@ export function mountLandingMotion(host: HTMLElement): () => void {
     root.classList.add('preview-hero');
     if (trigger) window.scrollTo({ top: trigger.end, behavior: 'instant' });
     else stage.scrollIntoView({block:'start',behavior:'instant'});
-    present(1); wake(); title.focus({ preventScroll: true });
+    progress = visualProgress = 1; scene?.updateProgress(1); present(1); wake(); title.focus({ preventScroll: true });
   }
   const heroLinks = [...root.querySelectorAll<HTMLAnchorElement>('a[href="#hero"]')];
   function visitHero(event:Event){event.preventDefault();skipIntro();}
@@ -144,9 +154,10 @@ export function mountLandingMotion(host: HTMLElement): () => void {
     const heading = entrance.querySelector<HTMLElement>('.entrance-title')!;
     const description = entrance.querySelector<HTMLElement>('.muted')!;
     const a = heading.getBoundingClientRect(), b = description.getBoundingClientRect(), host = stage.getBoundingClientRect();
-    stage.style.setProperty('--entrance-light-left', `${Math.max(0, a.left - host.left - 80)}px`);
-    stage.style.setProperty('--entrance-light-right', `${Math.min(host.width, a.right - host.left + 100)}px`);
-    stage.style.setProperty('--entrance-light-bottom', `${b.bottom - host.top + 40}px`);
+    if (heroRays) {
+      heroRays.clip(Math.max(0, a.left - host.left - 80), Math.min(host.width, a.right - host.left + 100), b.bottom - host.top + 40);
+      wake();
+    }
   }
   function resize() {
     positionEntranceLight(); scene?.resize(stage.clientWidth, stage.clientHeight); ScrollTrigger.refresh(); wake();
@@ -164,7 +175,7 @@ export function mountLandingMotion(host: HTMLElement): () => void {
   function replay() {
     if (reduced || fallback) { title.focus({ preventScroll: false }); return; }
     pendingSkip = false; root.classList.remove('preview-hero');
-    window.scrollTo({ top: 0, behavior: 'instant' }); present(0); wake(); skip.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: 'instant' }); progress = visualProgress = 0; scene?.updateProgress(0); present(0); wake(); skip.focus({ preventScroll: true });
   }
   function loadScene() { budgetOverride = true; fallback = false; pendingSkip = false; root.classList.remove('preview-hero'); status.textContent = 'Preparing the 3D entrance...'; void setup(); }
   const observer = new IntersectionObserver(entries => {

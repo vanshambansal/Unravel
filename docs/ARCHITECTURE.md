@@ -99,11 +99,11 @@ apps/web/PRODUCT.md is a small design-tool context entry point linking to the au
 
 The approved B authentication and A workspace use existing architectural artwork, CSS material light and web-only Motion transitions. WorkspaceMotion owns ambient pause, visibility and reduced-motion policy. The landing Three.js/GSAP renderer remains marketing-only. The server product layout passes authorized project metadata into persistent navigation; there is no client ownership bypass.
 
-Recorder state and recording/submission services remain independent of widget presentation. One persistent Shadow DOM material shell uses native Web Animations; its listeners/animations clean up through the widget AbortController. Investigation motion preserves the player while selecting evidence, but view exit still removes it immediately. Plan draft state remains mounted after first opening.
+Recorder state and recording/submission services remain independent of widget presentation. One persistent Shadow DOM material shell uses native Web Animations; its listeners/animations clean up through the widget AbortController. Investigation motion preserves the player while selecting evidence, but the inactive investigation panel retains a paused player. Plan draft state remains mounted after first opening.
 
 ## Review-first plan boundary - 2026-11-11
 
-The pure test-plan package reads version 1 or 2 and outputs normalized version 2, without database writes. PlanEditor/PlanControls edit that draft; save still uses the existing private revision-checked JSONB boundary. Export mode is reproduction or regression: included action validation applies to both, while confirmed typed outcomes apply only to regression. No uploaded code is executed by the server. New source positions link back to the original investigation clock; the player is still disposed when leaving Investigation. TEST_PLANS.md owns supported checks and execution limits.
+The pure test-plan package reads version 1 or 2 and outputs normalized version 2, without database writes. PlanEditor/PlanControls edit that draft; save still uses the existing private revision-checked JSONB boundary. Export mode is reproduction or regression: included action validation applies to both, while confirmed typed outcomes apply only to regression. No uploaded code is executed by the server. New source positions link back to the original investigation clock; the player remains mounted and pauses when leaving Investigation. TEST_PLANS.md owns supported checks and execution limits.
 
 ## Generator interaction boundary
 
@@ -122,3 +122,17 @@ The marketing server page generates one synthetic plan/code example through the 
 ## Local responsiveness boundaries
 
 Private links use cancellable intent prefetch rather than viewport fan-out. Project reads use request-scoped React cache keyed by owner; no persistent user cache. Report count/page share one SQL statement snapshot and select metadata only. Authorized plan GET exposes numeric Server-Timing stages; storage logs whitelist codes only. Preview launcher pairs separate dashboard/player origins and strips application credentials from the player process. Conservative resource hints may start the existing static landing with explicit Enable3D; full rendering remains default for unknown/capable devices. Details and actual limits: [continuation evidence](audits/AUTH_RESPONSIVENESS_2026-11-12.md).
+
+## Interaction lifecycle update - 2026-11-13
+
+ReportWorkspace supplies activity and repeated seek-request identity to ReportViewer. The viewer pauses on panel exit/backgrounding, keeps the current position, bounds replay retrieval, recovers late initialization and retries through a fresh isolated frame/channel. The trusted host starts its clock during playback and stops it on pause/finish/teardown. Live-search timers cancel on link navigation, Back and unmount. The landing follows native-scroll targets through frame-rate-independent camera interpolation and preserves immediate Skip/Replay endpoints. Ray shader constants upload when their inputs change.
+
+The scene starts at full quality and reduces raster resolution gradually after repeated slow-frame windows, with an absolute0.8 pixel-ratio floor. Intermediate tiers retain reflections, bloom, rays and materials. The existing severe-stall fallback remains. Marketing poster URLs are generated through the existing Next image optimizer at quality90 and passed as server-rendered CSS variables, including no-JavaScript styles. Original PNG assets remain the rendering reference. The implementation audit owns measured effects and limitations.
+
+## Responsiveness refinement - 2026-11-13
+
+After session authorization, the persistent shell streams independently of its shared project-list promise. NavigationPreparation owns only bounded preparation readiness; Next owns the private browser route cache. IntentLink supports shorter intent and a single likely idle destination. ReportWorkspace owns a cancellable10s anticipated plan read, shared with PlanEditor; forced reload bypasses it. No cross-user server cache or browser persistence is introduced. Report edits refresh route data.
+
+Plan context joins the owner-filtered report/events and optional saved draft in one statement. A scoped database lease provides numeric acquisition/query timing; the shared maximum-five-client pool reuses idle connections for120s with a300s lifetime. Landing presentation and camera share visual progress; stationary reflection reuse and a smaller bloom raster reduce repeated rendering while anchored fixtures, full FXAA and multisampled reflections improve stability. DESIGN.md owns the approved refinement boundary; the final audit owns measurements.
+
+The subsequent search/navigation/entrance repair honors explicit Next Link full prefetch for All projects/Reports only. Search owns its native-decoration and shared-field resets. The scene now invalidates completed rendering on camera, size or quality changes; fixed atmosphere permits settled-frame reuse. Rays skip painting when their shape and visible pointer inputs are unchanged. Normal raster floor is1.0; the earlier0.8 adaptive floor is superseded. See audits/CINEMA_SEARCH_NAVIGATION_2026-11-13.md for measured tradeoffs and verification.

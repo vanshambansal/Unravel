@@ -1,10 +1,10 @@
 # Unravel visual direction
 
-Updated: 2026-11-12
+Updated: 2026-11-13
 
 ## Authority and approval
 
-The cinematic doorway/hero is approved and must remain unchanged. The internal application is an approved redesign task: V1/V2 remain references and history, not restrictions against replacing weak layouts. The user selected B for authentication and A for every other internal surface, then approved the coordinated motion direction for implementation. V1/V2 and both A/B explorations remain intact for reference. Runtime aesthetic acceptance is separate from this direction approval. A design proposal, implemented screen, passing check and user aesthetic acceptance are four different states.
+The cinematic doorway/hero's architectural identity is approved. On 2026-11-13 the user explicitly approved performance, camera responsiveness, coordinated reveals and lighting/edge/reflection fidelity improvements within that identity; the earlier literal entrance freeze no longer applies to these repairs. A replacement scene remains a separate visual decision. The internal application is an approved redesign task: V1/V2 remain references and history, not restrictions against replacing weak layouts. The user selected B for authentication and A for every other internal surface, then approved the coordinated motion direction for implementation. V1/V2 and both A/B explorations remain intact for reference. Runtime aesthetic acceptance is separate from this direction approval. A design proposal, implemented screen, passing check and user aesthetic acceptance are four different states.
 
 This document owns visual intent. INTERNAL_UI.md owns patterns and implementation mapping; PROJECT_STATUS.md owns actual functionality/results; PROJECT_BRIEF.md owns requirements. Historical design discussion and superseded capability statements live in DESIGN_HISTORY.md. Do not infer current functionality from old Figma copy.
 

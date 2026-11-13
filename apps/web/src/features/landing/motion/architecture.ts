@@ -51,7 +51,7 @@ export async function loadArchitecture() {
       for (const { indices, bounds } of groups.values()) {
         const size = bounds.getSize(new THREE.Vector3()), center = bounds.getCenter(new THREE.Vector3());
         if (size.x >= .16 || size.z > .2 || size.y < 2) continue;
-        const width = .16, depth = Math.max(.12, size.z), right = bounds.max.x - .025;
+        const width = .12, depth = size.z, right = bounds.max.x;
         for (const i of indices) {
           point.fromBufferAttribute(positions, i).applyMatrix4(node.matrixWorld);
           point.x = right - width + (point.x - bounds.min.x) / size.x * width;

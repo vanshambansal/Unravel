@@ -1,6 +1,6 @@
 # Landing implementation
 
-Approved extension, 2026-11-12. Visual source: existing Figma file, frame 2:45 and its normal-flow/diagnostic/reveal compositions. The accepted entrance and its materials, camera, rays and hero remain the first viewport. No new visual-world exploration or renderer is selected.
+Approved extension, 2026-11-12. Visual source: existing Figma file, frame 2:45 and its normal-flow/diagnostic/reveal compositions. The architectural entrance remains the first viewport. The user approved responsiveness, coordinated camera/reveal motion and lighting/edge/reflection fidelity repairs on 2026-11-13. No new visual-world exploration or replacement renderer is selected.
 
 ## Direction contract
 

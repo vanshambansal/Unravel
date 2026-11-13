@@ -15,7 +15,16 @@ export function PageContent({ children, width = 'wide' }: { children: ReactNode;
 }
 
 export function PageHeader({ title, description, context, actions }: { title: string; description: ReactNode; context?: ReactNode; actions?: ReactNode }) {
-  return <header className="ui-page-header"><div>{context && <p className="ui-context">{context}</p>}<h1>{title}</h1><p>{description}</p></div>{actions && <div className="ui-page-actions">{actions}</div>}</header>;
+  return (
+    <header className="ui-page-header">
+      <div>
+        {context && (typeof context === 'string' ? <p className="ui-context">{context}</p> : <div className="ui-context">{context}</div>)}
+        <h1>{title}</h1>
+        {typeof description === 'string' ? <p>{description}</p> : <div>{description}</div>}
+      </div>
+      {actions && <div className="ui-page-actions">{actions}</div>}
+    </header>
+  );
 }
 
 export function SettingsGroup({ title, description, icon, children, footer }: { title: string; description: ReactNode; icon?: ReactNode; children: ReactNode; footer?: ReactNode }) {

@@ -18,7 +18,7 @@ export function WorkspaceSidebar({ projects }: { projects: { id: string; name: s
       <p className="workspace-nav-caption">Workspace</p>
       {links.map((link, index) => <div key={link.href}>
         {index === 1 && <p className="workspace-nav-caption workspace-nav-project" title={project?.name}>{project?.name}</p>}
-        <Link className="workspace-nav-link" href={link.href} aria-current={link.selected ? 'page' : undefined}>
+        <Link className="workspace-nav-link" href={link.href} prefetch={link.label === 'All projects' || link.label === 'Reports' ? true : undefined} prepareOnIdle={!!project && index === 0} aria-current={link.selected ? 'page' : undefined}>
           {link.selected && <motion.span className="workspace-nav-selection" layoutId="selection" transition={{ type: 'spring', stiffness: 440, damping: 38 }} />}
           <Image src={`/product/${link.icon}.svg`} width={20} height={20} alt="" /><span>{link.label}</span>
         </Link>

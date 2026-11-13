@@ -1,8 +1,8 @@
 'use client';
 
 import Link, { useLinkStatus } from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useRef, type ComponentProps } from 'react';
+import { useNavigationPreparation } from './NavigationPreparation';
 
 function Pending() {
   const { pending } = useLinkStatus();
@@ -10,24 +10,33 @@ function Pending() {
 }
 
 /** Do not fan out private database-backed routes merely because links are visible. */
-export function IntentLink({ children, onPointerEnter, onPointerLeave, onPointerDown, onFocus, onBlur, onClick, className = '', ...props }: ComponentProps<typeof Link>) {
-  const router = useRouter(), prefetched = useRef(false);
+export function IntentLink({ children, onPointerEnter, onPointerLeave, onPointerDown, onFocus, onBlur, onClick, className = '', prepareOnIdle = false, ...props }: ComponentProps<typeof Link> & { prepareOnIdle?: boolean }) {
+  const prepareRoute = useNavigationPreparation();
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   function cancel() { clearTimeout(timer.current); timer.current = undefined; }
   useEffect(() => () => clearTimeout(timer.current), []);
   function prepare() {
-    if (prefetched.current || props.prefetch === false) return;
+    if (props.prefetch === false) return;
     const href = typeof props.href === 'string' ? props.href : undefined;
     if (!href?.startsWith('/')) return;
-    prefetched.current = true;
-    router.prefetch(href);
+    prepareRoute(href);
   }
-  function schedule() { if (!prefetched.current && !timer.current) timer.current = setTimeout(() => { timer.current = undefined; prepare(); }, 150); }
-  return <Link {...props} prefetch={false} className={`workspace-intent-link ${className}`}
+  function schedule() { if (!timer.current) timer.current = setTimeout(() => { timer.current = undefined; prepare(); }, 50); }
+  const href = typeof props.href === 'string' ? props.href : undefined;
+  useEffect(() => {
+    if (!prepareOnIdle || !href || props.prefetch === false) return;
+    if (!window.requestIdleCallback) {
+      const idle = setTimeout(() => prepareRoute(href), 350);
+      return () => clearTimeout(idle);
+    }
+    const idle = window.requestIdleCallback(() => prepareRoute(href), { timeout: 1500 });
+    return () => window.cancelIdleCallback(idle);
+  }, [href, prepareOnIdle, prepareRoute, props.prefetch]);
+  return <Link {...props} prefetch={props.prefetch === true} className={`workspace-intent-link ${className}`}
     onPointerEnter={event => { onPointerEnter?.(event); if (event.pointerType === 'mouse') schedule(); }}
     onPointerLeave={event => { cancel(); onPointerLeave?.(event); }}
-    onPointerDown={event => { cancel(); onPointerDown?.(event); }}
-    onFocus={event => { onFocus?.(event); schedule(); }}
+    onPointerDown={event => { cancel(); onPointerDown?.(event); if (!event.defaultPrevented && event.button === 0) prepare(); }}
+    onFocus={event => { onFocus?.(event); prepare(); }}
     onBlur={event => { cancel(); onBlur?.(event); }}
     onClick={event => { cancel(); onClick?.(event); }}>
     {children}<Pending />
