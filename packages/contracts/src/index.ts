@@ -62,7 +62,7 @@ const time = { at: positive };
 export const ActionSchema = z.strictObject({
   kind: z.literal('action'), ...time,
   action: z.enum(['click', 'fill', 'select', 'check', 'submit']),
-  target: LocatorSchema, value: nullableText(10000), redacted: z.boolean(),
+  target: LocatorSchema, targetLabel: z.optional(text(160)), value: nullableText(10000), redacted: z.boolean(),
   // Presence means a native multiple selection; null means masked, [] means deselect all.
   values: z.optional(z.nullable(z.array(text(10000)).check(z.maxLength(100)))),
 }).check(z.refine(event => event.values === undefined || event.action === 'select' && event.value === null && (event.redacted ? event.values === null : event.values !== null), 'Invalid multiple selection.'));
@@ -99,6 +99,7 @@ export type StopReason = z.infer<typeof StopReasonSchema>;
 export const RecordingSchema = z.strictObject({
   version: z.literal(RECORDING_VERSION), id: z.uuid(), projectId: z.uuid(),
   presentation: z.optional(z.literal(PRESENTATION_VERSION)),
+  captureMode: z.optional(z.enum(['masked-values','full'])),
   startedAt: positive, durationMs: positive, initialUrl: SafeUrlSchema,
   stopReason: StopReasonSchema, truncated: z.boolean(), hasFullSnapshot: z.boolean(), filteredReplayEvents: positive,
   replay: z.array(ReplayEventSchema).check(z.maxLength(20000)),

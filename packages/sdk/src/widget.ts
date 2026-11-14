@@ -1,5 +1,5 @@
 import { initialize } from './recorder';
-import type { Recorder, RecorderOptions } from './types';
+import type { Recorder, RecorderOptions, RecordingMode } from './types';
 import css from './widget.css';
 import mark from './unravel-mark.svg';
 import { widgetMotion } from './widget-motion';
@@ -27,6 +27,7 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
   let opened = false, disposed = false, view: View = 'ready', previous: View = 'ready';
   let title = '', description = '', error = '', recorder: Recorder, returnFocus: HTMLElement | null = null;
   let descriptionExpanded = false;
+  let selectedMode: RecordingMode = 'masked-values';
   const host = document.createElement('div'); host.setAttribute('data-unravel-block',''); host.setAttribute('data-unravel-widget','');
   const shadow = host.attachShadow({ mode: 'open' });
   const style = document.createElement('style'); style.textContent = css;
@@ -38,7 +39,7 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
   const listeners = new AbortController();
   const motion = widgetMotion(surface, plate, root, listeners.signal);
   function update(next: View) { view = next; live.textContent = next === 'recording' ? 'Recording started. Reproduce the problem, then stop recording.' : next === 'describe' ? 'Recording stopped. Describe the issue before submitting.' : next === 'success' ? 'Your report was received.' : ''; render(); }
-  function createRecorder() { return initialize({ ...options, submissionUrl: `${application.origin}/api/ingest/${options.projectId}`,
+  function createRecorder() { return initialize({ ...options, privacy:{...options.privacy,mode:selectedMode}, submissionUrl: `${application.origin}/api/ingest/${options.projectId}`,
     onStateChange(status) {
       options.onStateChange?.(status);
       if (disposed) return;
@@ -76,7 +77,7 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
     surface.dataset.state = view;
     if (!opened) {
       if (view === 'recording' || view === 'starting') {
-        const dock = element('div', undefined, 'dock'); const b = action(`${view === 'starting' ? 'Preparing…' : clock(recorder.getStatus().durationMs)}`, 'open'); b.setAttribute('aria-label','Open recording controls'); b.dataset.timer = '';
+        const dock = element('div', undefined, 'dock'); const b = action(`${view === 'starting' ? 'Preparingâ€¦' : clock(recorder.getStatus().durationMs)}`, 'open'); b.setAttribute('aria-label','Open recording controls'); b.dataset.timer = '';
         dock.dataset.widgetDrag=''; b.dataset.widgetDrag=''; b.setAttribute('aria-describedby',moveHelp.id); b.title='Drag to move, or open recording controls';
         dock.append(element('span',undefined,'dot'), b, action(view === 'starting' ? 'Cancel' : 'Stop recording', 'stop', 'stop')); root.append(dock);
       } else { const b = action(view === 'success' ? 'Report received' : view === 'retry' ? 'Retry bug report' : 'Report a bug','open','launcher'); const icon=element('span');icon.innerHTML=mark;b.prepend(icon); b.dataset.widgetDrag=''; b.setAttribute('aria-describedby',moveHelp.id); b.title='Report a bug. Drag to move; Home resets position.'; root.append(b); }
@@ -91,24 +92,34 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
     const heading = (s: string) => panel.append(element('h2',s));
     const copy = (s: string, cls?: string) => panel.append(element('p',s,cls));
     if (view === 'ready') {
-      heading('Show us what went wrong.'); panel.append(action('Start recording','start'));
-      copy('You control the recording. Sensitive content is masked. Nothing is sent until you submit.','small');
-    } else if (view === 'starting') { heading('Getting ready…');copy('Recording has not started yet. Keep this page open for a moment.');panel.append(action('Cancel','stop','secondary')); }
+      heading('Show us what went wrong.');
+      const modes=element('fieldset',undefined,'recording-modes'); modes.append(element('legend','Recording privacy'));
+      for(const [value,name,description] of [
+        ['masked-values','Mask entered values','Page text stays visible. Values inside fields are masked.'],
+        ['full','Full-content recording','Include entered and sensitive values in the report you submit.']
+      ]){
+        const label=element('label',undefined,'recording-choice'),input=element('input'),text=element('span');
+        input.type='radio';input.name='recording-mode';input.value=value;input.checked=selectedMode===value;
+        const title=element('strong',name),detail=element('small',description);text.append(title,detail);label.append(input,text);modes.append(label);
+      }
+      panel.append(modes,action('Start recording','start'));
+      copy('You control the recording. Nothing is sent until you submit. Your choice applies to this recording only.','small');
+    } else if (view === 'starting') { heading('Getting readyâ€¦');copy('Recording has not started yet. Keep this page open for a moment.');panel.append(action('Cancel','stop','secondary')); }
     else if (view === 'recording') {
       const badge=element('div',undefined,'badge');badge.append(element('span',undefined,'dot'),element('span','RECORDING'));panel.append(badge);
-      const timer=element('div',undefined,'timer');const time=element('span',clock(recorder.getStatus().durationMs),'time');time.dataset.timer='';timer.append(time,element('p','Your steps are being captured'));panel.append(timer);copy('Repeat the problem on this page. Stop when you have shown what happened.');panel.append(action('Stop recording','stop'));copy('You review the report before sending. Recording stops visibly at its configured limit.','small');
+      const timer=element('div',undefined,'timer');const time=element('span',clock(recorder.getStatus().durationMs),'time');time.dataset.timer='';timer.append(time,element('p','Your steps are being captured'));panel.append(timer);copy('Repeat the problem on this page. Stop when you have shown what happened.');panel.append(action('Stop recording','stop'));copy(selectedMode==='full'?'Full-content recording: entered and sensitive values are included.':'Mask entered values: page text is visible; field values are masked.','small');
     } else if (view === 'describe') {
-      heading('Tell us what happened.');const summary=element('div',undefined,'summary');const captured=element('span','Recording captured');captured.prepend(drawnIcon(checkIcon));summary.append(captured,element('span',`${Math.round(recorder.getStatus().durationMs/1000)} sec`));panel.append(summary);
+      heading('Tell us what happened.');copy(selectedMode==='full'?'Full-content recording: this report includes entered and sensitive values.':'Entered values were masked. Visible page text is included.','small');const summary=element('div',undefined,'summary');const captured=element('span','Recording captured');captured.prepend(drawnIcon(checkIcon));summary.append(captured,element('span',`${Math.round(recorder.getStatus().durationMs/1000)} sec`));panel.append(summary);
       const form=element('form',undefined,'form');
       const details = element('details',undefined,'optional-details'); details.open = descriptionExpanded || !!description;
       details.append(element('summary','Add details (optional)'));
-      for (const [name,label,value] of [['title','Report title',title],['description','What happened / expected? · optional',description]]) {
+      for (const [name,label,value] of [['title','Report title',title],['description','What happened / expected? Â· optional',description]]) {
         const field=element('div',undefined,'field'), l=element('label',label), input=name==='title'?element('input'):element('textarea');input.id=`unravel-${name}`;input.name=name;input.value=value;input.maxLength=name==='title'?120:2000;l.htmlFor=input.id;
         if(input instanceof HTMLInputElement){input.required=true;input.placeholder='e.g. Save changes does nothing';} else input.placeholder='What did you do, and what did you expect?';field.append(l,input);if(name==='description')details.append(field);else form.append(field);
       }
       details.append(element('p','Please leave out passwords and other secrets.','small'));form.append(details);const send=action('Send bug report','submit');send.type='submit';form.append(send);panel.append(form);
       const foot=element('div',undefined,'foot');foot.append(action('Discard recording','discard','link'),element('p','Nothing sent yet','small'));panel.append(foot);
-    } else if (view === 'submitting') { heading('Sending your report…');copy('Your recording and description are on their way. Please keep this page open.'); }
+    } else if (view === 'submitting') { heading('Sending your reportâ€¦');copy('Your recording and description are on their way. Please keep this page open.'); }
     else if (view === 'retry') { heading('Your recording is still here.');copy('We could not confirm delivery. Retry safely sends the same report without creating a duplicate.');panel.append(action('Retry submission','submit'));copy('Report details stay unchanged during retry.','small'); }
     else if (view === 'success') { heading('Thanks for helping us fix it.');copy('The developer can now investigate your recording and report.');panel.append(action('Done','done')); }
     else { heading('Discard this unsent report?');copy('This clears your local recording and description. You cannot recover them.');panel.append(action('Keep this report','keep'),action('Discard unsent report','confirm-discard','secondary'));copy('Previously submitted reports are unaffected.','small'); }
@@ -125,6 +136,7 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
   }
   function open() { if(disposed)return;returnFocus=document.activeElement instanceof HTMLElement?document.activeElement:null;opened=true;render();focusFirst(); }
   function close() { if(disposed)return;opened=false;render();(root.querySelector('button')??returnFocus)?.focus({preventScroll:true}); }
+  shadow.addEventListener('change',event=>{const input=event.target;if(view==='ready'&&input instanceof HTMLInputElement&&input.name==='recording-mode'&&(input.value==='full'||input.value==='masked-values'))selectedMode=input.value;},{signal:listeners.signal});
   shadow.addEventListener('input',event=>{const t=event.target;if(t instanceof HTMLInputElement&&t.name==='title')title=t.value;if(t instanceof HTMLTextAreaElement&&t.name==='description')description=t.value;},{signal:listeners.signal});
   shadow.addEventListener('toggle', event => { if(event.target instanceof HTMLDetailsElement && event.target.classList.contains('optional-details')) { descriptionExpanded=event.target.open; position.reconcile(); } }, {signal:listeners.signal,capture:true});
   shadow.addEventListener('submit',event=>{event.preventDefault();void submit();},{signal:listeners.signal});
@@ -133,11 +145,11 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
       case 'open':open();break;case 'close':close();break;
       case 'reset-position':position.reset();break;
       case 'move':live.textContent=moveHelp.textContent;break;
-      case 'start':error='';void recorder.start().catch(()=>{if(!disposed){error='Recording could not start. Please try again.';update('ready');}});break;
+      case 'start':error='';recorder.destroy();recorder=createRecorder();void recorder.start().catch(()=>{if(!disposed){error='Recording could not start. Please try again.';update('ready');}});break;
       case 'stop':recorder.stop();if(view==='starting')update('ready');break;
       case 'submit':if(view==='retry')void submit();break;
       case 'discard':previous=view;update('discard');break;case 'keep':update(previous);break;
-      case 'confirm-discard':case 'done':{const done=target.dataset.action==='done';recorder.destroy();recorder=createRecorder();title='';description='';descriptionExpanded=false;error='';view='ready';if(done)close();else render();break;}
+      case 'confirm-discard':case 'done':{const done=target.dataset.action==='done';recorder.destroy();selectedMode='masked-values';recorder=createRecorder();title='';description='';descriptionExpanded=false;error='';view='ready';if(done)close();else render();break;}
     }
   },{signal:listeners.signal});
   shadow.addEventListener('keydown',event=>{if((event as KeyboardEvent).key==='Escape'){event.preventDefault();close();}},{signal:listeners.signal});

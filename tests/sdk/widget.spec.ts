@@ -34,7 +34,8 @@ test('compact widget supports real drag, keyboard movement, reset, viewport chan
   expect((await launcher.boundingBox())!.x).toBeCloseTo(moved.x+10,0);
   await launcher.click();const panel=page.getByRole('dialog',{name:'Report a bug'});
   expect((await panel.boundingBox())!.width).toBeLessThanOrEqual(380);
-  expect((await panel.boundingBox())!.height).toBeLessThan(350);
+  expect((await panel.boundingBox())!.height).toBeLessThan(800-32);
+  await expect(page.getByRole('radio',{name:/Mask entered values/})).toBeChecked();
   const handle=page.getByRole('button',{name:'Move bug reporter',exact:true});
   await handle.focus();const beforeKeyboard=(await panel.boundingBox())!;await page.keyboard.press('Shift+ArrowRight');
   expect((await panel.boundingBox())!.x).toBeCloseTo(beforeKeyboard.x+40,0);

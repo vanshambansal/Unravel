@@ -60,7 +60,7 @@ export function validateSubmission(input: unknown): ReportSubmission {
     const tag = string(data.tagName, 32);
     if (['script','iframe','object','embed','svg','canvas','video','audio','base'].includes(tag)) return bad();
     const attrs = attributes(data.attributes);
-    if (attrs.type === 'password' || attrs.type === 'hidden') delete attrs.value;
+    if (attrs.type === 'hidden' || (attrs.type === 'password' && recording.captureMode !== 'full')) delete attrs.value;
     return { id: nodeId, type: 2, tagName: inertTags.has(tag) ? tag : 'div', attributes: attrs, childNodes: list(data.childNodes).map(child => node(child, depth + 1)) };
   }
   let snapshots = 0, previous = 0;

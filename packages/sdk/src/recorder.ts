@@ -1,5 +1,5 @@
 import { RecordingSchema, SemanticEventSchema, RECORDING_VERSION, type Recording, type ReplayEvent, type SemanticEvent, type StopReason } from '@unravel/contracts';
-import { createPrivacy, BLOCK_SELECTOR } from './privacy';
+import { createPrivacy } from './privacy';
 import { createReplaySanitizer } from './replay';
 import { instrumentNetwork } from './network';
 import { instrumentEvents } from './events';
@@ -78,7 +78,7 @@ export function initialize(options: RecorderOptions): Recorder {
           const { record } = await import('@rrweb/record');
           if (ticket !== generation) return;
           started = performance.now();
-          result = { version: RECORDING_VERSION, presentation: 1, id: crypto.randomUUID(), projectId, startedAt: Date.now(), durationMs: 0, initialUrl: privacy.safeUrl(location.href)!, stopReason: 'manual', truncated: false, hasFullSnapshot: false, filteredReplayEvents: 0, replay: [], events: [] };
+          result = { version: RECORDING_VERSION, presentation: 1, ...(privacy.mode ? {captureMode: privacy.mode} : {}), id: crypto.randomUUID(), projectId, startedAt: Date.now(), durationMs: 0, initialUrl: privacy.safeUrl(location.href)!, stopReason: 'manual', truncated: false, hasFullSnapshot: false, filteredReplayEvents: 0, replay: [], events: [] };
           // Reserve envelope/duration/reason growth so the final JSON stays under cap.
           bytes = encoder.encode(JSON.stringify(result)).byteLength + 512;
           state = 'recording';
@@ -101,11 +101,11 @@ export function initialize(options: RecorderOptions): Recorder {
               try { const safe = sanitize(event); if (safe) append(safe, true); else filtered++; }
               catch { finish('recorder-error'); }
             },
-            blockSelector: BLOCK_SELECTOR, ignoreSelector: '[data-unravel-block]', maskAllInputs: true, maskTextSelector: '*',
+            blockSelector: privacy.blockSelector, ignoreSelector: '[data-unravel-block]', maskAllInputs: true, maskTextSelector: '*',
             maskTextFn: (text, element) => privacy.text(element, text), maskInputFn: (text, element) => privacy.value(element, text),
             inlineStylesheet: false, inlineImages: false, collectFonts: false, recordCanvas: false, recordCrossOriginIframes: false,
             slimDOMOptions: { script: true, comment: true, headFavicon: true, headMetaDescKeywords: true, headMetaSocial: true, headMetaRobots: true, headMetaHttpEquiv: true, headMetaAuthorship: true, headMetaVerification: true },
-            sampling: { mousemove: 200, scroll: 150, input: 'last' },
+            sampling: { mousemove: 200, scroll: 150, input: 'all' },
           });
           if (!stop) throw new Error('Recorder unavailable.');
           own(() => { stop(); record.mirror.reset(); });

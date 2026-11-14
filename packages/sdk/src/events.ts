@@ -31,7 +31,8 @@ export function instrumentEvents(privacy: Privacy, at: () => number, emit: (even
         else value = redacted ? null : element.value.slice(0, 10000);
       } else value = redacted ? null : checkbox ? String((element as HTMLInputElement).checked) : element.value.slice(0, 10000);
     }
-    send({ kind: 'action', at: at(), action: kind, target: privacy.locator(element), value, redacted, ...(values !== undefined ? {values} : {}) });
+    const targetLabel=privacy.actionLabel(element);
+    send({ kind: 'action', ...(targetLabel?{targetLabel}:{}), at: at(), action: kind, target: privacy.locator(element), value, redacted, ...(values !== undefined ? {values} : {}) });
     if (values !== undefined && element instanceof HTMLSelectElement) multipleSelection?.(element);
   }
   for (const name of ['click', 'input', 'change', 'submit']) listen(document, name, action);

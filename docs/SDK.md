@@ -86,11 +86,20 @@ The development-only http://localhost:3000/sdk-lab exercises the real package in
 
 ## Approved privacy policy
 
-Sanitization occurs before data is stored in the recording. Defaults mask page text and input values; block scripts, passwords/hidden/payment/one-time-code fields, iframes, canvas and media; discard error messages/stacks, CSS bodies, plugins and unsupported event sources. Network capture records method, origin, status, timing and outcome only: no headers, bodies, cookies, query strings or fragments. The same-origin root path / is retained; other paths are null unless exactly allowlisted for the same origin. HTTP 500 is an HTTP failure, not an uncaught JavaScript exception.
+Updated2026-11-14 after explicit user agreement. The reporting widget presents two choices before Start:
 
-The replay sanitizer reconstructs allowed fields instead of retaining arbitrary raw attributes. IDs, classes, arbitrary data/ARIA attributes, image URLs and resource URLs are omitted. Raw inline styles are replaced with the bounded computed-presentation representation described below. The SDK can retain explicitly allowlisted same-origin stylesheet paths without queries/fragments, but current ingestion strips those references and the isolated player blocks original resources. **This deliberately limits visual fidelity**; it is not general pixel-perfect replay. Dynamic CSS, images, cross-origin iframes, canvas, full reload continuity, file controls and custom-widget semantics are unsupported initially. Shadow-root hosts/subtrees are omitted as inert placeholders; no Shadow DOM fidelity is promised. This also avoids rejected snapshots from Next.js route announcers/development portals. Server rejection of unsupported Shadow DOM remains unchanged.
+- **Mask entered values** (default): normal page text and layout are visible; field values are masked. Names or typed values echoed into ordinary page text remain visible. No automatic private-text detection is attempted.
+- **Full-content recording**: entered and sensitive field values (including password/payment inputs where capturable) are included after the visitor explicitly selects this mode. A visible warning appears before Start and during recording/review. Selection is frozen for that recording; Done/discard resets the next recording to masking.
 
-Synthetic fixture opt-ins use `privacy.allowTextSelectors`, `allowValueSelectors`, `testIds`, exact `paths`, `stylesheetPaths`, and exact `errorMessages`. These are explicit trust decisions, not automatic safe-content detection. Do not broadly allow an application root or arbitrary user content. Password blocking takes precedence over opt-ins. Use `data-unravel-block` on SDK UI and sensitive sections. Stable allowlisted `data-testid` values take precedence. Other supported light-DOM controls receive bounded tag/ordinal CSS paths, without collecting labels, names, IDs, classes or text. Paths are at most 20 levels/500 characters and ordinals at most 9999; unsupported structures stay unresolved. Markup changes can invalidate these paths. The semantic contract accepts this additive locator variant under recording version 1; legacy recordings remain readable. Fresh capture is needed to obtain missing old identifiers.
+Both modes exclude SDK UI, developer-marked `data-unravel-block` subtrees, hidden inputs and unsupported active resources. Masked mode retains the geometry of visible sensitive controls instead of removing them. This is DOM replay within the existing bounded presentation subset, not video or arbitrary cross-origin/canvas capture. Network capture remains metadata-only: no headers, bodies, cookies, query strings or fragments. Exact paths/error messages still require their existing opt-ins.
+
+The low-level `initialize` API can select the same policy with `privacy.mode: 'masked-values' | 'full'`. Omitting mode retains its legacy selector-based masking for backwards compatibility; widget consumers do not need selectors or safe-text markers. The widget always uses its visitor-selected mode. Mode selection is client consent UX, not cryptographic proof from an untrusted uploader.
+
+New recordings carry optional `captureMode` metadata. Legacy reports without it remain supported. The server retains password snapshot values only when mode is explicitlyfull; hidden input values remain stripped. All replay script/resource isolation, validation caps and active-attribute rejection remain in force. Storage uses the existing recording JSON metadata, without a schema migration. Existing evidence remains immutable and redacted content cannot be recovered.
+
+Normal text includes potentially private information already rendered by the website, an explicit user-accepted tradeoff. Developers can exclude an entire section with `data-unravel-block`. Full-content capture does not override that exclusion or turn on hidden/browser/network data collection.
+
+Legacy low-level selector options (`allowTextSelectors`, `allowValueSelectors`, `testIds`, `paths`, `stylesheetPaths`, `errorMessages`) remain available. The previous static-marker onboarding is superseded for widget integration. A new recording with the updated package is required.
 
 ## Contracts and provisional guardrails
 
@@ -134,3 +143,11 @@ Native multiple selects use optional `values` in recording-v1 select events: mis
 Actual Chromium/Firefox capture/privacy checks and independent React/Next export execution are recorded in [the completion verification](audits/DEFECTS_LANDING_2026-11-12.md).
 
 Stopping a minimized recording with a usable full snapshot opens the details/submission form immediately. This transition keeps capture stopped and submission explicit. The same behavior applies when a recording reaches its configured limit.
+
+## Earlier static-marker onboarding
+
+Superseded by the visitor-selected widget modes above. Existing recordings made with those settings remain unchanged.
+
+## Action names and replay timing (2026-11-14)
+
+Explicit visitor modes add optional action targetLabel from associated labels, aria-labels or ordinary button/link text, never control values. Legacy mode does not add this text. Selectors remain unchanged. rrweb input sampling records every input update at event time; limits still apply. Masking modifies emitted recording data, not the live DOM or field value. Browser regression checks verify live value/geometry and captured timing; current results belong to PROJECT_STATUS.md.

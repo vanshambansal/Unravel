@@ -35,3 +35,5 @@
 .header{gap:8px}.header>span:first-child svg{width:24px;height:24px}
 .optional-details summary{padding:5px 0;color:#b4b1bd;font-size:13px;cursor:pointer}
 .optional-details[open]{display:grid;gap:10px}.optional-details[open] summary{margin-bottom:10px}
+
+.recording-modes{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0}.recording-modes legend{font-size:14px;margin-bottom:10px;color:#f3f2ee}.recording-choice{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid #414550;border-radius:9px;cursor:pointer}.recording-choice:has(input:checked){border-color:#ff858b;background:#ff858b0b}.recording-choice input{margin:4px 0 0;accent-color:#ff858b;flex-shrink:0}.recording-choice span{display:grid;gap:3px}.recording-choice strong{font-size:14px;font-weight:550}.recording-choice small{font-size:12px;line-height:1.55;color:#b5bac4}

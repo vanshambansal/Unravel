@@ -1,6 +1,9 @@
 import type { Recording, StopReason } from '@unravel/contracts';
 import type { SubmissionState } from './submission';
+export type RecordingMode = 'masked-values' | 'full';
 export type PrivacyOptions = {
+  /** Omit to retain the low-level recorder’s legacy selector policy. Widget chooses a mode per recording. */
+  mode?: RecordingMode;
   allowTextSelectors?: string[];
   allowValueSelectors?: string[];
   testIds?: string[];
