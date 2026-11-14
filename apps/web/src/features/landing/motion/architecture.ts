@@ -67,11 +67,18 @@ export async function loadArchitecture() {
       mat.lightMap = light; mat.lightMapIntensity = 1.5;
       mat.aoMap = ao; mat.aoMapIntensity = .55;
       mat.envMapIntensity = .6; mat.side = THREE.FrontSide;
-      if (mat.name.includes('Cold ceiling')) mat.emissiveIntensity = .55;
+      if (mat.name.includes('Cold ceiling')) {
+        mat.emissiveIntensity = .55;
+        mat.polygonOffset = true; mat.polygonOffsetFactor = -1; mat.polygonOffsetUnits = -2;
+      }
       if (mat.name.includes('Recessed crimson')) mat.emissiveIntensity = 1.6;
       node.castShadow = !mat.name.includes('basalt');
       if (mat.name.includes('basalt')) floor = mat;
-      if (mat.name.includes('edge emitter')) edges.push(mat);
+      if (mat.name.includes('edge emitter')) {
+        // Separate flush emitters from the wall in the depth buffer as the camera moves.
+        mat.polygonOffset = true; mat.polygonOffsetFactor = -1; mat.polygonOffsetUnits = -2;
+        edges.push(mat);
+      }
       mat.needsUpdate = true;
     }
   });

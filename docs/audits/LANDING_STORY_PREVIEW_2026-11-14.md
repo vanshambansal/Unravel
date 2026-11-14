@@ -1,0 +1,35 @@
+# Landing story visual checkpoint
+
+State: interactive preview implemented and browser inspected; application integration and user visual acceptance pending. Date: 2026-11-14 (India).
+
+## Current revision after user feedback
+
+The user requested cursor/timer repairs, a visual request handoff, navigation/zoom clearance, JSON as a peer view, removal of verification and local-publication discussion, stronger type consistency, a responsive footer light and one navigation design throughout the eventual landing. These supersede the initial preview details below.
+
+Revised the3040 artifact only. Cursor coordinates now come from actual input/button rectangles, with a visible submit-press state. The manual demo uses elapsed animation-frame time from00:00 through Submit until explicit Stop; hidden/offscreen sessions pause and can resume. The widget has larger text and a request-shaped next action; it scrolls to, focuses and highlights the matching POST500 row. JSON joins Steps/Playwright in a bounded code pane with Copy JSON. Removed the entire verified-example panel while preserving underlying proof artifacts. Removed tarball/install disclosure and the public-deployment FAQ; setup links to the real project flow, and the replacement FAQ addresses visitor accounts. No fictional published installation command was introduced.
+
+The header is compact/fixed with aligned container geometry, consistent links/actions and a keyboard-accessible mobile Menu. It is the proposed shared shell for eventual entrance/story integration; actual entrance source is unchanged. Preview CSS reserves header space above the diagnostic stage, hides obsolete surrounding copy during zoom travel and restores it on reverse; original zoom TypeScript remains unchanged. This explicitly adjusts the preview geometry to resolve the user's overlap report. Standardized readable body/control/metadata sizing. Footer light follows desktop pointer position, is bounded on mobile and remains static with reduced motion. Direct fragment navigation is corrected after fonts settle. Capture intro stays anchored while the completed widget expands.
+
+Fresh browser checks: cursor tip inside Submit at7.1s; full playback/visible handoff; target request highlighted at viewport top536px on1000px desktop. Manual timer00:00 →00:02, remains00:02 on Submit, stops00:03 and stays frozen. No exceptions in the successful revision run. JSON contained at784px width with375px scroll area;390px and320px no document horizontal overflow; mobile Menu/navigation worked. At1440x900 the diagnostic intro starts134px below a72px header; reveal heading top361px; reverse restores visible intro; reduced motion uses Next moment. Pointer moved footer light to72%; direct mobile FAQ fragment settled at112px below a64px header. Inspected revised desktop/handoff/diagnostic/reveal/footer and mobile JSON/FAQ screenshots. Syntax and whitespace checks passed. One intermediate HTML replacement failed to add the handoff element, causing a null-handler exception and automation timeout; corrected before these final checks. One screenshot attempt raced a motion-preference refresh; recaptured after layout settled. Application integration/build and physical-device acceptance remain pending.
+
+## Scope and review
+
+Open `http://localhost:3040`. Files: `.cache/landing-story-preview/`. Restart with `python -m http.server 3040 --bind localhost --directory .cache/landing-story-preview`.
+
+The approved plan calls for desktop/mobile composition review before application integration. The shorter posthero story now has an isolated review artifact: on-request synthetic recording demonstration, protected diagnostic zoom, connected action/reproduction/Playwright workbench, compact local SDK setup and privacy boundaries, FAQs and closing workspace CTA. No application source, hero, SDK, original fixture, backend or deployment changes were made in this task. Original3000 and production3032 remain separate.
+
+Playback includes pause/resume/replay, directly selectable moments and a local-only Start/type/submit/failure/Stop path. Nothing invokes the recorder SDK or an upload endpoint. Playback pauses offscreen/background; reduced motion offers manual moments. The diagnostic uses the existing markup/copied stylesheet and a bundle of unchanged `story-motion.ts`.
+
+Readable steps are the default; selecting an action highlights corresponding generated code. JSON and actual recorded before/after verification are secondary disclosures. Intended success remains developer supplied. Setup reflects the unpublished local tarball rather than claiming registry availability. Existing fonts, charcoal/crimson palette and mark remain.
+
+## Verification and artifacts
+
+Fresh proof: `.cache/landing-story-preview/proof-run/proof.json`. Exact exported SHA256 `d2f11a7aa5290d30dd3825f0b1f71d090ebf5e2c60df412e965479dfe4b55075`; five expected assertion failures before the endpoint fix and five passes after; retries0, identical exported file. The only fixture patch changes the response500 to200 in an isolated copy. Original fixture and older proof remain intact. Helpers: `.cache/prepare-landing-preview.mjs`, `.cache/verify-landing-preview.mjs`.
+
+Browser review at1440x1000,390x844 and320x740: no document horizontal overflow. Inspected capture/workbench/setup/proof/FAQ compositions. Verified pause retains time,12-second playback completion/replay, local typed submission/Stop, action/code association, framework switching, diagnostic controls and offscreen pause. Diagnostic progress0.550 yielded scale25.6599; reversing restored identity transform and non-inert controls. Reduced motion removed zoom and exposed manual Next moment. No page exceptions observed. Initial favicon404 corrected. Observed playback/navigation requests were local static GETs, not recording uploads.
+
+Screenshots under preview root: `desktop-capture.png`, `desktop-workbench.png`, `desktop-setup.png`, `desktop-proof.png`, `desktop-diagnostic.png`, `desktop-zoom.png`, `mobile-capture.png`, `mobile-workbench.png`, `mobile-details.png`, `narrow-setup.png`. Some precede final typography/color refinements; running preview is current. Scroll positions may crop section headings beneath persistent navigation.
+
+JavaScript syntax check passed. No application build/typecheck was rerun for this isolated HTML/CSS/JS artifact and documentation. Final React integration, lifecycle, production performance and physical-device acceptance remain unverified. The application port needs its own build, navigation/recovery, desktop/mobile and reduced-motion checks. No new keys, dependencies or services were needed.
+
+Final screenshot refresh initially timed out because the automation clicked the hidden readable-view link while the code view was already selected after same-page anchor navigation. Selecting the persistent Playwright control recovered; this was a harness-state mismatch, not a page exception. Documentation whitespace check passed; original and copied diagnostic stylesheet hashes match.

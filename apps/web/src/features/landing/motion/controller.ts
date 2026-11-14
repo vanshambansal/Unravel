@@ -1,3 +1,4 @@
+import {preload} from 'react-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { choreography, journeyTiming, journeyViewports } from './choreography';
@@ -96,7 +97,7 @@ export function mountLandingMotion(host: HTMLElement): () => void {
   function activateFallback(message: string) {
     fallback = true; generation++; stop(); trigger?.kill(); trigger = undefined;
     scene?.dispose(); scene = undefined; heroRays?.dispose(); heroRays = undefined;
-    root.classList.remove('rendering');
+    root.classList.remove('rendering','rays-ready');
     root.classList.add('static');
     progress = visualProgress = 1; present(1); ambientButton.disabled = true; status.textContent = message;
   }
@@ -104,25 +105,31 @@ export function mountLandingMotion(host: HTMLElement): () => void {
     const ticket = ++generation;
     presentedProgress = Number.NaN;
     stop(); trigger?.kill(); trigger = undefined; scene?.dispose(); scene = undefined; heroRays?.dispose(); heroRays = undefined;
-    root.classList.remove('rendering');
+    root.classList.remove('rendering','rays-ready');
     reduced = media.matches;
     const hints = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean; effectiveType?: string } };
     const conserved = !budgetOverride && conserveSceneResources({ ...hints.connection, saveData:hints.connection?.saveData, effectiveType:hints.connection?.effectiveType, deviceMemory:hints.deviceMemory, hardwareConcurrency:hints.hardwareConcurrency });
     enableScene.hidden = !conserved || reduced;
     ambientButton.hidden = conserved && !reduced;
     if (reduced || fallback || conserved) { activateFallback(reduced ? 'Reduced motion / static architectural view' : conserved ? 'Lightweight view / 3D is optional' : status.textContent ?? 'Static architectural view'); return; }
+    preload('/landing/architecture/atrium.glb',{as:'fetch',crossOrigin:'anonymous'});
+    preload('/landing/architecture/indirect-light.png',{as:'image',crossOrigin:'anonymous'});
+    preload('/landing/architecture/ambient-occlusion.png',{as:'image',crossOrigin:'anonymous'});
     root.classList.remove('static');
     ambientButton.disabled = false; status.textContent = '';
     // HTML/poster remain useful if the renderer chunk cannot load.
     try {
+      // Prepare the independent overlay while geometry/maps and PBR programs load.
+      const raysReady = initializeHeroRays(element<HTMLCanvasElement>('hero-rays'), () => ticket !== generation || disposed).then(rays => {
+        if (ticket !== generation || disposed) { rays?.dispose(); return; }
+        heroRays = rays; positionEntranceLight(); present(0); rays?.render(0,true);
+        root.classList.add('rays-ready'); return rays;
+      });
       const { initializeScene } = await import('./scene');
-      if (ticket !== generation || disposed) return;
+      if (ticket !== generation || disposed) { await raysReady; return; }
       const initialized = await initializeScene(canvas, innerWidth <= 700 ? 'mobile' : 'desktop');
-      if (ticket !== generation || disposed) { initialized.dispose(); return; }
-      scene = initialized; positionEntranceLight();
-      const rays = await initializeHeroRays(element<HTMLCanvasElement>('hero-rays'), () => ticket !== generation || disposed);
-      if (ticket !== generation || disposed) { rays?.dispose(); return; }
-      heroRays = rays;
+      if (ticket !== generation || disposed) { initialized.dispose(); await raysReady; return; }
+      scene = initialized; heroRays = await raysReady;
       positionEntranceLight();
       scene.resize(stage.clientWidth, stage.clientHeight); scene.pauseAmbient(paused);
       trigger = ScrollTrigger.create({ trigger: journey, start: 'top top', end: () => `+=${innerHeight * journeyTiming.cameraViewports}`, onUpdate: self => { progress = self.progress; wake(); }, invalidateOnRefresh: true });

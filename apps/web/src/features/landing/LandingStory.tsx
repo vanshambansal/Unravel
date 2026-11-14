@@ -1,77 +1,13 @@
-/* eslint-disable @next/next/no-img-element -- Reuse the exact fixed-size local trace SVG. */
-'use client';
-import Link from 'next/link';
-import {useEffect,useRef,useState} from 'react';
+ 'use client';
+import {useEffect,useRef} from 'react';
 import type {LandingExample} from './story-example';
+import {storyMarkup} from './story-markup';
 import './story.css';
-
-const moments=[
- {time:'00:00.0',title:'Recording started',detail:'The visitor chooses when to begin.'},
- {time:'00:02.1',title:'Question entered',detail:'A safe synthetic value for this example.'},
- {time:'00:05.2',title:'POST /api/questions',detail:'HTTP 500 · the request failed.'},
- {time:'00:05.7',title:'Failure feedback appeared',detail:'The corresponding moment in the replay.'},
-];
-
-function TraceMark(){return <img src="/landing/artwork/unravel-mark.svg" width="26" height="26" alt=""/>;}
-
-function RecorderPreview(){
- const [step,setStep]=useState(0),[playing,setPlaying]=useState(false);
- useEffect(()=>{if(!playing)return;let frame=0;const timer=setInterval(()=>{frame++;setStep(frame);if(frame>=3){clearInterval(timer);setPlaying(false);}},1400);return()=>clearInterval(timer);},[playing]);
- return <figure className="story-recorder-example"><figcaption>Interactive example · nothing is recorded or sent</figcaption>
-  <div className="story-host-site"><div className="story-browserbar"><span className="story-browser-dots" aria-hidden="true"><i/><i/><i/></span><span>Question desk / synthetic website</span></div>
-   <div className="story-question-preview"><h3>Ask a question</h3><span>Your question</span><div className="story-question-value">{step>0?'Why does this request fail?':'A visitor has a question…'}</div><span className="story-example-submit">Submit question</span><p className={step>1?'story-failure':'story-placeholder'}>{step>1?'We could not submit your question.':'The visitor is ready to reproduce the issue.'}</p></div>
-   <div className="story-recorder"><div className="story-recorder-brand"><TraceMark/><strong>unravel</strong><span className={playing?'story-recording-indicator':'story-preview-label'}>{playing?'Preview playing':'Recording preview'}</span></div>
-    <h3>{step===3?'The sequence is ready to share.':'Show us what went wrong.'}</h3><p>{moments[step].detail}</p>
-    <div className="story-preview-actions"><button className="button light" onClick={()=>{if(playing)setPlaying(false);else{setStep(0);setPlaying(true);}}}>{playing?'Pause preview':step===3?'Replay example':'Play recording example'}</button><button className="story-text-button" onClick={()=>{setPlaying(false);setStep(0);}}>Reset</button></div>
-    <div className="story-preview-progress" aria-label={`Example moment ${step+1} of 4`}>{moments.map((moment,index)=><button key={moment.time} aria-label={`Preview ${moment.title.toLowerCase()}`} aria-pressed={index===step} onClick={()=>{setPlaying(false);setStep(index);}}><span/></button>)}</div>
-   </div>
-  </div>
- </figure>;
-}
-
-function DiagnosticPanel(){
- const [detail,setDetail]=useState<'request'|'actions'|'errors'>('request');
- return <div className="story-inspector" data-diagnostic-panel>
-  <div className="story-inspector-title"><span className="story-session-dot"/><strong>Question submission</strong><span>Illustrative recording</span><span className="story-session-duration">00:05.7</span></div>
-  <div className="story-inspector-body"><div className="story-replay-example"><div className="story-browserbar">demo.example / questions</div><div className="story-question-preview"><h3>Question desk</h3><span>Your question</span><div className="story-question-value">Why does this request fail?</div><span className="story-example-submit">Submit question</span><p className="story-failure">We could not submit your question.</p></div><div className="story-playhead"><span/>00:05.7 / 00:06.0</div></div>
-   <div className="story-network"><h3>Network activity</h3><div className="story-request-columns"><span>Time</span><span>Method / path</span><span>Status</span><span>Duration</span></div>
-    <div className="story-request-row"><time>00:00.2</time><span><b>GET</b> /questions</span><span className="story-http-ok">200</span><span>42 ms</span></div>
-    <button className="story-request-row story-request-selected" onClick={()=>setDetail('request')} aria-label="Inspect failed POST request"><time>00:05.2</time><span><b>POST</b> /api/questions</span><span className="story-http-error" data-status-anchor>500</span><span>382 ms</span></button>
-    <div className="story-request-row"><time>00:05.9</time><span><b>GET</b> /assets/ui.css</span><span className="story-http-ok">200</span><span>18 ms</span></div>
-    <div className="story-evidence-switch" role="group" aria-label="Example evidence details">{(['request','actions','errors'] as const).map(value=><button key={value} aria-pressed={detail===value} onClick={()=>setDetail(value)}>{value==='request'?'Request':value==='actions'?'Actions':'Errors'}</button>)}</div>
-    <div className="story-request-detail" role="status">{detail==='request'?<><strong>HTTP failure, in context.</strong><span>POST /api/questions returned 500. Bodies and headers are not captured.</span></>:detail==='actions'?<><strong>Enter question → Submit question</strong><span>Related actions and replay timestamps stay together.</span></>:<><strong>An HTTP 500 is not a JavaScript exception.</strong><span>Uncaught browser errors are captured separately. Neither proves a backend root cause.</span></>}</div>
-   </div>
-  </div>
- </div>;
-}
-
-function PlanPreview({example}:{example:LandingExample}){
- const [view,setView]=useState('steps'),[copied,setCopied]=useState('');
- const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
- useEffect(()=>()=>{if(timer.current)clearTimeout(timer.current);},[]);
- async function copy(){try{await navigator.clipboard.writeText(view==='json'?example.json:example.code);setCopied('Example copied');}catch{setCopied('Copy unavailable. Select the code to copy.');}if(timer.current)clearTimeout(timer.current);timer.current=setTimeout(()=>setCopied(''),3000);}
- return <div className="story-plan"><div className="story-plan-tabs" role="group" aria-label="Example test plan view">{[['steps','Readable steps'],['json','JSON plan'],['code','Playwright']].map(([value,label])=><button key={value} aria-pressed={view===value} onClick={()=>setView(value)}>{label}</button>)}</div>
-  {view==='steps'?<div className="story-plan-steps"><h3>Make it reproducible.</h3><ol><li>Open the question page.</li><li>Enter a safe question value.</li><li>Select Submit question.</li></ol><div className="story-expected"><span>Developer-confirmed expected result</span><p>Your question was submitted successfully.</p></div><p className="story-note">The recorded failure is evidence. You decide what correct behavior means.</p><button className="story-text-button" onClick={()=>setView('code')}>Inspect the generated test</button></div>:<div className="story-plan-code"><div><span>{view==='json'?'Versioned, framework-independent data':'Generated by Unravel’s actual Playwright adapter'}</span><button className="story-text-button" onClick={()=>void copy()}>Copy example</button></div><pre tabIndex={0} aria-label={view==='json'?'Example JSON plan':'Example Playwright test'}><code>{view==='json'?example.json:example.code}</code></pre><p role="status">{copied||'Synthetic example. Not a passing-test claim.'}</p></div>}
- </div>;
-}
-
-export function LandingStory({example}:{example:LandingExample}){
+import './approved-story.css';
+export function LandingStory({example}:{example:LandingExample}) {
  const root=useRef<HTMLDivElement>(null);
- useEffect(()=>{let cancelled=false,dispose:(()=>void)|undefined;void import('./story-motion').then(({mountStoryMotion})=>{if(!cancelled&&root.current)dispose=mountStoryMotion(root.current);}).catch(()=>{/* Native static sections remain readable. */});return()=>{cancelled=true;dispose?.();};},[]);
- const [framework,setFramework]=useState('Next.js'),[copyMessage,setCopyMessage]=useState('');
- const copyTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
- useEffect(()=>()=>{if(copyTimer.current)clearTimeout(copyTimer.current);},[]);
- const snippet=`${framework==='Next.js'?"'use client';\n\n":''}import { useEffect } from 'react';\nimport { mountWidget } from '@unravel/sdk';\n\nexport function UnravelReporter() {\n  useEffect(() => {\n    const widget = mountWidget({\n      projectId: 'YOUR_PUBLIC_PROJECT_ID',\n      applicationOrigin: 'YOUR_UNRAVEL_ORIGIN',\n    });\n    return () => widget.destroy();\n  }, []);\n  return null;\n}`;
- async function copyIntegration(){try{await navigator.clipboard.writeText(snippet);setCopyMessage('Integration example copied');}catch{setCopyMessage('Copy unavailable. Select the code to copy.');}if(copyTimer.current)clearTimeout(copyTimer.current);copyTimer.current=setTimeout(()=>setCopyMessage(''),3000);}
- return <div className="landing-story" ref={root}>
-  <nav className="story-navigation" aria-label="Product navigation"><a href="#hero" aria-label="Unravel hero" className="story-wordmark"><TraceMark/>unravel</a><div><a href="#study">How it works</a><a href="#diagnostics">Investigate</a><a href="#integration">SDK guide</a></div><Link href="/sign-in" className="story-nav-signin">Sign in</Link><Link href="/app" className="button light">Open workspace</Link></nav>
-  <section id="study" className="story-section story-record-section" tabIndex={-1} aria-labelledby="record-story-title"><div className="story-copy"><h2 id="record-story-title">Start with what<br/>actually happened.</h2><p>Let visitors show the issue in their own browser. Keep the actions, the failure and the moments around it in one report.</p><p>They choose when to record and what to submit. Sensitive values are masked by default.</p><a className="story-text-button" href="#integration">See the integration</a><div className="story-consent-line"><span/>Explicit recording. No visitor account.</div></div><RecorderPreview/></section>
-  <section id="diagnostics" className="story-diagnostic-journey" data-diagnostic-journey aria-labelledby="diagnostic-story-title"><div className="story-diagnostic-stage" data-diagnostic-stage><div className="story-diagnostic-intro"><div><h2 id="diagnostic-story-title">Look closer at the failure.</h2><p>A replay, a request, and the moments around it.<br/>The details are already here. Follow the one that matters.</p></div><a className="story-text-button" href="#sequence">Skip visual transition</a></div><DiagnosticPanel/><p className="story-diagnostic-caption">One failed request. The surrounding sequence preserved.<span>Illustrative data · a network status does not establish root cause.</span></p><div className="story-diagnostic-reveal" data-diagnostic-reveal aria-hidden="true"><div className="story-reveal-thread"/><h2>The story is<br/>everything around it.</h2><span>The failure is one moment. Follow the actions, requests and replay around it.</span></div></div></section>
-  <section id="sequence" className="story-section story-sequence" aria-labelledby="sequence-title"><div className="story-section-heading"><h2 id="sequence-title">A report you<br/>can reproduce.</h2><p>Connect what the visitor did with what the browser observed. Then review the steps and define what should happen instead.</p></div><div className="story-sequence-grid"><div className="story-sequence-evidence"><h3>The recorded sequence</h3><ol>{moments.map((moment,index)=><li key={moment.time} className={index===2?'story-moment-failure':''}><time>{moment.time}</time><div><strong>{moment.title}</strong><p>{moment.detail}</p></div></li>)}</ol><p className="story-note">Replay and diagnostics provide evidence, not an automatic diagnosis.</p></div><PlanPreview example={example}/></div><p className="story-sequence-summary">From replay to readable steps, an editable JSON plan, and a test that runs in your own project.</p></section>
-  <section id="integration" className="story-section story-integration" aria-labelledby="integration-title"><div className="story-copy"><h2 id="integration-title">Your website.<br/>One integration.</h2><p>Register a website, install the standalone SDK and mount the reporter once near your application root.</p><p>Unravel supplies the floating widget, recording controls, report form and retry flow. Visitors never configure a project ID.</p><div className="story-install-note"><strong>Local development package</strong><p>The SDK is currently unpublished. Pack it with <code>pnpm sdk:pack</code>, then install the resulting local tarball in your website project.</p><code>pnpm add /path/to/unravel-sdk-0.1.0.tgz</code></div><Link href="/app/projects" className="story-text-button">Get your project’s setup instructions</Link></div><div className="story-integration-code"><div className="story-code-toolbar"><div role="group" aria-label="Landing integration framework">{['Next.js','React'].map(name=><button aria-pressed={framework===name} key={name} onClick={()=>setFramework(name)}>{name}</button>)}</div><button className="story-text-button" onClick={()=>void copyIntegration()}>Copy code</button></div><pre tabIndex={0} aria-label={`${framework} SDK integration example`}><code>{snippet}</code></pre><p role="status">{copyMessage||'Mount <UnravelReporter /> once. Nothing records before Start.'}</p></div></section>
-  <section id="privacy" className="story-section story-privacy" aria-labelledby="privacy-title"><div className="story-copy"><h2 id="privacy-title">Useful evidence.<br/>Deliberate boundaries.</h2><p>Recording shouldn’t mean collecting everything. Unravel starts with conservative defaults and makes the limits visible.</p></div><dl><div><dt>Masked by default</dt><dd>Page text and input values stay masked unless the developer explicitly permits safe content. Password fields remain blocked.</dd></div><div><dt>Metadata, not network bodies</dt><dd>No request bodies, response bodies, headers or cookies. Private paths, queries and fragments are omitted by default.</dd></div><div><dt>Isolated replay</dt><dd>Reconstructed pages run on a separate player origin, with recorded scripts and external resources blocked.</dd></div><div><dt>Developer-reviewed tests</dt><dd>Supply safe test values and the correct expected outcome. Export doesn’t mean execution; run the test in your project.</dd></div></dl></section>
-  <section className="story-section story-questions" aria-labelledby="questions-title"><h2 id="questions-title">A few things<br/>worth knowing.</h2><div><details><summary>Is session replay a video?</summary><p>No. It reconstructs recorded DOM activity. Layout and colors are captured within a safe subset; images, external fonts and complex embedded content have limits.</p></details><details><summary>Does Unravel invent the expected result?</summary><p>No. Recorded failure is evidence. You review the actions, supply missing safe values and confirm what correct behavior should be before exporting a regression test.</p></details><details><summary>What websites and interactions are supported?</summary><p>The standalone widget integrates with React and Next.js. Initial support covers ordinary light-DOM controls and single-page navigation. Full reload continuity, cross-origin frames, file uploads, canvas and complex custom controls remain limited or unsupported.</p></details><details><summary>Can I deploy it publicly today?</summary><p>This is a locally verified portfolio MVP. Public deployment still needs production authentication, isolated HTTPS replay, edge abuse protections and a reviewed privacy/retention policy.</p></details></div></section>
-  <section className="story-final story-section" aria-labelledby="final-title"><div><h2 id="final-title">Keep the story.<br/>Protect the fix.</h2><p>Turn the next “it broke” into something you can investigate, reproduce and test.</p></div><Link href="/app" className="button light">Open your workspace</Link></section>
-  <footer className="story-footer"><a className="story-wordmark" href="#hero"><TraceMark/>unravel</a><p>Browser bugs. Understood.</p><div><a href="#integration">SDK guide</a><a href="#privacy">Privacy defaults</a><button id="replay" className="story-text-button" type="button">Back to entrance</button></div></footer>
- </div>;
+ useEffect(()=>{let cancelled=false;let dispose:(()=>void)|undefined;
+ void import('./approved-story').then(({mountApprovedStory})=>{if(!cancelled&&root.current){dispose=mountApprovedStory(root.current,example);}});
+ return()=>{cancelled=true;dispose?.();};},[example]);
+ return <div className="approved-story" ref={root} dangerouslySetInnerHTML={{__html:storyMarkup}}/>;
 }
