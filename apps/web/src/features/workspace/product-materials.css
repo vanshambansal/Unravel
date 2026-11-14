@@ -1,5 +1,11 @@
 
-.unravel-workspace :is(.ui-settings-group,.ui-resource-collection,.setup-progress,.ui-investigation-surface) { background: linear-gradient(135deg,rgba(255,255,255,0.03),transparent 60%),var(--ui-surface); border: 1px solid var(--ui-line-strong); box-shadow: var(--ui-inner-light), 0 16px 48px rgba(0,0,0,0.4); backdrop-filter: blur(20px) saturate(160%); }
-.unravel-workspace .setup-step { background:linear-gradient(145deg,rgba(255,255,255,0.03),transparent),var(--ui-surface); border:1px solid var(--ui-line-strong); box-shadow:var(--ui-inner-light); border-radius:14px; padding:24px; font-size:14px; backdrop-filter: blur(16px); }
+.unravel-workspace :is(.ui-settings-group,.ui-resource-collection,.setup-progress,.ui-investigation-surface) { background: linear-gradient(135deg,rgba(255,255,255,0.03),transparent 60%),var(--ui-surface); border: 1px solid var(--ui-line-strong); box-shadow: var(--ui-inner-light), 0 16px 48px rgba(0,0,0,0.4);  }
+.unravel-workspace .setup-step { background:linear-gradient(145deg,rgba(255,255,255,0.03),transparent),var(--ui-surface); border:1px solid var(--ui-line-strong); box-shadow:var(--ui-inner-light); border-radius:14px; padding:24px; font-size:14px;  }
 .unravel-workspace .setup-step h3 { font-size:16px;line-height:24px; }.unravel-workspace .setup-progress h2 { font-size:18px;line-height:26px; }
-@media(prefers-reduced-transparency:reduce){.unravel-workspace :is(.ui-settings-group,.ui-resource-collection,.setup-progress,.ui-investigation-surface){backdrop-filter:none;background:#161922;}}
+@media(prefers-reduced-transparency:reduce){.unravel-workspace :is(.ui-settings-group,.ui-resource-collection,.setup-progress,.ui-investigation-surface){background:#161922;}}
+
+/* Task surfaces use stable paint; transient overlays retain their own styling. */
+.unravel-workspace .workspace-frame :is(.ui-resource-collection,.ui-settings-group,.setup-step,.setup-progress,.report-grid,.generator-sequence) { background:#161922; }
+.unravel-workspace .workspace-frame .report-timeline { background:#12141a; }
+.unravel-workspace .workspace-frame .product-button:active { transition:none; background:#333741; }
+.unravel-workspace .workspace-frame .product-button.secondary:active { background:#292d35; }

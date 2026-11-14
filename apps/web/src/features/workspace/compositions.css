@@ -69,7 +69,7 @@
 
 /* Floating surfaces: strongest depth belongs to overlays, not every content row. */
 .unravel-workspace .ui-dialog { padding: 0; width: calc(100% - 32px); max-width: 520px; max-height: calc(100dvh - 32px); overflow: auto; border: 1px solid #ffffff29; border-radius: 16px; color: var(--product-text); background: linear-gradient(140deg, #ffffff05, transparent 60%), #191b20; box-shadow: var(--ui-inner-light), 0 32px 100px #0009; }
-.unravel-workspace .ui-dialog::backdrop { background: #050609b8; backdrop-filter: blur(4px); }
+.unravel-workspace .ui-dialog::backdrop { background: #050609b8; }
 .unravel-workspace .ui-dialog { opacity:0; transform:translateY(8px) scale(.98); transition:opacity 160ms,transform var(--motion-standard) var(--motion-arrive),display var(--motion-standard) allow-discrete,overlay var(--motion-standard) allow-discrete; }
 .unravel-workspace .ui-dialog[open] { opacity:1; transform:none; }
 @starting-style { .unravel-workspace .ui-dialog[open] { opacity:0; transform:translateY(8px) scale(.98); } }
@@ -83,7 +83,7 @@
 .unravel-workspace .ui-dialog-actions .product-button { font-size: 13px; min-height: 42px; padding: 10px 16px; }
 
 /* Resource collections: one surface, repeatable rows, a quiet toolbar and footer. */
-.unravel-workspace .ui-resource-collection { border: 1px solid var(--ui-line-strong); background: var(--ui-surface); border-radius: var(--ui-radius); box-shadow: var(--ui-inner-light), var(--ui-shadow); overflow: hidden; backdrop-filter: blur(20px) saturate(160%); }
+.unravel-workspace .ui-resource-collection { border: 1px solid var(--ui-line-strong); background: var(--ui-surface); border-radius: var(--ui-radius); box-shadow: var(--ui-inner-light), var(--ui-shadow); overflow: hidden;  }
 .unravel-workspace .ui-collection-heading { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 12px 22px; border-bottom: 1px solid var(--ui-line); background: rgba(255, 255, 255, 0.02); }
 .unravel-workspace .ui-collection-heading h2 { font: 500 12px/20px 'Unravel Product Inter', sans-serif; color: rgba(255, 255, 255, 0.65); letter-spacing: .01em; }
 .unravel-workspace .ui-count { color: rgba(255, 255, 255, 0.50); font: 11px/18px 'Unravel Product Mono', monospace; border: 1px solid var(--ui-line); border-radius: 6px; padding: 1px 6px; background: rgba(255, 255, 255, 0.04); }
@@ -141,3 +141,5 @@
 }
 
 @media(max-width:700px){.unravel-workspace .ui-resource-row[data-has-icon=true] .ui-resource-actions{padding-left:54px}}
+
+.unravel-workspace .workspace-frame .ui-dialog { transition:none; transform:none; }

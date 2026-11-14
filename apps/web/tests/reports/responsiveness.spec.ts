@@ -57,6 +57,12 @@ test('search navigation, mobile hit targets, retained paused replay and delayed-
     expect(await page.getByTestId('replay-time').textContent()).toBe(paused);
     await page.getByRole('tab', { name: 'Investigation', exact: true }).click();
     await expect(host).toHaveAttribute('data-test-identity', 'retained'); await expect(page.getByRole('button', { name: 'Play replay', exact: true })).toBeVisible();
+    const investigation = page.getByRole('tab', { name: 'Investigation', exact: true });
+    await investigation.focus(); await investigation.press('ArrowRight');
+    await expect(page.getByRole('tab', { name: 'Reproduction & test plan', exact: true })).toBeFocused();
+    await expect(page.getByRole('tabpanel', { name: 'Reproduction & test plan', exact: true })).toBeVisible();
+    await page.getByRole('tab', { name: 'Reproduction & test plan', exact: true }).press('ArrowLeft');
+    await expect(investigation).toBeFocused();
     console.log('[responsiveness] paused instance retained');
     const playerOrigin = new URL((await host.getAttribute('src'))!).origin;
     await page.route(`${playerOrigin}/`, async route => { await new Promise(resolve => setTimeout(resolve, 5500)); await route.continue(); });

@@ -31,7 +31,7 @@ test('anonymous service calls cannot reach persistence; client ownership is igno
   const project = { id: '11111111-1111-4111-8111-111111111111', ownerId: 'owner-a', name: 'Demo', origin: 'https://example.com', createdAt: new Date(0) };
   const repository: ProjectRepository = {
     async list(owner) { calls.push(['list', owner]); return [project]; },
-    async find(owner, id) { calls.push(['find', owner, id]); return owner === project.ownerId ? project : undefined; },
+    async findSetup() { return undefined; }, async find(owner, id) { calls.push(['find', owner, id]); return owner === project.ownerId ? project : undefined; },
     async create(...values) { calls.push(['create', ...values]); return project; },
     async update() { return project; }, async remove() { return true; },
   };
@@ -47,7 +47,7 @@ test('anonymous service calls cannot reach persistence; client ownership is igno
 });
 test('invalid registration and duplicate website produce useful field errors', async () => {
   let writes = 0;
-  const service = projectService({ async list() { return []; }, async find() { return undefined; }, async create() { writes++; return undefined; }, async update() { return undefined; }, async remove() { return false; } });
+  const service = projectService({ async list() { return []; }, async findSetup() { return undefined; }, async find() { return undefined; }, async create() { writes++; return undefined; }, async update() { return undefined; }, async remove() { return false; } });
   await assert.rejects(service.create('owner', {}), (e: unknown) => e instanceof ApplicationError && e.status === 422 && !!e.fields?.websiteUrl);
   assert.equal(writes, 0);
   await assert.rejects(service.create('owner', { name: 'Demo', websiteUrl: 'example.com' }), (e: unknown) => e instanceof ApplicationError && e.status === 409);
@@ -67,7 +67,7 @@ test('project management checks owner, current snapshot, validation and exact de
   const project = { id: '11111111-1111-4111-8111-111111111111', ownerId: 'a', name: 'Demo', origin: 'https://example.com', createdAt: new Date() };
   let current: typeof project | undefined = project, collision = false, race = false;
   const service = projectService({
-    async list() { return []; }, async find(owner) { return owner === 'a' ? current : undefined; }, async create() { return undefined; },
+    async list() { return []; }, async findSetup() { return undefined; }, async find(owner) { return owner === 'a' ? current : undefined; }, async create() { return undefined; },
     async update(owner, id, expected, next) {
       assert.equal(owner, 'a'); assert.equal(id, project.id); assert.deepEqual(expected, { name: current!.name, origin: current!.origin });
       if (collision) throw { cause: { code: '23505', constraint: 'projects_owner_origin_unique' } };
@@ -94,4 +94,19 @@ test('project management checks owner, current snapshot, validation and exact de
   race = true; await assert.rejects(service.remove('a', project.id, deletion), (e: unknown) => e instanceof ApplicationError && e.status === 409);
   race = false; await service.remove('a', project.id, deletion);
   await assert.rejects(service.remove('a', project.id, deletion), (e: unknown) => e instanceof ApplicationError && e.status === 404);
+});
+
+test('setup reads enforce identity and ownership before exposing report existence', async () => {
+  const project = { id: '11111111-1111-4111-8111-111111111111', ownerId: 'owner', name: 'Demo', origin: 'https://example.com', createdAt: new Date(0) };
+  let calls = 0;
+  const service = projectService({
+    async list() { return []; }, async find() { return undefined; },
+    async findSetup(owner, id) { calls++; return owner === project.ownerId && id === project.id ? { ...project, hasReports: true } : undefined; },
+    async create() { return undefined; }, async update() { return undefined; }, async remove() { return false; },
+  });
+  await assert.rejects(async () => service.getSetup(null, project.id), (error: unknown) => error instanceof ApplicationError && error.status === 401);
+  await assert.rejects(service.getSetup('owner', 'invalid'), (error: unknown) => error instanceof ApplicationError && error.status === 404);
+  assert.equal(calls, 0);
+  await assert.rejects(service.getSetup('another-owner', project.id), (error: unknown) => error instanceof ApplicationError && error.status === 404);
+  assert.equal((await service.getSetup('owner', project.id)).hasReports, true);
 });

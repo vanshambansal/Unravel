@@ -9,7 +9,6 @@ import { ApplicationError } from '@/server/errors';
 import { projectServices } from '@/server/projects';
 import { ProjectNavigation } from '@/features/workspace/ProjectNavigation';
 import { WorkspaceSidebar } from '@/features/workspace/WorkspaceSidebar';
-import { AmbientMotionControl, MaterialLight } from '@/features/workspace/WorkspaceMotion';
 import { NavigationPreparation } from '@/features/workspace/NavigationPreparation';
 export const dynamic = 'force-dynamic';
 
@@ -20,9 +19,8 @@ async function ProtectedWorkspace({ children }: { children: React.ReactNode }) {
   const projects = projectServices().list(owner);
   const artwork=getImageProps({src:'/landing/artwork/hero-atrium.png',alt:'',width:960,height:640}).props.src;
   return <WorkspaceProvider artwork={artwork}><NavigationPreparation key={owner}><div className="workspace-frame">
-    <MaterialLight />
     <a href="#workspace-content" className="product-skip">Skip to content</a>
-    <header className="workspace-header"><Link className="workspace-brand" href="/" prefetch={false}><Image src="/landing/artwork/unravel-mark.svg" width={26} height={26} alt="" />unravel</Link><Suspense fallback={<div className="workspace-project-placeholder" role="status">Loading projects…</div>}><ProjectSwitcher projects={projects} /></Suspense><div className="workspace-header-actions"><AmbientMotionControl /><AccountMenu /></div></header>
+    <header className="workspace-header"><Link className="workspace-brand" href="/" prefetch={false}><Image src="/landing/artwork/unravel-mark.svg" width={26} height={26} alt="" />unravel</Link><Suspense fallback={<div className="workspace-project-placeholder" role="status">Loading projects…</div>}><ProjectSwitcher projects={projects} /></Suspense><div className="workspace-header-actions"><AccountMenu /></div></header>
     <div className="workspace-body"><Suspense fallback={<aside className="workspace-sidebar" aria-label="Loading navigation" aria-busy="true"><div className="ui-skeleton workspace-nav-placeholder" /><div className="ui-skeleton workspace-nav-placeholder" /><div className="ui-skeleton workspace-nav-placeholder" /></aside>}><ProjectSidebar projects={projects} /></Suspense><main id="workspace-content" className="workspace-content" tabIndex={-1}>{children}</main></div>
   </div></NavigationPreparation></WorkspaceProvider>;
 }

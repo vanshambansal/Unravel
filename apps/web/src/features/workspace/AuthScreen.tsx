@@ -3,7 +3,8 @@ import Image from 'next/image';
 import { SignIn, SignUp } from '@clerk/nextjs';
 import { Suspense } from 'react';
 import { authConfigured } from '@/server/auth';
-import { AmbientMotionControl, MaterialLight } from './WorkspaceMotion';
+import { AmbientMotionControl } from './WorkspaceMotion';
+import { MaterialLight } from './AuthMaterialLight';
 import { AuthAvailability } from '../authentication/AuthAvailability';
 
 export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {

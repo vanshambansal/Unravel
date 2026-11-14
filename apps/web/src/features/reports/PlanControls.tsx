@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useId, useRef, type ReactNode } from 'react';
 import { emptyLocator, type PlanLocator, type PlanAssertion, type PlanStep, describeStep } from '@unravel/test-plan';
 
 const kinds: [PlanLocator['kind'], string][] = [['testId','Test ID'],['label','Label'],['role','Accessible role'],['text','Exact text'],['css','CSS selector'],['unresolved','Not identified']];
@@ -30,17 +30,19 @@ export function StepFields({ step, label, onChange }: { step: PlanStep; label: s
 }
 /** Native dialog supplies keyboard confinement, Escape and focus restoration. */
 export function PlanInspector({ title, disabled, children, onClose, onApply }: { title: string; disabled: boolean; children: ReactNode; onClose(): void; onApply(): void }) {
+  const headingId = useId();
   const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const dialog = ref.current!, previous = document.activeElement;
     dialog.showModal(); dialog.querySelector<HTMLElement>('h2')?.focus();
     return () => { dialog.close(); if (previous instanceof HTMLElement && previous.isConnected) previous.focus(); };
   }, []);
-  return <dialog ref={ref} className="plan-inspector" aria-labelledby="plan-inspector-title" onCancel={event => { event.preventDefault(); if (!disabled) onClose(); }}><header><div><h2 id="plan-inspector-title" tabIndex={-1}>{title}</h2><p>Edits affect the plan. Recorded evidence stays unchanged.</p></div><button className="product-text-link" disabled={disabled} onClick={onClose} aria-label="Close advanced editing">Close</button></header><fieldset disabled={disabled} className="plan-inspector-body">{children}</fieldset><footer><p>Apply to the draft, or cancel without changes.</p><div className="product-actions"><button className="product-button secondary" disabled={disabled} onClick={onClose}>Cancel</button><button className="product-button" disabled={disabled} onClick={onApply}>Apply changes</button></div></footer></dialog>;
+  return <dialog ref={ref} className="plan-inspector" aria-labelledby={headingId} onCancel={event => { event.preventDefault(); if (!disabled) onClose(); }}><header><div><h2 id={headingId} tabIndex={-1}>{title}</h2><p>Edits affect the plan. Recorded evidence stays unchanged.</p></div><button className="product-text-link" disabled={disabled} onClick={onClose} aria-label="Close advanced editing">Close</button></header><fieldset disabled={disabled} className="plan-inspector-body">{children}</fieldset><footer><p>Apply to the draft, or cancel without changes.</p><div className="product-actions"><button className="product-button secondary" disabled={disabled} onClick={onClose}>Cancel</button><button className="product-button" disabled={disabled} onClick={onApply}>Apply changes</button></div></footer></dialog>;
 }
 
 export function PlanPrompt({ title, children, actions, onClose }: {title:string; children:ReactNode; actions:ReactNode; onClose():void}) {
+  const headingId=useId();
   const ref=useRef<HTMLDialogElement>(null);
-  useEffect(()=>{const dialog=ref.current!,previous=document.activeElement;dialog.showModal();return()=>{dialog.close();if(previous instanceof HTMLElement&&previous.isConnected)previous.focus();};},[]);
-  return <dialog className="plan-prompt" ref={ref} aria-labelledby="plan-prompt-heading" onCancel={event=>{event.preventDefault();onClose();}}><h2 id="plan-prompt-heading">{title}</h2><div>{children}</div><footer className="product-actions">{actions}</footer></dialog>;
+  useLayoutEffect(()=>{const dialog=ref.current!,previous=document.activeElement;dialog.showModal();return()=>{dialog.close();if(previous instanceof HTMLElement&&previous.isConnected)previous.focus();};},[]);
+  return <dialog className="plan-prompt" ref={ref} aria-labelledby={headingId} onCancel={event=>{event.preventDefault();onClose();}}><h2 id={headingId}>{title}</h2><div>{children}</div><footer className="product-actions">{actions}</footer></dialog>;
 }

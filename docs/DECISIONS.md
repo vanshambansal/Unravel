@@ -2,6 +2,12 @@
 
 Updated 2026-11-12. Earlier rationale and superseded experiments are preserved unchanged in [DECISIONS_HISTORY.md](DECISIONS_HISTORY.md).
 
+## 2026-11-14 - Posthero composition review
+
+User feedback revises the preview: remove verification disclosure, make JSON a peer of Steps/Playwright, remove local-package/public-deployment marketing discussion without inventing publication, and replace the floating header with a consistent compact shell to carry through the entrance on integration. Permit preview diagnostic layout clearance adjustments for the header while preserving the original zoom controller. Use real elapsed manual timing and a visual/focused handoff to the failed request. Preview revisions are implemented; application port and full visual acceptance remain pending.
+
+Approved direction: one requested synthetic recording journey, preserved hero/exact diagnostic zoom, connected evidence/reviewed steps/actual adapter-generated Playwright, compact honest local setup and privacy/FAQ/CTA. Expected behavior stays developer supplied; JSON and real recorded fail/pass proof are secondary. No autoplay recording, fake test execution or unpublished registry-install claim. The plan's desktop/mobile visual checkpoint is a separate interactive preview on3040 before application integration. User visual acceptance and React port remain pending. [Evidence and verification boundary](audits/LANDING_STORY_PREVIEW_2026-11-14.md).
+
 ## Application boundary and packaging
 
 **Decision:** One Next.js App Router + TypeScript application for marketing, authentication/dashboard and initial Node APIs. pnpm workspaces; no Turborepo/Nx or separate Express server. Create SDK/contracts/test-plan packages only when used.
@@ -219,7 +225,7 @@ Use a normal-network paired local preview with exact replay parent origin and no
 
 - **Mobile Viewport Verification (`390Ãƒâ€”844` on iPhone 14 Profile):** Completed end-to-end audit across all internal screens (`/app/projects`, `/app/projects/[projectId]/reports`, `/reports/[reportId]` Investigation & Test Plan steps/code, `/setup`, `/settings`). Verified `scrollWidth <= clientWidth` on every route with 0 horizontal overflow. Confirmed touch targets, CodeMirror scrolling, and sticky footer positioning on narrow screens.
 - **CSS Token Consolidation:** Unified root `--product-*` and `--ui-*` tokens at `.unravel-workspace` in `workspace.css`. Replaced legacy opaque `#111318` surface and `#30343e` border defaults with authoritative translucent smoked glass (`rgba(16, 18, 24, 0.68)`), hairline border (`rgba(255, 255, 255, 0.08)`), and warm crimson highlight (`#ff4d61`).
-- **Tailwind & shadcn Migration Declined:** Explicitly confirmed with user not to migrate to Tailwind or shadcn. Retaining native modern CSS custom properties and `motion/react` preserves Unravel's distinctive architectural depth ([hero-atrium.png](hero-atrium.png)), avoids 50+ npm dependencies, maintains 1.6s Turbopack builds, and eliminates generic SaaS template look.
+- **Historical Tailwind & shadcn decision (superseded as a standing restriction on 2026-11-14):** This entry previously recorded a declined migration. Its dependency-count, build-speed and generic-design rationale is not a general basis for rejecting these tools. Current adoption guidance is recorded below; no migration is authorized merely by changing that guidance.
 - **Verification:** `corepack pnpm test` (43/43 pass), `corepack pnpm typecheck` (0 errors), and `corepack pnpm build` (clean Turbopack production build in 1.6s).
 
 ## 2026-11-13 - Hydration Error Resolution & Raycast-Grade Search Bar Upgrade
@@ -274,3 +280,44 @@ Anchor pale light time/sway and opening pointer illumination, align narrowed emi
 ## 2026-11-13 - Keep completed collections visible while navigating
 
 Production full prefetch already reused collection data, but development does not run that prefetch and per-collection loading boundaries replaced completed views with skeletons. Retain the skeleton components as reusable feature code and remove their automatic route registration. Keep the first-workspace/auth loading and error boundaries. The existing transition now holds useful content until destination data is ready, with immediate link pending feedback. Preserve stable full prefetch and refresh-on-mutation; do not introduce experimental global cache settings or an additional private-data cache merely to mimic production prefetch in development. Real delayed-response and repeated-navigation tests own acceptance.
+
+## 2026-11-14 - Research components and evaluate adoption on merit
+
+The user explicitly adopted the component-research guidance now in AGENTS.md. Agents should discover, recommend and adapt suitable components rather than requiring the user to select each one. Existing CSS and earlier no-migration wording are not blanket restrictions on library use. Evaluate concrete benefits and costs, including compatibility, accessibility, performance and maintenance. Discuss major visual or stack changes before implementation. This supersedes the standing restriction implied by the Nov13 Tailwind/shadcn entry. This discussion authorizes guidance updates only, not a UI redesign, dependency installation or stack migration.
+
+## 2026-11-14 - Landing composition integrated
+
+User approved revised preview and application integration. apps/web now renders the approved story with one fixed nav spanning entrance/footer, scoped CSS and a disposable vanilla interaction controller, consistent with the existing motion architecture. Synthetic markup is a trusted build-time constant; actual example data remains server supplied. Retain architecture motion controls separately. Preview-stage approval gate is satisfied; integration on original3000 is implemented. Prior preview-only notes are historical.
+
+## 2026-11-14 - Preserve cinematic DOM and ownership
+
+The rejected shared-header integration removed a required replay element and broke initialization. Restore the exact original Landing.tsx and cinematic header/control placement; keep posthero navigation inside its own section. Preserve stable nodes used by the cinematic controller, including #replay, rather than replacing DOM after mount. Avoid page-wide anchor offsets that leave the scene visible after entering product content. This supersedes the earlier fixed-header integration decision after the user's rejection.
+
+## 2026-11-14 - Independent rays and emitter depth
+
+Start independent rays before architectural initialization completes, retaining poster until the first scene frame. Guard preload behind reduced-motion/resource decisions. Use reference rose/cool hero colors and a steady opening; preserve cached ray drawing buffer. Separate flush emitters through polygon depth offset. Reject expensive multisampled composer targets after local motion measurements; retain FXAA and stationary caching. [Evidence](audits/RAYS_STABILITY_2026-11-14.md).
+
+## 2026-11-14 - User-operated independent SDK demos
+
+Use two projects outside the workspace membership, with actual local tarball installation and the same mountWidget effect/cleanup as website SdkSetup. Next uses root layout/client reporter; React uses root component and a small esbuild-based local server. Exact origins4200/4201 need separate user-created project registrations. Leave public-ID placeholders so the user tests setup manually; never imply synthetic-ID smoke validates ingestion. Existing replay4192 is reused locally; no backend/database change.
+
+## 2026-11-14 - Explicit static text onboarding
+
+Keep mask-by-default policy. After user approval, expose an optional SDK setup toggle for `[data-unravel-safe-text]` using existing allowTextSelectors. Describe narrowly marked public text and warn against broad/user-content selectors. Keep values masked/passwords blocked and old evidence immutable. Add contextual report explanation and require fresh capture. No automatic static-text classification or default capture expansion.
+
+
+## 2026-11-14 - Visitor-selected recording modes (approved)
+
+User explicitly approved two simple modes after clarifying that ordinary rendered page text, including echoed names/values, should stay visible without private-text inference. Widget defaults to Mask entered values; visitor may choose Full-content recording to include sensitive entered values. Mode is chosen before Start, frozen through review/retry, and reset after discard/Done. Exclude SDK UI, developer-blocked sections and hidden/unsupported resources in both modes; do not relax replay script/resource isolation. Preserve legacy low-level selector behavior when no explicit mode is supplied. New optional captureMode metadata in existing recording JSON controls server password-attribute retention. No DB migration or old-evidence rewrite. This supersedes prior always-blocked visible password controls and static-marker-only widget policy.
+
+## 2026-11-14 - Readable actions and replay input timing
+
+Record optional public targetLabel metadata only for the explicit visitor modes, without reading control values; preserve legacy strict behavior. Keep selectors as the technical execution identity. Existing reports derive labels from their sanitized initial snapshot only; missing/dynamic labels fall back to a generic control. Original evidence remains immutable. Record rrweb inputs immediately rather than on delayed last sampling. Historical action selection can seek to a same-node, same-value input within two seconds; show that captured-state timestamp separately and keep the action timestamp unchanged. Put static recording-mode copy in the server page to avoid adding another hydrated viewer branch. No suppression of hydration diagnostics or relaxation of replay isolation.
+
+## 2026-11-15 - Approved internal performance pass
+
+The user approved the revised measured plan after comparing Antigravity's diagnosis. Remove private pointer gradients, nested blur and layout/entrance motion, retaining static hierarchy and immediate button/selection feedback. Separate sign-in atmosphere from authenticated runtime imports. Keep Next.js and native route caching, use public prefetch APIs and avoid duplicate manual preparation for full-prefetch Links. Keep the static template wrapper because tested deeper navigation retained it. Instance-specific control IDs handle Next Activity-retained DOM. Add numeric private-read timing and an owner-filtered setup EXISTS query. Lazy-load/prepare the generator while preserving drafts and paused replay. A125s idle experiment measured 575ms reconnect with the old limit versus 0.7ms reuse with a300s candidate, so extend app pool idle/lifetime to 300s/1800s at max 5. No provider setup, migration, persistent private cache or new runtime dependency. Physical-device and remaining cold-network acceptance stays explicit.
+
+## 2026-11-15 - Large evidence follow-up
+
+Bound rendered evidence at100 rows per page after a valid4MB recording produced85k DOM nodes. All events remain available through direct page selection and native controls. Preserve external/repeated evidence selection and immutable recordings. Static crimson tint remains a proposal pending visual implementation.

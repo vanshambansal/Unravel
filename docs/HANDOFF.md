@@ -1,6 +1,16 @@
 # Start here in a new conversation
 
-Updated 2026-11-13. This is a navigation/handoff note; PROJECT_STATUS.md owns current implementation and verification facts. Previous chat history is not required to continue.
+Updated 2026-11-15. This is a navigation/handoff note; PROJECT_STATUS.md owns current implementation and verification facts. Previous chat history is not required to continue.
+
+## Large-recording follow-up - 2026-11-15
+
+Timeline rendering now uses100-row pages after a4MB recording produced85k DOM nodes. Last-page seeking, filter recovery and6x mobile controls passed; a60-navigation/330s idle experiment retained stable warmed DOM/listener counts and successful reads. Preview3033 now uses `.next-large-final15`, player4195. Physical hardware, hours-long sessions and cold network extremes remain limits. The static crimson accent is a recommendation only. The implementation audit owns measured results.
+
+## Latest implemented task - 2026-11-15
+
+Read [the internal performance implementation](audits/INTERNAL_PERFORMANCE_2026-11-15.md) and PROJECT_STATUS first. The user approved the revised diagnosis after the Antigravity comparison. Private surfaces are static and responsive, native Link preparation survives page recreation, SDK setup uses a corrected owner-filtered EXISTS query, private reads have numeric timing and pool reuse is extended after measurement. The generator is lazy/prepared with retained drafts/paused replay and Activity-safe controls. Final local preview3033 uses `.next-large-final15` with isolated4195. Earlier previews are historical comparisons. Preserve all uncommitted user and implementation work.
+
+Build/typecheck/lint/unit48, focused browser management/search/replay/generator/preparation workflows, authentication session/logout, exported fail-before/pass-after proof and desktop/mobile inspection passed. The audit retains intermediate failures and exact measurement limits. Remaining work is user-perceived acceptance, physical low-end/long-session/large-report checks, independent human SDK installation and release decisions. No commit/push/provider/deployment approval is implied.
 
 ## Read and inspect
 

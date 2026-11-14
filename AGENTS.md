@@ -7,6 +7,7 @@
 - Own routine engineering and design decisions within agreed scope. Recommend a direction, explain consequential tradeoffs, and ask only for decisions that materially change product, architecture, security, or visual direction.
 - Prioritize correct functionality, simple modular architecture, and maintainability over feature count. Prefer TypeScript for application code.
 - Use maintained libraries and add dependencies only for a concrete reason. Follow established patterns; avoid speculative features and premature optimization.
+- Actively research existing components before inventing equivalents. Recommend and adapt the strongest options to our visual direction. Existing CSS is a starting point, and library adoption should be judged on concrete benefits and costs. Bring major visual or stack changes for discussion.
 - Define acceptance criteria for meaningful features and keep work within the agreed milestone. Do not change unrelated working features without a reason.
 - Never hardcode secrets, commit credentials, or include secrets in logs or documentation.
 - Never fabricate functionality, completed features, or verification results. Distinguish proposals, current implementation, and historical results.

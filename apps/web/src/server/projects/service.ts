@@ -29,6 +29,13 @@ export function projectService(repository: ProjectRepository) {
       if (!project) throw new ApplicationError(404, 'Project not found.');
       return project;
     },
+    async getSetup(subject: string | null, id: string) {
+      const ownerId = owner(subject);
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) throw new ApplicationError(404, 'Project not found.');
+      const project = await repository.findSetup(ownerId, id);
+      if (!project) throw new ApplicationError(404, 'Project not found.');
+      return project;
+    },
     async create(subject: string | null, input: unknown) {
       const ownerId = owner(subject);
       const { value, fields } = validateProject(input);

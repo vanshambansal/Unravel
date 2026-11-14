@@ -85,3 +85,14 @@ The player caches unchanged fit calculations and omits duplicate idle time messa
 ## Replay activity and recovery - 2026-11-13
 
 Switching to the plan retains the isolated frame and position and pauses playback explicitly. Backgrounding pauses it as well. The clock runs during playback and stops on pause/finish/teardown. Slow initialization can recover after the initial warning. Retry creates a fresh frame/channel and aborts the old request. Recording retrieval has a60-second deadline. A loading or payload error uses recovery guidance for the configured player origin. Normal development and local production can have different paired origins. Evidence and security validation remain owned by the existing replay boundary.
+
+
+## Recording mode metadata (2026-11-14)
+
+New SDK recordings optionally include captureMode (`masked-values` or `full`), persisted with existing recording JSON. Dashboard replay labels distinguish these and legacy recordings. Full may contain sensitive field values; server password snapshot attributes are retained only for explicit full mode. The uploader's mode is a client declaration, not proof of visitor consent. Recorded scripts/resources remain blocked in every mode. [Current capture policy](SDK.md#approved-privacy-policy) owns privacy semantics. No existing recording is rewritten/unmasked.
+
+## Action presentation and historical input timing (2026-11-14)
+
+Evidence rows use recorded targetLabel or a label derived read-only from the sanitized initial snapshot. Dynamic historic targets may keep a generic description. Raw selectors remain in Technical locator details. Historical delayed inputs can align selected replay state to a matching node/value within two seconds, with a separate captured-state time; original event times and payloads remain unchanged. This cannot restore data masked in an earlier recording. New SDK input sampling avoids the delay. Recording-mode notice is server rendered outside the hydrated viewer.
+
+Large evidence timelines render100 rows per page with direct page selection and previous/next controls. Filters retain complete evidence and external selection opens the matching page. Pagination affects presentation only.

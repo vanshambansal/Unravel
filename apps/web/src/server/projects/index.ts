@@ -18,11 +18,12 @@ async function safe<T>(operation: () => Promise<T>): Promise<T> {
 // React invalidates this at each server render; never a cross-owner/session cache.
 const renderProjectList = cache((owner: string | null) => safe(() => projectService(projectRepository(database())).list(owner)));
 
-export function projectServices() {
-  const service = projectService(projectRepository(database()));
+export function projectServices(db?: ReturnType<typeof database>) {
+  const service = projectService(projectRepository(db ?? database()));
   return {
-    list: renderProjectList,
+    list: db ? (owner: string | null) => safe(() => service.list(owner)) : renderProjectList,
     get: (owner: string | null, id: string) => safe(() => service.get(owner, id)),
+    getSetup: (owner: string | null, id: string) => safe(() => service.getSetup(owner, id)),
     create: (owner: string | null, input: unknown) => safe(() => service.create(owner, input)),
     update: (owner: string | null, id: string, input: unknown) => safe(() => service.update(owner, id, input)),
     remove: (owner: string | null, id: string, input: unknown) => safe(() => service.remove(owner, id, input)),

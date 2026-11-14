@@ -1,3 +1,4 @@
+import { timedPrivateRead } from '@/server/timed-private-read';
 import { requireDeveloper } from '@/server/auth';
 import { projectServices } from '@/server/projects';
 import { errorResponse, projectBody } from '@/server/http';
@@ -5,8 +6,8 @@ import { errorResponse, projectBody } from '@/server/http';
 export const runtime = 'nodejs';
 export async function GET(_request: Request, { params }: { params: Promise<{ projectId: string }> }) {
   try {
-    const owner = await requireDeveloper();
-    return Response.json({ project: await projectServices().get(owner, (await params).projectId) }, { headers: { 'Cache-Control': 'no-store' } });
+    const { projectId } = await params;
+    return await timedPrivateRead(async (owner, db) => ({ project: await projectServices(db).get(owner, projectId) }));
   } catch (error) { return errorResponse(error); }
 }
 export async function PATCH(request: Request, { params }: { params: Promise<{ projectId: string }> }) {

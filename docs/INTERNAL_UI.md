@@ -31,7 +31,7 @@ Motion includes selection, expansion, state transitions and atmospheric brand mo
 
 ## Implementation gate and verification
 
-The user approved the actual frames and motion direction. Continue in bounded tasks while retaining feature logic. Motion is selected for web React transitions; no Tailwind/shadcn migration or general UI-kit dependency is required.
+The user approved the actual frames and motion direction. Continue in bounded tasks while retaining feature logic. Motion is selected for web React transitions. Component research and library adoption follow AGENTS.md; existing CSS does not prohibit Tailwind, shadcn or other suitable components. Major visual or stack changes require discussion; no migration is currently authorized. See the 2026-11-14 component-research decision in DECISIONS.md.
 
 Verify actual desktop/mobile pages with representative empty, populated, long-content and failure states. Use screenshot comparisons with the chosen target and inspect real interactions. Functional checks and aesthetic review are independent gates; static Figma does not establish runtime accessibility, animation smoothness, privacy or performance.
 
@@ -50,3 +50,7 @@ PlanEditor owns review-first sequence/output/outcome/code state; PlanControls ow
 ## Bounded completion corrections - 2026-11-12
 
 Keep the A/B system. Project navigation must use a shrinkable grid track so long project names cannot widen links into content; product-audit checks link bounds. SDK setup has one copyable local install command, keyboard-scrollable samples, expandable privacy detail and a mobile-first report checkpoint. Investigation uses compact report metadata, original recording aspect ratio and explicit fit/100% guidance. Grouped/raw selected evidence uses the same indices for visual and ARIA state. Distinct report-header/workspace keys preserve React identity. These are refinements of working compositions, not another theme layer or design direction. Actual verification is in PROJECT_STATUS.md.
+
+## Performance implementation - 2026-11-15
+
+The approved performance pass supersedes internal atmospheric motion requirements. Private surfaces use stable charcoal fills and immediate selection states. Pointer-following lights, nested task-surface blur and Motion layout/entrance animation are removed. The private header no longer offers an ambient pause button. Authentication retains its separate atmosphere/control. Native dialog focus, keyboard tabs, retained plan drafts and paused replay remain functional requirements. See audits/INTERNAL_PERFORMANCE_2026-11-15.md for measured and verified states.

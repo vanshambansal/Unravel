@@ -35,7 +35,7 @@ test('fresh styled recording → reviewed persisted plan → standalone Playwrig
     await page.getByLabel('Replay position').focus(); await page.getByLabel('Replay position').press('End');
     const replay = page.frameLocator('iframe[title="Session replay"]').frameLocator('iframe');
     await expect(replay.locator('main')).toHaveCSS('max-width', '680px'); await expect(replay.locator('section').first()).toHaveCSS('border-radius', '12px'); await expect(replay.locator('#feedback')).toHaveCount(0); // arbitrary original IDs stay omitted
-    await expect(replay.getByRole('heading', { name: 'Question desk', exact: true })).toBeVisible(); await expect(replay.getByRole('textbox').first()).toHaveValue('Synthetic regression question');
+    await expect(replay.getByRole('heading', { name: 'Question desk', exact: true })).toBeVisible(); await expect(replay.getByRole('textbox').first()).toHaveValue('[redacted]');
     await expect(replay.locator('html')).toHaveCSS('background-color', 'rgb(243, 245, 247)');
     const payload = await (await review.request.get(`${endpoint}/replay`)).text(); expect(payload).not.toContain('PLAN_PRIVATE_SENTINEL'); expect(payload).not.toContain('background-image');
     await mkdir('../../.playwright-mcp', { recursive: true }); await page.evaluate(() => scrollTo(0,0)); await page.screenshot({ path: '../../.playwright-mcp/styled-replay-desktop.png', fullPage: true });
@@ -59,6 +59,13 @@ test('fresh styled recording → reviewed persisted plan → standalone Playwrig
     const removed=page.locator('.generator-excluded');await expect(removed.getByRole('button',{name:'Restore',exact:true})).toHaveCount(diagnosticSteps.length);
     await removed.getByRole('button',{name:'Restore',exact:true}).first().click();await page.getByRole('button',{name:'Undo',exact:true}).click();
     await page.getByRole('button',{name:'Redo',exact:true}).click();await page.getByRole('button',{name:`Remove step ${diagnosticSteps[0].index+1}`,exact:true}).click();
+    // Masked recordings require developer-supplied safe selection values too.
+    for (const [index, step] of plan.steps.entries()) {
+      if (step.action !== 'select') continue;
+      await page.getByRole('button', { name: `Edit step ${index+1}`, exact: true }).click();
+      await page.getByLabel(`Step ${index+1} safe value`, { exact: true }).fill('technical');
+      await page.getByRole('button', { name: 'Apply changes', exact: true }).click();
+    }
     // New rows and edits are staged. Cancel is a real cancellation.
     const rowCount=await page.locator('.generator-step').count();await page.getByRole('button',{name:'Add action',exact:true}).click();await page.getByRole('button',{name:'Cancel',exact:true}).click();expect(await page.locator('.generator-step').count()).toBe(rowCount);
     await page.getByRole('button',{name:`Edit step ${fillIndex+1}`,exact:true}).click();await page.getByLabel(`Step ${fillIndex+1} safe value`,{exact:true}).fill('CANCEL THIS VALUE');await page.getByRole('button',{name:'Cancel',exact:true}).click();await expect(page.locator('.generator-step-list')).not.toContainText('CANCEL THIS VALUE');

@@ -35,7 +35,7 @@ test('prepared navigation reuses data and generator reads are shared', async ({ 
         Object.assign(window, { fluidityTiming: result });
         function tick() {
           result.fallback ||= !!document.querySelector('.workspace-content [aria-busy="true"]');
-          if (document.querySelector('.ui-page-header h1')?.textContent === 'Bug reports') { result.ms = performance.now() - start; return; }
+          if ([...document.querySelectorAll('.ui-page-header h1')].find(heading => heading.checkVisibility())?.textContent === 'Bug reports') { result.ms = performance.now() - start; return; }
           if (performance.now() - start < 10000) requestAnimationFrame(tick);
         }
         requestAnimationFrame(tick);
@@ -79,6 +79,8 @@ test('prepared navigation reuses data and generator reads are shared', async ({ 
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: '.cache/fluid13-report-mobile.png' });
+    await page.goto(`/app/projects/${current.id}/setup`);
+    await expect(page.getByRole('listitem').filter({ hasText: /^Report received/ })).toBeVisible();
   } finally {
     await context.close();
   }

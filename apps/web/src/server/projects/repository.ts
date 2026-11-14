@@ -1,10 +1,11 @@
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, sql, getTableColumns } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { projects, type Project } from '../db/schema.ts';
+import { projects, reports, type Project } from '../db/schema.ts';
 import type * as schema from '../db/schema.ts';
 
 export interface ProjectRepository {
   list(ownerId: string): Promise<Project[]>;
+  findSetup(ownerId: string, id: string): Promise<(Project & { hasReports: boolean }) | undefined>;
   find(ownerId: string, id: string): Promise<Project | undefined>;
   create(ownerId: string, name: string, origin: string): Promise<Project | undefined>;
   update(ownerId: string, id: string, expected: ProjectSnapshot, next: ProjectSnapshot): Promise<Project | undefined>;
@@ -15,6 +16,11 @@ export type ProjectSnapshot = Pick<Project, 'name' | 'origin'>;
 export function projectRepository(db: NodePgDatabase<typeof schema>): ProjectRepository {
   return {
     list: ownerId => db.select().from(projects).where(eq(projects.ownerId, ownerId)).orderBy(desc(projects.createdAt), desc(projects.id)),
+    async findSetup(ownerId, id) {
+      const [project] = await db.select({ ...getTableColumns(projects), hasReports: sql<boolean>`exists(${db.select({ id: reports.id }).from(reports).where(eq(reports.projectId, projects.id))})` })
+        .from(projects).where(and(eq(projects.ownerId, ownerId), eq(projects.id, id))).limit(1);
+      return project;
+    },
     async find(ownerId, id) {
       const [project] = await db.select().from(projects).where(and(eq(projects.ownerId, ownerId), eq(projects.id, id))).limit(1);
       return project;
