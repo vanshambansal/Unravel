@@ -1,6 +1,6 @@
 # Release preparation and remaining operator work
 
-Updated 2026-11-12. No deployment, domain provisioning, production provider change or npm publication has occurred. This document is the release contract, not a claim that Unravel is publicly ready.
+Updated 2026-11-16. SDK 0.1.0 is published on npm. No public application deployment, domain provisioning or production provider change has occurred. This document is the release contract, not a claim that Unravel is publicly ready.
 
 ## Implemented safeguards
 
@@ -33,7 +33,7 @@ The owner reconciled development signup to email-code + Google. Fresh anonymous 
 
 The approved account-closure policy disables intake and retains data. The signed `/api/webhooks/clerk` handler and additive owner-block table are implemented and tested locally. Configure `user.deleted` delivery and its secret at the hosted endpoint, then verify receipt/retries before public release. Missing configuration returns 503. A preflight secret is not proof of a delivered event. No hosted endpoint was provisioned.
 
-`pnpm sdk:pack` creates a locally installable tarball. Independent npm import, types, bundling and browser integration are checked separately from publication. The package intentionally remains private/unpublished. Choose the project's distribution license, verify bundled dependency notices/versioning and publish only with explicit approval. Do not show `npm install @unravel/sdk` as an available registry command yet.
+`@vansham/unravel-sdk@0.1.0` is published under MIT. Install with `npm install @vansham/unravel-sdk@0.1.0`. The downloaded registry archive matches the owner-approved SHA256; fresh registry consumption is verified separately from public service deployment. The workspace stays private; `pnpm sdk:pack` remains a development/release-review tool.
 
 ## Preflight and acceptance
 

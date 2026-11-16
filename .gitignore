@@ -24,6 +24,8 @@ playwright/.auth/
 
 # Local interface review captures
 .impeccable/review/
+.impeccable/config.local.json
+.impeccable/hook.cache.json
 
 # Local agent libraries/configuration (owner approved keeping local, not in Git)
 /.agents/skills/

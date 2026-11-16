@@ -101,3 +101,15 @@ Desktop sufficiently tall viewports get one bounded sticky diagnostic journey. N
 ## Internal performance priority - 2026-11-15
 
 The user approved performance over internal decorative animation after measured diagnosis. Private task surfaces use stable charcoal fills, immediate selection and pressed states, and native focusable controls. Pointer gradients, nested blur, layout springs and entrance animation are removed from authenticated tasks. Authentication keeps its separate atmosphere; marketing cinema retains its own renderer. This supersedes earlier requirements for atmospheric internal motion. The implementation audit owns measured results and remaining acceptance limits.
+
+## Static crimson workspace accent - 2026-11-15
+
+The user approved a faint crimson spray based on the landing reference. The workspace frame paints one static upper-right radial background, bounded to720 by440 CSS pixels over its opaque charcoal base. Feature surfaces, content opacity, focus and control behavior remain unchanged. No animation, pointer listener, blur or additional DOM layer is introduced. The performance audit owns verification and limits.
+
+## Unified public navigation - 2026-11-15
+
+User approved the complete landing navigation from the first entrance screen, fixed at the viewport top through the hero/story. Use the existing charcoal/crimson identity with an opaque64px header and immediate workspace access. Remove the tagline/duplicate header, put Skip intro beneath it only during the entrance, and move background-motion controls into Display options. Mobile preserves brand/workspace access with section links in Menu. LANDING.md owns implementation mapping; PROJECT_STATUS owns verification.
+
+## Cinematic-first revision - 2026-11-15
+
+Supersedes the full fixed public navbar, which the user rejected after viewing it. During the architecture sequence, show only the crimson mark/name over the scene and entrance-only Skip intro, with no opaque bar. After the cinematic section, a compact content header becomes sticky within the product section. Remove the pause/display menu and duplicate CTA labels; respect reduced motion and actual sign-in state. LANDING.md and PROJECT_STATUS own implementation and verification.

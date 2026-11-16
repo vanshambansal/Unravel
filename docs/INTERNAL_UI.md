@@ -54,3 +54,11 @@ Keep the A/B system. Project navigation must use a shrinkable grid track so long
 ## Performance implementation - 2026-11-15
 
 The approved performance pass supersedes internal atmospheric motion requirements. Private surfaces use stable charcoal fills and immediate selection states. Pointer-following lights, nested task-surface blur and Motion layout/entrance animation are removed. The private header no longer offers an ambient pause button. Authentication retains its separate atmosphere/control. Native dialog focus, keyboard tabs, retained plan drafts and paused replay remain functional requirements. See audits/INTERNAL_PERFORMANCE_2026-11-15.md for measured and verified states.
+
+## Static crimson workspace accent - 2026-11-15
+
+The user approved a faint crimson spray based on the landing reference. The workspace frame paints one static upper-right radial background, bounded to720 by440 CSS pixels over its opaque charcoal base. Feature surfaces, content opacity, focus and control behavior remain unchanged. No animation, pointer listener, blur or additional DOM layer is introduced. The performance audit owns verification and limits.
+
+## Account portal contrast - 2026-11-15
+
+AccountMenu.tsx owns UserButton and embedded UserProfile appearance overrides. Use opaque charcoal surfaces and explicit foreground/neutral/input/action/badge colors; keep auth-page atmospheric styling scoped to authentication. Profile/popover portal content must remain readable outside the workspace DOM wrapper. Current browser evidence and limits: audits/UI_REFINEMENTS_2026-11-15.md.

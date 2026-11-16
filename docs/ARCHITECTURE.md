@@ -1,6 +1,8 @@
 # Architecture
 
-Updated 2026-11-11. This document describes the implemented foundation separately from approved future product architecture.
+Updated 2026-11-16. Current boundaries are summarized below; milestone sections retain their original implementation history. Where historical capture descriptions differ, [SDK.md](SDK.md#approved-privacy-policy) owns the current two-mode policy and [PROJECT_STATUS.md](PROJECT_STATUS.md) owns actual verification.
+
+The deterministic generator now separates schema/types, event normalization, validation, readable descriptions and Playwright output under packages/test-plan/src, with the same public exports and stored plan versions. The completion roadmap is [COMPLETION_PLAN.md](COMPLETION_PLAN.md).
 
 ## Implemented
 
@@ -142,3 +144,7 @@ The subsequent search/navigation/entrance repair honors explicit Next Link full 
 Authenticated task surfaces use static charcoal fills and immediate native selection states. Row/frame pointer lights and private Motion layout animations are removed. AuthMaterialLight owns sign-in atmosphere separately, keeping the Motion dependency outside private chrome. Workflow panels retain mounted state after opening and pause inactive replay. Instance-specific control IDs tolerate Next Activity-retained pages. The template wrapper remains static.
 
 Native full-prefetch Links own primary preparation. Secondary intent activates native full Link prefetch, gated by visibility/data-saving policy. Next owns deduplication and cache lifetime. PlanEditor has a client lazy boundary and intent preparation. Private read APIs share timedPrivateRead for numeric auth/acquisition/service/serialization timing, with authorized connection-scoped services and no-store responses. SDK setup reads its owner-filtered project and report existence in one statement. Max-five-client pool idle/lifetime are now300s/1800s after a 125s reuse comparison. This supersedes the earlier120s/300s values. See audits/INTERNAL_PERFORMANCE_2026-11-15.md for actual measurements and limits.
+
+## Landing session hint - 2026-11-15
+
+The statically generated landing has no Clerk provider. Its product-content navigation lazily requests `/api/session` as it approaches the viewport and rechecks on window focus. Clerk middleware covers that exact endpoint, which returns only signedIn with private/no-store headers and503 on unavailable session resolution. This is presentation state; all existing private routes retain independent authorization. LANDING.md owns navigation composition.

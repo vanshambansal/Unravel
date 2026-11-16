@@ -24,12 +24,12 @@ The SDK and pipeline must remain reusable across supported sites; a demonstratio
 - Website developers authenticate; visitors do not need an Unravel account to record and submit a report through the installed widget. Anonymous submission still requires ingestion abuse protections before hosting.
 - Initial interaction support focuses on ordinary form input/submission, clicks, native selections, and navigation within a single-page application.
 - Full document reloads, cross-origin navigation/iframes, file uploads, drag-and-drop, canvas, and complex custom controls are outside the initial supported interaction set. Unsupported cases must be documented and surfaced rather than presented as successfully captured/testable.
-- Sensitive information, page text and input values are masked by default; passwords are always blocked. The approved policy omits network bodies/headers/query/fragment and redacts paths/error text unless explicitly allowlisted. Only synthetic fixture content, known paths and its intentional error message are opted in. Local reports have owner-controlled deletion/no automatic expiry; complete submissions are provisionally capped at 5 MB. Hosted retention/security remains future work. See SDK.md and REPORTS.md for limitations.
+- The widget defaults to masking entered field values while retaining page text and structure. Visitors can select full-content recording; both modes include diagnostic messages and URL paths. [SDK.md](SDK.md#approved-privacy-policy) owns the approved policy and exclusions. Local reports have owner-controlled deletion/no automatic expiry; complete submissions are provisionally capped at 5 MB. Hosted retention/security remains future work.
 
 ## Product and engineering boundaries
 
 - Recording begins only through explicit visitor action; no silent or continuous capture.
-- Never collect passwords, cookies, tokens, or request/response bodies. Approved masking/local retention are documented in SDK.md and REPORTS.md; public deployment requires a separate privacy/retention review.
+- Never collect cookies, hidden inputs or network bodies/headers. Visible field values follow the visitor-selected policy in SDK.md; full mode can include sensitive values. Public deployment requires a separate privacy/retention review and accurate disclosure.
 - Replay reconstructs DOM activity; it is not a literal video. Diagnostics provide evidence, not guaranteed backend root causes.
 - Observed failure does not establish intended behavior. Developers must supply meaningful expected outcomes.
 - JSON is the central test representation; Playwright is the first export target. Other adapters are future possibilities, not current scope.
@@ -43,6 +43,6 @@ Next.js App Router + TypeScript with pnpm workspaces, retained vanilla Three.js 
 
 The approved opening/hero has been migrated from the unchanged Vite reference into apps/web. Local recording-to-report/replay is verified using the explicitly approved separate player origin. Deterministic plan generation/editing/export is described in TEST_PLANS.md. Actual verification lives in PROJECT_STATUS.md; no automatic return to the deleted foundation.
 
-Approved V2 product UI and the SDK's complete floating visitor workflow are implemented locally. Integrators mount/configure the widget; visitors do not build controls or need an Unravel account. The independent fixture demonstrates Start, reproduce, Stop, describe, submit/retry, then developer investigation. SDK setup documents actual local package installation; the package is not published. See SDK.md and PROJECT_STATUS.md for operation and actual verification.
+Approved V2 product UI and the SDK's complete floating visitor workflow are implemented locally. Integrators mount/configure the widget; visitors do not build controls or need an Unravel account. The independent fixture demonstrates Start, reproduce, Stop, describe, submit/retry, then developer investigation. SDK setup documents the published `@vansham/unravel-sdk@0.1.0` npm installation. Public application hosting is pending. See SDK.md and PROJECT_STATUS.md for operation and actual verification.
 
 Direction B authentication and Direction A internal product presentation are approved and implemented locally. The compact SDK widget is supplied out of the box; integrators configure it once, and visitors never enter a project ID. DESIGN.md owns visual intent; PROJECT_STATUS.md owns verification and remaining work.

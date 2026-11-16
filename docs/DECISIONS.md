@@ -321,3 +321,86 @@ The user approved the revised measured plan after comparing Antigravity's diagno
 ## 2026-11-15 - Large evidence follow-up
 
 Bound rendered evidence at100 rows per page after a valid4MB recording produced85k DOM nodes. All events remain available through direct page selection and native controls. Preserve external/repeated evidence selection and immutable recordings. Static crimson tint remains a proposal pending visual implementation.
+
+## Static workspace brand accent - 2026-11-15
+
+User approved a faint static crimson glow based on the existing landing reference, subject to performance verification. Use a single radial background on the existing opaque workspace frame. Keep task surfaces readable and preserve the landing. No pointer tracking, animation, backdrop blur, whole-page opacity or dependency is required. Three user-requested checkpoint commits precede this visual change.
+
+## Workspace menu and interaction cleanup - 2026-11-15
+
+User requested an opaque project menu matching the application, a chevron closer to its label and removal/cleanup of warm click highlights. Use solid charcoal for the menu, a content-sized trigger with bounded label truncation, neutral keyboard focus and pending-link feedback, and immediate readable button presses. Preserve native popover keyboard/dismissal behavior and explicitly close on destination selection. No blur or animation is added.
+
+## 2026-11-15 - React uses the shared recording SDK
+
+The two recording modes and action-label fixes belong to the framework-independent SDK. React's discrepancy was an outdated independent tarball installation, not a separate React privacy implementation. Preserve the user's copied reporter/project configuration; refresh the installed artifact and browser bundle. Replacing the same local archive name/version may require forced reinstall because a normal add can reuse stale contents. Document this local-only distribution limitation; do not introduce a second React implementation or claim npm publication. Keep real report submission manual during synthetic integration checks.
+
+## One persistent landing navigation - 2026-11-15
+
+User approved a complete fixed header from the entrance onward, rather than revealing links at the hero. Consolidate the stage and story headers into LandingNavigation outside the stage. Keep destination links available immediately; move Skip intro outside the navbar and motion controls into Display options. Preserve native section anchors, reduced motion and renderer resource/lifecycle behavior. Keep the public landing statically generated rather than adding session/provider work for this visual task.
+
+## 2026-11-15 - Diagnostic visibility and native replay correction
+
+User explicitly requested readable networks/errors in both visitor modes. Include bounded URL paths and error messages in those modes; retain legacy low-level opt-ins and exclude network bodies/headers/cookies/query/fragment. Explain that messages/paths may contain user text. Preserve native details/dialog open state and the rrweb modal marker through closed validation. Serialize open as empty-string/null for rrweb, accepting and normalizing earlier boolean forms only at intake. Retain auto/percentage dimensions through available Typed OM without allowing arbitrary CSS or external resources. Keep original saved evidence immutable, replay scripts disabled and existing isolated topology. Add a retry discard exit with a truthful already-delivered warning, repair source mojibake and use hash-suffixed local archives to prevent stale independent installations. Restore the existing3033 service rather than changing the user's reporter to another origin. No public readiness/publication claim.
+
+## Cinematic-first staged navigation - 2026-11-15
+
+The user rejected the full fixed landing navbar after viewing it, then approved minimal brand/Skip intro over the architecture and practical navigation only in the product section. Supersedes the earlier fixed-header direction. Use absolute positioning within the existing cinematic stage and section-scoped sticky product navigation, without a new scroll animation. Remove the pause menu; preserve reduced motion and resource fallback. Resolve session awareness through a lazy boolean-only no-store endpoint using existing Clerk middleware, keeping public HTML static and avoiding a landing Clerk provider/database read. Private authorization remains unchanged.
+
+## Single continuous header correction - 2026-11-15
+
+User clarified that hero and content must share one navbar, with no second bar below the hero. Implemented one LandingNavigation instance outside the scene: transparent gradient backing, brand/Skip intro during the entrance, full links from hero onward, same position through content. The existing choreography toggles navigation-ready; no extra scroll listener. Session awareness and removed pause menu remain. Supersedes the two-header staged approach. Final `.next-single-nav15` build, focused lint and six headed-Chrome tests passed; desktop/mobile hero renders inspected. Preview remains3038/player4210; changes uncommitted.
+
+## 2026-11-15 - Entrance/detail UI corrections
+
+User asked for steadier third-pole/left-rim lights, reduced doorway spill, visible demo recorder, balanced FAQ, brand-to-hero navigation and readable account UI. Correct narrow geometry/depth separation and light-source bounds without adding render passes or changing the original GLB/reference. Make the demo action directly available and keep a restart; remove hover displacement that oscillates after text/layout changes. FAQ uses one reading column instead of filling a left rail. Brand goes to hero; only explicit Back to entrance restarts. Use per-UserButton/UserProfile appearance overrides so auth-page translucency cannot leak into account portals. No account behavior/provider change, new UI dependency or visual-world replacement.
+
+## 2026-11-15 - Floating recorder and paired replay startup
+
+User clarified that the synthetic recorder must overlap the example website like the real SDK, not sit below it. Move the recorder inside the example browser and use absolute bottom-right positioning with explicit dark-widget foreground, responsive bounds and measured page clearance. Keep controls accessible through ready/recording/completed states; no real landing capture/upload is introduced.
+
+The repeated replay failure was the stopped development4192 service. Root dev now starts/checks the existing isolated-player topology alongside Next rather than relying on a forgotten second terminal. Reuse only a healthy player with the expected exact parent, pass no app/provider environment into an owned player, and stop only owned child processes. DEV_PORT/DEV_REPLAY_PORT permit isolated lifecycle verification; normal defaults remain3000/4192. App-only development still needs manual replay:dev. No proxying under the dashboard or sandbox relaxation.
+
+## 2026-11-15 - Restore the intended edge overlap
+
+User clarified that the synthetic recorder must straddle the example browser's lower edge, half inside and half outside. This supersedes the fully-inside and fully-below interpretations. A positioned wrapper owns the browser and recorder as siblings; translateY(50%) anchors the card midpoint to the browser bottom. Reserve only half its measured height inside the page and half below before the caption. Preserve form access, full card visibility and ready/completed restart behavior at desktop and narrow widths.
+
+## 2026-11-15 - Universal brand destination
+
+User clarified that the top-left logo/name must open the hero from anywhere. Workspace and authentication brands now link to /#hero with framework scrolling disabled so the scene controller owns positioning. Landing brands retain #hero. Controller handles initial fragments before scene loading, fragment changes and pending renderer preparation; the story font-ready correction no longer scrolls #hero back to the entrance. Explicit Back to entrance still restarts and clears the hero fragment. No route/auth/data or visual-design replacement.
+
+## 2026-11-15 - Brand behavior during the initial entrance
+
+User clarified an exception to universal hero navigation: the top-left landing brand must not bypass the initial entrance. During entrance it stays at the current entrance and Skip intro remains the explicit shortcut. Once the hero/navigation is available, its target becomes #hero. Workspace/auth brands remain /#hero. The scene presentation owns the brand target/label and restores them on teardown; the default SSR target is #journey so an early click cannot accidentally skip before the controller loads.
+
+
+## 2026-11-16 - Complete the portfolio project without feature expansion
+
+The owner approved the completion roadmap: stabilize the supported recording-to-test workflow, make important code understandable, prepare/publish the SDK, verify a hosted deployment, and prepare the demonstration. Preserve the existing architecture, current two capture modes, immutable evidence, developer-confirmed assertions and separate script-disabled replay topology. No new AI service, hosted runner or scene redesign is selected. Public API/plan versions remain compatible; generator internals are separated by responsibility.
+
+The owner selected MIT for Unravel code and approved excluding784 tracked local agent-tool files while keeping local copies. Their Git exclusions are staged; do not delete the local libraries or rewrite history. Other design/data removals remain unapproved. Core formatting is deliberately scoped, and credential-free CI does not replace provider/browser/hosted acceptance.
+
+The owner chose free hosting tiers and accepts cold starts/quotas. The provider proposal is reviewable in RELEASE_CHECKLIST.md; no provider is provisioned or public-ingestion flag enabled. npm identity/scope and exact publication authorization remain gates; package private status stays enabled. E404 for a preferred package is not scope ownership. PROJECT_STATUS.md and the completion audit own actual verification; public readiness must follow real registry/HTTPS/provider acceptance.
+
+
+## 2026-11-16 - Owner-controlled SDK scope and publication candidate
+
+The owner authenticated as vansham and selected @vansham/unravel-sdk. Update active imports, installation snippets and independent examples together; keep public project IDs/origins unchanged. The workspace SDK stays private to prevent accidental recursive publication. Packing creates a clean public-ready tarball manifest without workspace devDependencies or scripts and with registry-ready README; only that exact reviewed artifact may be published after explicit approval. Historical @unravel/sdk references remain historical, not a second supported package. Independent example installs must use --ignore-workspace and their own lockfiles; the root lockfile must not depend on ignored local archives. Scope choice did not itself authorize publication.
+
+
+## 2026-11-16 - Approved npm publication completed
+
+The owner explicitly approved public MIT publication of @vansham/unravel-sdk@0.1.0, enabled account 2FA and completed npm browser confirmation locally. npm accepted the unchanged approved archive. Public registry metadata and downloaded SHA256 match ccd4a70bbe2c68f286a8f61521784b49f3531ba441291e7079057d3b50fc5e1e. Use the pinned registry version in active website setup and independent manual examples; preserve their existing project IDs/origins. No additional publication, application deployment, provider setup, Git commit or push is authorized by this release.
+
+
+## 2026-11-16 - Interview demo routes and application readability
+
+The owner approved application-wide readability cleanup, a concrete clutter review and an in-app /demo entry point. Preserve cinematic identity and independent integration examples. Use a normal Next route plus a standalone React build served by the main app; share only ordinary React scenario presentation. Both integrate immutable npm SDK0.1.0 through an explicit alias so a workspace build cannot masquerade as the published release. The React document imports no Next runtime. Generated bundles are ignored and built by normal development/production commands.
+
+Use existing developer authentication and owner-authorized project APIs. Reuse the exact-origin project or create it only on an explicit click. No shared inbox, auth bypass, new database migration or provider provisioning. Anonymous users can explore the synthetic failures; saved reports remain private. Dispose local capture on route/document exit and reload restored BFCache documents rather than leave a destroyed reporter. Deliberate failure endpoint never reads/stores/logs its body.
+
+Format maintained application/landing/example source with established Prettier settings; retain prototype/history. Add comments at engineering boundaries instead of narrating JSX or rewriting working architecture. Archive/removal candidates are reviewed in CLEANUP_REVIEW.md and remain pending specific approval. No commit/push/deployment was performed.
+
+
+## 2026-11-16 - Owner-authorized GitHub publication
+
+The owner explicitly requested logical commits and a push to the existing GitHub remote to inspect the repository structure. Use the current main branch after checking it matches origin/main; no force push, reset, history rewrite or new file removal is authorized. Commit the previously approved local-tool exclusions, tested implementation/fixtures and current documentation. Keep local tool copies and ignored build/cache/credential files. Document tracked folders versus local-only artifacts in REPOSITORY_MAP.md. This authorization does not deploy the application or provision services.

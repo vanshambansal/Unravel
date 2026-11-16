@@ -1,8 +1,12 @@
 # Browser recording SDK
 
-Updated 2026-11-12. Local workspace implementation, not a published package. Recording, explicit submission and persistence are implemented. Playback uses the user-approved isolated local host; run/check details are in REPORTS.md and actual outcomes in PROJECT_STATUS.md. Deterministic plan editing/export is described in TEST_PLANS.md.
+Updated 2026-11-16. Published MIT package: `@vansham/unravel-sdk@0.1.0`. Public application hosting remains pending. Recording, explicit submission and persistence are implemented. Playback uses the user-approved isolated local host; run/check details are in REPORTS.md and actual outcomes in PROJECT_STATUS.md. Deterministic plan editing/export is described in TEST_PLANS.md. The owner selected MIT; package notices and release gates live in packages/sdk and RELEASE_CHECKLIST.md.
 
 ## Run and inspect
+
+### Registry installation
+
+Run `npm install @vansham/unravel-sdk@0.1.0` inside your website project. A running Unravel service and its registered public project ID are required; npm installation does not host the dashboard or replay service.
 
 ### Complete reporting widget (preferred integration)
 
@@ -11,7 +15,7 @@ Updated 2026-11-12. Local workspace implementation, not a published package. Rec
 ```tsx
 'use client';
 import { useEffect } from 'react';
-import { mountWidget } from '@unravel/sdk';
+import { mountWidget } from '@vansham/unravel-sdk';
 
 export function UnravelReporter() {
   useEffect(() => {
@@ -29,7 +33,21 @@ Mount `<UnravelReporter />` once near the application root. Use the actual Unrav
 
 The widget uses its own Shadow DOM styles and system/available Inter font stack, with no React runtime, external font request or component-library dependency. Its blocked host and shadow descendants are excluded from capture. Initialization captures nothing. Minimize/Escape preserves capture and shows a Stop dock; Stop freezes capture, while closing a description preserves its draft. Discard requires confirmation. Retry keeps the first attempted report unchanged, even if its response was lost. Done resets the local widget; saved reports remain on the server. Destroy clears local state/owned resources and can abort upload, but cannot undo an already committed server request. Reduced motion disables entry/pulse animation. Narrow/short viewports constrain the panel and allow internal scrolling. Only one widget may be mounted per page.
 
-For an external local application, run `corepack pnpm sdk:pack` in this repository, then `pnpm add /absolute/path/to/.cache/sdk-distribution/unravel-sdk-0.1.0.tgz` in the target project. This is not registry publication. Runtime contracts and recorder code are bundled; declarations carry a generated local contracts copy, with the existing Zod version as their only package dependency. The external tarball install, declaration check, SSR import and browser bundle were exercised in a disposable consumer directory. Distribution/licensing review still applies before public publication.
+For an external local application, run `corepack pnpm sdk:pack` in this repository, then install the hash-suffixed archive path printed by that command in the target project. This is not registry publication. Runtime contracts and recorder code are bundled; declarations carry a generated local contracts copy, with the existing Zod version as their only package dependency. Use `pnpm sdk:check` to inspect required files, notices, portable declarations and lazy chunks. The published release is verified independently from these local development archives.
+
+Local updates now also print a hash-suffixed immutable artifact from `sdk:pack`. Install that printed path in each consumer instead of replacing the same tarball name; this avoids pnpm silently retaining stale installed contents. Rebuild/restart the consumer and refresh its browser. The fixed-name archive remains available for compatibility. This is local distribution, not registry publication.
+
+### Independent registry verification
+
+Run `node scripts/prepare-sdk-consumer.mjs --registry`, then `npm install --ignore-scripts --registry=https://registry.npmjs.org` in `.cache/sdk-registry-consumer`. Set `STANDARD_PACKED_CONSUMER=true`, `STANDARD_SDK_REGISTRY=true` and `REPORTS_BASE_URL` to a running local production preview before running `pnpm test:standard`. Both React and Next.js resolve the installed registry package without workspace SDK aliases. The registry lockfile must resolve the SDK from registry.npmjs.org.
+
+### Independent packed-package verification
+
+`pnpm sdk:consumer:prepare` creates a disposable `.cache/sdk-release-consumer` from the current immutable archive and ordinary fixture sources. Run `npm install --ignore-scripts` inside that directory. It installs pinned React/Next.js and the SDK archive using normal package resolution; no workspace SDK alias is used.
+
+In a root PowerShell terminal, set `$env:STANDARD_PACKED_CONSUMER='true'`, set `$env:REPORTS_BASE_URL` to an already-running production preview, then run `pnpm test:standard`. The suite starts its own fixture/player services; their configured ports must be free. It uses existing synthetic Clerk identities and real test-owned reports. It verifies integration and actual downloaded reproduction/regression files against controlled buggy/fixed applications. It is not registry publication or arbitrary-site certification. Reports remain labelled synthetic evidence; do not delete unrelated reports during cleanup.
+
+Run preparation only in the disposable consumer directory intended by the script; it updates that generated fixture's package/configuration files, not the user's manual examples. See PROJECT_STATUS.md for actual results and intermediate failures.
 
 ### Independent fixture
 
@@ -55,7 +73,7 @@ Importing on the server is safe; initializing requires a browser effect. The pub
 ```tsx
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { initialize, type Recorder } from '@unravel/sdk';
+import { initialize, type Recorder } from '@vansham/unravel-sdk';
 
 export function RecordingControls({ projectId }: { projectId: string }) {
   const recorder = useRef<Recorder | null>(null);
@@ -76,7 +94,7 @@ export function RecordingControls({ projectId }: { projectId: string }) {
 }
 ```
 
-- `initialize(options)` installs no instrumentation and captures no events. It validates configuration and identifies sensitive elements so revealing an existing password field cannot make it recordable.
+- `initialize(options)` installs no instrumentation and captures no events. It validates configuration and identifies excluded sections for the configured policy. Password blocking in the legacy API differs from the approved explicit visitor modes below.
 - `start()` returns a promise. Recording begins after the recorder engine is ready, with a snapshot of the page's **current** state. Explicitly allowlisted data already present at that time may appear. Repeated Start during startup/recording is idempotent. Only one active Unravel instance is allowed per page.
 - `stop()` restores owned instrumentation and returns the finished recording, or null if initialization was cancelled before capture. `getRecording()` returns a fresh validated copy only after stop. A subsequent Start replaces the previous recording.
 - `getStatus()` returns state, relative duration, event count, approximate active bytes and stop reason. State callbacks fire on transitions, not every event, to avoid feedback loops.
@@ -91,7 +109,7 @@ Updated2026-11-14 after explicit user agreement. The reporting widget presents t
 - **Mask entered values** (default): normal page text and layout are visible; field values are masked. Names or typed values echoed into ordinary page text remain visible. No automatic private-text detection is attempted.
 - **Full-content recording**: entered and sensitive field values (including password/payment inputs where capturable) are included after the visitor explicitly selects this mode. A visible warning appears before Start and during recording/review. Selection is frozen for that recording; Done/discard resets the next recording to masking.
 
-Both modes exclude SDK UI, developer-marked `data-unravel-block` subtrees, hidden inputs and unsupported active resources. Masked mode retains the geometry of visible sensitive controls instead of removing them. This is DOM replay within the existing bounded presentation subset, not video or arbitrary cross-origin/canvas capture. Network capture remains metadata-only: no headers, bodies, cookies, query strings or fragments. Exact paths/error messages still require their existing opt-ins.
+Both modes exclude SDK UI, developer-marked `data-unravel-block` subtrees, hidden inputs and unsupported active resources. Masked mode retains the geometry of visible sensitive controls instead of removing them. This is DOM replay within the existing bounded presentation subset, not video or arbitrary cross-origin/canvas capture. Both visitor modes include bounded error messages and URL paths (including request, navigation and error-file paths), following the user's 2026-11-15 clarification. Diagnostic messages and paths may themselves contain user text. Network capture remains metadata-only: no headers, bodies, cookies, query strings or fragments. The legacy low-level API without an explicit mode still requires its path/message opt-ins.
 
 The low-level `initialize` API can select the same policy with `privacy.mode: 'masked-values' | 'full'`. Omitting mode retains its legacy selector-based masking for backwards compatibility; widget consumers do not need selectors or safe-text markers. The widget always uses its visitor-selected mode. Mode selection is client consent UX, not cryptographic proof from an untrusted uploader.
 
@@ -118,7 +136,7 @@ Commands are centralized in [README.md](../README.md); actual outcomes and measu
 
 ## Styled replay presentation v1
 
-New recordings include `presentation: 1`. The recorder captures a closed vocabulary of computed layout/color/border/type values as bounded inline styles. It never copies arbitrary stylesheet bodies, selectors, custom properties, pseudo-content, CSS URLs, images or font resources. The server validates the same grammar independently. Default text/value masking, blocked passwords/widget descendants and network exclusions remain unchanged. The synthetic fixture explicitly permits its static headings/notice in addition to its synthetic form content; no SDK-wide text opt-in changed.
+New recordings include `presentation: 1`. The recorder captures a closed vocabulary of computed layout/color/border/type values as bounded inline styles. It never copies arbitrary stylesheet bodies, selectors, custom properties, pseudo-content, CSS URLs, images or font resources. The server validates the same grammar independently. The approved visitor modes above own current text/value policy; legacy low-level selector rules remain supported. Native details/dialog open state and rrweb's modal/non-modal marker are preserved as bounded inert attributes. Open is serialized as an empty string for rrweb compatibility. Typed OM preserves auto/percentage width and height where available, avoiding initially frozen auto-growing containers; browsers without it retain resolved sizing. This remains a bounded reconstruction, not arbitrary-site visual equivalence.
 
 This is bounded styled replay, not pixel-perfect browser reconstruction. System fonts replace original font families. Initial layout, directly mutated elements and inserted nodes are supported; stylesheet-only theme changes, descendant cascade changes and responsive reflow across a recorded resize are not comprehensively reconstructed. CSS adds payload/CPU cost; limits remain provisional. Old recordings lack presentation and are shown as legacy structural replay; record again to get styling. See PROJECT_STATUS.md for measurements/checks.
 
@@ -151,3 +169,5 @@ Superseded by the visitor-selected widget modes above. Existing recordings made 
 ## Action names and replay timing (2026-11-14)
 
 Explicit visitor modes add optional action targetLabel from associated labels, aria-labels or ordinary button/link text, never control values. Legacy mode does not add this text. Selectors remain unchanged. rrweb input sampling records every input update at event time; limits still apply. Masking modifies emitted recording data, not the live DOM or field value. Browser regression checks verify live value/geometry and captured timing; current results belong to PROJECT_STATUS.md.
+
+Development replay availability: root pnpm dev now starts/checks the separate4192 player alongside Next3000. When using an app-only Next command instead, replay:dev remains the manual player command. Recording SDK code is independent of this dashboard/player process lifecycle. An unavailable player affects viewing reports from every framework, not their stored recording data.

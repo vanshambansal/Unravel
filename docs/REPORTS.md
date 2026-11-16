@@ -4,17 +4,14 @@ Milestone 4 uses the existing Clerk/Neon projects. See PROJECT_STATUS.md for act
 
 ## Run locally
 
-From the repository root, use separate terminals:
+From the repository root, start the dashboard and its isolated player together:
 
 ```powershell
-# Application: http://localhost:3000
+# Application: http://localhost:3000; isolated player: http://127.0.0.1:4192
 corepack pnpm dev
 ```
 
-```powershell
-# Isolated player: http://127.0.0.1:4192
-corepack pnpm replay:dev
-```
+The root development command starts/checks the paired player before launching Next. It reuses an already healthy player with the expected parent; stopping the command stops only processes it owns. Do not launch another player on the same port. If Next was launched separately with an app-only command, restore the missing player with `corepack pnpm replay:dev`. `node scripts/dev-local.mjs --check` verifies the default player's availability/configuration without starting a dashboard.
 
 ```powershell
 # Independent website: use its printed URL; configured example http://127.0.0.1:4184
@@ -96,3 +93,7 @@ New SDK recordings optionally include captureMode (`masked-values` or `full`), p
 Evidence rows use recorded targetLabel or a label derived read-only from the sanitized initial snapshot. Dynamic historic targets may keep a generic description. Raw selectors remain in Technical locator details. Historical delayed inputs can align selected replay state to a matching node/value within two seconds, with a separate captured-state time; original event times and payloads remain unchanged. This cannot restore data masked in an earlier recording. New SDK input sampling avoids the delay. Recording-mode notice is server rendered outside the hydrated viewer.
 
 Large evidence timelines render100 rows per page with direct page selection and previous/next controls. Filters retain complete evidence and external selection opens the matching page. Pagination affects presentation only.
+
+## Diagnostic/native control repair (2026-11-15)
+
+Both explicit visitor modes include bounded URL paths and error messages. Selected errors show their available file and line/column; absent historic data cannot be recovered. Native details/dialog tags, empty-string open state and rrweb modal/non-modal marker pass closed validation. Earlier boolean open forms normalize during intake, not by rewriting stored reports. Computed presentation retains auto/percentage sizing through available Typed OM; the supported replay subset and external-resource exclusions remain. [Readiness audit](audits/SDK_READINESS_2026-11-15.md) owns exact verification, final saved reports, intermediate failures and remaining public-release/visual limits.

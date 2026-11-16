@@ -16,7 +16,7 @@ Readable steps, JSON and code share the version 2 schema. Version 1 is upgraded 
 
 ## Identification and normalization
 
-Default SDK integrations capture tag/ordinal structural paths, without page text, labels, classes, IDs or arbitrary attributes. Explicitly allowlisted test IDs take precedence. Structural paths are a privacy-preserving fallback, not a promise of stability across markup changes. Masked inputs still require synthetic replacement values.
+Default SDK integrations identify targets using tag/ordinal structural paths. Visitor modes also capture bounded public control labels for readable evidence; those labels do not automatically become validated test locators. Explicitly allowlisted test IDs take precedence. Structural paths are a fallback, not a promise of stability across markup changes. Masked inputs, including sensitive-field actions, require synthetic replacement values.
 
 Generation folds a focus-click followed by input, consecutive fills of the same identified element, and matching click/submit events. SubmitEvent.submitter supports implicit Enter submission when the browser supplies its control. A recent same-origin SPA transition following click/select/check is treated as resulting evidence rather than an extra action (bounded 2.5-second heuristic). Same-address history updates are suppressed. Pop/back navigation is retained; standalone safe navigation becomes an Open page action. Masked destinations remain flagged. Raw evidence is immutable.
 
