@@ -11,7 +11,10 @@ import moveIcon from './icons/move.svg';
 import resetIcon from './icons/reset.svg';
 import { widgetPosition } from './widget-position';
 
-export type WidgetOptions = Omit<RecorderOptions, 'submissionUrl'> & { applicationOrigin: string };
+export type WidgetOptions = Omit<RecorderOptions, 'submissionUrl'> & {
+  applicationOrigin: string;
+  authenticatedDemo?: boolean;
+};
 export interface ReportingWidget {
   open(): void;
   close(): void;
@@ -30,6 +33,8 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
       'Mount the reporting widget inside a browser lifecycle after the document is ready.',
     );
   const application = new URL(options.applicationOrigin);
+  if (options.authenticatedDemo && application.origin !== window.location.origin)
+    throw new Error('Authenticated demos must use the current application origin.');
   if (!/^https?:$/.test(application.protocol) || application.origin !== options.applicationOrigin)
     throw new Error(
       'Use an HTTP(S) Unravel origin without a path, credentials, query or fragment.',
@@ -92,7 +97,10 @@ export function mountWidget(options: WidgetOptions): ReportingWidget {
     return initialize({
       ...options,
       privacy: { ...options.privacy, mode: selectedMode },
-      submissionUrl: `${application.origin}/api/ingest/${options.projectId}`,
+      submissionUrl: `${application.origin}/api/${options.authenticatedDemo ? 'demo/ingest' : 'ingest'}/${options.projectId}`,
+      submissionCredentials: options.authenticatedDemo
+        ? 'same-origin'
+        : options.submissionCredentials,
       onStateChange(status) {
         options.onStateChange?.(status);
         if (disposed) return;

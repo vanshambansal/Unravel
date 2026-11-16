@@ -15,6 +15,7 @@ export type SubmissionState = {
 export function createSubmission(
   endpoint: string | undefined,
   notify?: (value: SubmissionState) => void,
+  credentials: 'omit' | 'same-origin' = 'omit',
 ) {
   let state: SubmissionState = { state: 'idle', reportId: null, error: null };
   let pending: Promise<SubmissionReceipt> | null = null,
@@ -60,6 +61,10 @@ export function createSubmission(
           new Error('Use a full HTTP(S) submission URL without credentials, query or fragment.'),
         );
       }
+      if (credentials === 'same-origin' && address.origin !== window.location.origin)
+        return Promise.reject(
+          new Error('Authenticated submissions must stay on the current origin.'),
+        );
       const parsed = ReportSubmissionSchema.safeParse({
         version: 1,
         title: details.title.trim(),
@@ -100,7 +105,7 @@ export function createSubmission(
           const response = await fetch(address, {
             method: 'POST',
             mode: 'cors',
-            credentials: 'omit',
+            credentials,
             headers: { 'Content-Type': 'application/json' },
             body,
             signal: controller!.signal,

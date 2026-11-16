@@ -41,7 +41,11 @@ export function initialize(options: RecorderOptions): Recorder {
   const privacy = createPrivacy(options.privacy);
   const projectId = options.projectId,
     onStateChange = options.onStateChange;
-  const submission = createSubmission(options.submissionUrl, options.onSubmissionChange);
+  const submission = createSubmission(
+    options.submissionUrl,
+    options.onSubmissionChange,
+    options.submissionCredentials,
+  );
   function limit(value: number | undefined, fallback: number, min: number, max: number) {
     if (value === undefined) return fallback;
     if (!Number.isInteger(value) || value < min || value > max)

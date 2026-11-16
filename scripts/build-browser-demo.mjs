@@ -4,7 +4,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const require = createRequire(new URL('../examples/browser-demo/package.json', import.meta.url));
 const { build } = require('esbuild');
 
-// Resolve every runtime from the independent registry consumer, never from workspace SDK source.
+// React stays independent of Next; only owner-only delivery uses the workspace SDK.
 await build({
   absWorkingDir: root,
   entryPoints: ['examples/browser-demo/src/main.tsx'],
@@ -17,6 +17,9 @@ await build({
   external: ['/landing/*'],
   define: { 'process.env.NODE_ENV': '"production"' },
   alias: {
+    '@vansham/unravel-sdk': fileURLToPath(
+      new URL('../packages/sdk/dist/index.js', import.meta.url),
+    ),
     react: require.resolve('react'),
     'react/jsx-runtime': require.resolve('react/jsx-runtime'),
     'react-dom/client': require.resolve('react-dom/client'),
@@ -28,4 +31,4 @@ await build({
     ),
   },
 });
-console.log('Built standalone React demo with the published SDK.');
+console.log('Built standalone React demo with owner-authenticated workspace SDK delivery.');

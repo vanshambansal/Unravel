@@ -2,6 +2,8 @@
 
 Reviewed against repository source on 2026-11-16. This is a briefing you can copy into a conversation or prompt. It describes the current project, not a future product specification.
 
+Deployment update: the main dashboard and separate replay viewer are hosted on Vercel. The current release targets signed-in portfolio demos: in-app React/Next use a workspace SDK option that submits with same-origin credentials to an owner-checked demo endpoint. Public anonymous intake remains disabled. npm 0.1.0 and independent examples are unchanged. Hosted uploads/replay responses have a 4 MB envelope limit and demos capture up to 3 MB. Earlier verification/deployment descriptions below retain their original scope; complete new hosted demo acceptance is still being performed.
+
 ## Problem and users
 
 Unravel helps developers investigate browser bugs that are difficult to reproduce from a short description. A report can show what happened on the page, which actions occurred and which requests or JavaScript errors appeared nearby. The goal is a reliable software engineering project with a demonstrable workflow, not a commercial monitoring platform.

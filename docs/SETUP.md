@@ -51,6 +51,10 @@ Without credentials, landing and example interactions remain available. Authenti
 
 ## Record your first report
 
+For the owner-authenticated portfolio demo, set `PORTFOLIO_DEMO_ENABLED=true` and `APP_ORIGIN` to your exact application origin (for example `http://localhost:3000`). Keep `PUBLIC_INGESTION_ENABLED=false`. Both in-app demos use the workspace SDK's explicit same-origin delivery option; only signed-in owners can submit to their own current-origin project through `/api/demo/ingest/{projectId}`. This does not enable anonymous external SDK submissions. General public intake retains its separate release requirements.
+
+Hosted demo capture is limited to 3 MB; Vercel intake envelopes and replay responses are bounded to 4 MB. Existing larger evidence is retained for local viewing. The npm 0.1.0 SDK and independent integration examples are unchanged; they do not have the workspace-only authenticated-demo option.
+
 1. Sign in and open `/demo`. Prepare your own project for the current origin.
 2. Choose React or Next.js. Start the widget, choose a privacy mode and reproduce the intentional failure using synthetic values.
 3. Stop and submit; open your private reports to inspect replay, actions, network metadata and errors.

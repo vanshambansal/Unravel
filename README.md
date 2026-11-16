@@ -21,7 +21,7 @@ A screenshot shows the result of a bug, but often misses the steps and failed re
 - **Private investigation:** owner-protected projects, replay, actions, JavaScript errors and fetch/XHR metadata.
 - **Recovery:** unchanged submission retries and revision checks for competing edits.
 - **Reviewed test generation:** editable plans and standalone Playwright reproduction/regression exports.
-- **React and Next.js demos:** controlled failures using the published SDK, plus independent integration examples.
+- **React and Next.js demos:** controlled failures with signed-in, owner-only submission; independent examples exercise the published SDK.
 
 ![Report workspace with search, status filters and synthetic bug reports](docs/images/reports.png)
 

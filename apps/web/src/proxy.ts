@@ -15,5 +15,12 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
   return authenticate(request, event);
 }
 export const config = {
-  matcher: ['/app(.*)', '/sign-in(.*)', '/sign-up(.*)', '/api/projects(.*)', '/api/session'],
+  matcher: [
+    '/app(.*)',
+    '/sign-in(.*)',
+    '/sign-up(.*)',
+    '/api/projects(.*)',
+    '/api/session',
+    '/api/demo(.*)',
+  ],
 };

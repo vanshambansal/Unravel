@@ -1,5 +1,5 @@
 import { ingestionAllowed } from '@/server/release';
-import { MAX_SUBMISSION_BYTES } from '@unravel/contracts';
+import { submissionByteLimit } from '@/server/hosting-limits';
 import { reportServices } from '@/server/reports';
 import { boundedJson, errorResponse } from '@/server/http';
 import { ApplicationError } from '@/server/errors';
@@ -60,7 +60,7 @@ export async function POST(request: Request, context: Context) {
       request.headers.get('content-encoding') !== 'identity'
     )
       throw new ApplicationError(415, 'Compressed submissions are unsupported.');
-    const input = await boundedJson(request, MAX_SUBMISSION_BYTES);
+    const input = await boundedJson(request, submissionByteLimit());
     const receipt = await reportServices().submit(projectId, allowed, input);
     return Response.json(receipt, {
       status: receipt.duplicate ? 200 : 201,

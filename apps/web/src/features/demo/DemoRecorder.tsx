@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { mountWidget } from '@unravel/published-sdk';
+import { mountWidget } from '@vansham/unravel-sdk';
 
-/** Both demos deliberately import the npm release, not the workspace SDK source. */
+/** The owner-only hosted demo uses the workspace SDK's authenticated delivery option. */
 export function DemoRecorder() {
   const [message, setMessage] = useState('Checking recording setup…');
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -28,7 +28,13 @@ export function DemoRecorder() {
             'This project belongs to a different website. Prepare a project from the demo guide.',
           );
         if (disposed) return;
-        widget = mountWidget({ projectId: id, applicationOrigin: location.origin });
+        widget = mountWidget({
+          projectId: id,
+          applicationOrigin: location.origin,
+          authenticatedDemo: true,
+          // Keep capture below the hosted envelope limit, including its JSON metadata.
+          limits: { maxBytes: 3_000_000 },
+        });
         setProjectId(id);
         setMessage('Ready. Open Report a bug at the bottom right to start.');
       })

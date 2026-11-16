@@ -21,6 +21,8 @@ export type RecorderStatus = {
   filteredReplayEvents: number;
 };
 export type RecorderOptions = {
+  /** Explicit opt-in for an authenticated same-origin host; external SDK delivery stays cookie-free. */
+  submissionCredentials?: 'omit' | 'same-origin';
   projectId: string;
   privacy?: PrivacyOptions;
   limits?: { maxDurationMs?: number; maxBytes?: number; maxEvents?: number };
