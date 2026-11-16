@@ -53,6 +53,8 @@ Committed posters are checked against renderer source/assets. They are generated
 
 ## What has actually been verified
 
+**Hosted portfolio update (2026-11-16):** signed-in React and Next demos submitted fresh masked/full recordings in all four combinations. Each saved report loaded the isolated player, advanced playback and showed the intentional failed request. Masked/full dummy-value behavior and refresh were checked. A lost-response retry returned the same report with `duplicate: true`. Both actual downloaded reproduction tests ran unchanged against the hosted targets and passed, with zero retries. Anonymous demo submission returned 401, a mismatched project origin returned 403, and general public intake remained disabled (503). This is a controlled portfolio release using existing development Clerk identities; it is not unrestricted production SDK intake. Later tests do not erase the earlier clean-service acceptance limitation.
+
 As of 2026-11-16, distinguish these environments:
 
 **Earlier configured local workspace:** report/replay/ownership/retry/editor/export browser checks passed. The published SDK was installed into independent React/Next consumers. Controlled exported-test proof recorded 8 reproduction passes, 8 intended buggy assertion failures and 8 fixed passes with unchanged regression files, no retries or locator corrections. These are bounded local results, not production-scale claims.

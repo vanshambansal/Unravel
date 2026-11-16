@@ -81,7 +81,7 @@ This separation keeps HTTP parsing out of SQL, SQL out of React presentation and
 
 Hosted portfolio update: both in-app demos now use the workspace SDK's explicit authenticated same-origin delivery. The separate `/api/demo/ingest/{projectId}` endpoint requires sign-in and ownership. Independent examples still exercise npm 0.1.0. General anonymous intake remains disabled on the hosted portfolio; earlier published-demo verification describes the prior configuration.
 
-The Next demo renders an ordinary route. The React demo serves a separate React document built from source, without the Next client runtime. They share scenario components and use the published SDK through a package alias. Independent example packages also install the actual npm package outside the workspace.
+The Next demo renders an ordinary route. The React demo serves a separate React document built from source, without the Next client runtime in that document. They share scenario components and use the workspace SDK for authenticated delivery. A small same-origin authentication frame maintains their Clerk session. Independent example packages install the actual npm package outside the workspace.
 
 The hub checks the signed-in developer's project and uses the current origin. An ordinary external developer instead configures that public project ID once; their visitors need no Unravel login.
 

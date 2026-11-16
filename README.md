@@ -202,7 +202,7 @@ For a local production-mode preview, follow [build/startup instructions](docs/SE
 - Both modes exclude hidden inputs, blocked sections, SDK UI, network bodies/headers/cookies and URL queries/fragments. Bounded diagnostic messages and URL paths remain visible. Use synthetic demo data.
 - Replay is a restricted DOM/CSS reconstruction, not video or universal visual fidelity. External resources, canvas, Shadow DOM, complex controls and full-document navigation have limitations.
 - Generation is deterministic, without LLM inference of business intent. Developers review locators and expected results; exporting does not run or certify a test.
-- Configured local workflows and credential-free clean-checkout checks have passed. Separate fresh-service acceptance and public hosting remain pending. See [dated verification scope](docs/knowledge/engineering-decisions.md#what-has-actually-been-verified).
+- Configured local workflows, credential-free clean-checkout checks and the signed-in hosted demo have passed their scoped checks. Separate fresh-service acceptance and unrestricted public intake remain outside this portfolio release. See [dated verification scope](docs/knowledge/engineering-decisions.md#what-has-actually-been-verified).
 
 Public hosting also requires separate HTTPS origins, production Clerk/database settings, signed account-deletion webhook verification, actual intake protection and retention/privacy decisions. Acknowledgement flags do not implement those controls. See [deployment boundaries](docs/SETUP.md).
 

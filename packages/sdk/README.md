@@ -2,7 +2,7 @@
 
 A framework-independent reporting widget with explicit recording, DOM replay evidence, semantic actions, JavaScript errors and fetch/XHR metadata. React and Next.js use the same package.
 
-**Release status:** published on npm as `@vansham/unravel-sdk@0.1.0` under MIT. A running Unravel service is required; public application hosting remains pending.
+**Release status:** published on npm as `@vansham/unravel-sdk@0.1.0` under MIT. A running Unravel service is required. The hosted portfolio currently accepts signed-in in-app demos only; general anonymous intake stays disabled. Independent npm consumers can use their own configured Unravel service.
 
 ## Installation
 

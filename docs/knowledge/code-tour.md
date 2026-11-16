@@ -78,7 +78,7 @@ Inside [features](../../apps/web/src/features), start with the feature you are e
 | Report investigation | [ReportWorkspace.tsx](../../apps/web/src/features/reports/ReportWorkspace.tsx)                                                                   | Connect investigation views for a report.                                   |
 | Replay/timeline      | [ReportViewer.tsx](../../apps/web/src/features/reports/ReportViewer.tsx), [timeline.ts](../../apps/web/src/features/reports/timeline.ts)         | Playback controls and timed evidence.                                       |
 | Test editing         | [PlanEditor.tsx](../../apps/web/src/features/reports/PlanEditor.tsx), [plan-state.ts](../../apps/web/src/features/reports/plan-state.ts)         | Review/edit a plan and manage editor state.                                 |
-| Demo                 | [DemoRecorder.tsx](../../apps/web/src/features/demo/DemoRecorder.tsx)                                                                            | Mount the published SDK for an authorized demo destination and clean it up. |
+| Demo                 | [DemoRecorder.tsx](../../apps/web/src/features/demo/DemoRecorder.tsx)                                                                            | Mount the workspace SDK for an authorized demo destination and clean it up. |
 
 A page usually gathers the required data and chooses a feature component. That component handles the detailed UI. This keeps route files easier to follow.
 
