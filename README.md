@@ -10,7 +10,7 @@ Unravel connects browser bug reporting, session replay and Playwright test gener
 
 _Cinematic scene artwork included with the application._
 
-**Status:** `@vansham/unravel-sdk@0.1.0` is published on npm. The supported workflow has been verified locally; public application deployment is pending. There is no hosted application URL yet.
+**Portfolio deployment:** [Open Unravel](https://unravel-eight-beta.vercel.app). Sign in to use your own demo project. The isolated [replay viewer](https://unravel-replay.vercel.app) is embedded automatically. General anonymous SDK intake remains disabled; the current release focuses on signed-in demos. `@vansham/unravel-sdk@0.1.0` is published on npm; the hosted demos use the workspace SDK's authenticated delivery option.
 
 ## Why Unravel?
 

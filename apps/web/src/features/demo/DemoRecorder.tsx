@@ -1,12 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { mountWidget } from '@vansham/unravel-sdk';
+import { useDemoSession } from './useDemoSession';
 
 /** The owner-only hosted demo uses the workspace SDK's authenticated delivery option. */
 export function DemoRecorder() {
+  const sessionReady = useDemoSession();
   const [message, setMessage] = useState('Checking recording setup…');
   const [projectId, setProjectId] = useState<string | null>(null);
   useEffect(() => {
+    if (!sessionReady) return;
     const controller = new AbortController();
     let widget: ReturnType<typeof mountWidget> | undefined;
     let disposed = false;
@@ -57,7 +60,7 @@ export function DemoRecorder() {
       window.removeEventListener('pageshow', restore);
       cleanup();
     };
-  }, []);
+  }, [sessionReady]);
   return (
     <aside className="demo-recording" data-unravel-block>
       <p role="status">{message}</p>

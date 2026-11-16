@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useDemoSession } from './useDemoSession';
 import Link from 'next/link';
 import { DemoChrome } from './DemoChrome';
 
@@ -7,12 +8,14 @@ type DemoProject = { id: string; name: string; origin: string };
 
 /** Reuse an owner-authorized project for this origin; never expose a shared report inbox. */
 export function DemoHub() {
+  const sessionReady = useDemoSession();
   const [project, setProject] = useState<DemoProject | null>(null);
   const [state, setState] = useState<
     'loading' | 'unconfigured' | 'signed-out' | 'idle' | 'creating' | 'error'
   >('loading');
   const [message, setMessage] = useState('');
   useEffect(() => {
+    if (!sessionReady) return;
     const controller = new AbortController();
     void fetch('/api/projects', { signal: controller.signal })
       .then(async (response) => {
@@ -38,7 +41,7 @@ export function DemoHub() {
         }
       });
     return () => controller.abort();
-  }, []);
+  }, [sessionReady]);
   async function prepare() {
     setState('creating');
     try {

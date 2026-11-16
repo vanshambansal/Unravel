@@ -55,6 +55,8 @@ For the owner-authenticated portfolio demo, set `PORTFOLIO_DEMO_ENABLED=true` an
 
 Hosted demo capture is limited to 3 MB; Vercel intake envelopes and replay responses are bounded to 4 MB. Existing larger evidence is retained for local viewing. The npm 0.1.0 SDK and independent integration examples are unchanged; they do not have the workspace-only authenticated-demo option.
 
+A small same-origin `/demo/session` frame runs Clerk session renewal for both demo documents. Its checked ready message lets the recorder wait for session initialization; it never sends tokens in messages. The standalone React document remains independent of the Next runtime, while authentication renewal is handled separately. Missing credentials still allow browse-only exploration.
+
 1. Sign in and open `/demo`. Prepare your own project for the current origin.
 2. Choose React or Next.js. Start the widget, choose a privacy mode and reproduce the intentional failure using synthetic values.
 3. Stop and submit; open your private reports to inspect replay, actions, network metadata and errors.

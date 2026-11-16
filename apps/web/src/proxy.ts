@@ -22,5 +22,6 @@ export const config = {
     '/api/projects(.*)',
     '/api/session',
     '/api/demo(.*)',
+    '/demo/session',
   ],
 };
