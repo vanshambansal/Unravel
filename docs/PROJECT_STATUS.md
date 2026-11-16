@@ -24,7 +24,7 @@ The bounded local recording-to-test workflow is implemented and verified. The SD
 - Four posters recaptured/stamped; 52 original reference files passed. Poster/reference checks account for reversible checkout line endings while retaining binary/code integrity. Mobile report and desktop poster renders inspected.
 - GitHub Actions is configured; no remote workflow run is claimed. No new universal FPS, WebKit, physical-phone or arbitrary-site compatibility claim.
 
-Current final preview: **http://localhost:3054/demo**, isolated player **http://127.0.0.1:4224**, build `.next-demo-complete16`. Task-owned intermediate dev3052/player4222 and preview3053/player4223 were stopped; existing user services were preserved. Implementation, fixture and approved784 tool exclusions are committed. The owner explicitly requested GitHub publication; documentation accompanies the final publication commit. No application deployment occurred.
+Current final preview: **http://localhost:3054/demo**, isolated player **http://127.0.0.1:4224**, build `.next-demo-complete16`. Task-owned intermediate dev3052/player4222 and preview3053/player4223 were stopped; existing user services were preserved. The owner-authorized implementation, fixture, documentation and784 tool exclusions are committed and published to the public GitHub repository vanshambansal/Unravel on main. The first publication was independently verified at3f70c47 by matching remote HEAD; this delivery note follows in a documentation-only commit. No application deployment occurred.
 
 ## Published-package verification (2026-11-16)
 
@@ -59,3 +59,7 @@ Current final preview: **http://localhost:3054/demo**, isolated player **http://
 4. Repeat the complete hosted workflow and update public instructions/demo/resume claims only from actual results.
 
 [Release handoff](RELEASE_CHECKLIST.md) · [Deployment contract](DEPLOYMENT.md) · [Cleanup review](CLEANUP_REVIEW.md) · [Demo/interview guide](DEMO_AND_INTERVIEW.md) · [Approved roadmap](COMPLETION_PLAN.md)
+
+## GitHub repository publication
+
+The current reviewed tree contains512 tracked files. All784 excluded tool-file copies remain local;73 local Next build directories are ignored. REPOSITORY_MAP.md explains public source versus local artifacts. Current workflow results belong to the GitHub Actions page; local verification is not a claim that remote CI passed.
