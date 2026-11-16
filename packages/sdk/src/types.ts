@@ -12,7 +12,14 @@ export type PrivacyOptions = {
   errorMessages?: string[];
 };
 export type RecorderState = 'idle' | 'starting' | 'recording' | 'stopped' | 'destroyed';
-export type RecorderStatus = { state: RecorderState; reason: StopReason | null; eventCount: number; bytes: number; durationMs: number; filteredReplayEvents: number };
+export type RecorderStatus = {
+  state: RecorderState;
+  reason: StopReason | null;
+  eventCount: number;
+  bytes: number;
+  durationMs: number;
+  filteredReplayEvents: number;
+};
 export type RecorderOptions = {
   projectId: string;
   privacy?: PrivacyOptions;
@@ -27,6 +34,9 @@ export interface Recorder {
   getRecording(): Recording | null;
   getStatus(): RecorderStatus;
   destroy(): void;
-  submit(details: { title: string; description?: string }): Promise<import('@unravel/contracts').SubmissionReceipt>;
+  submit(details: {
+    title: string;
+    description?: string;
+  }): Promise<import('@unravel/contracts').SubmissionReceipt>;
   getSubmissionStatus(): SubmissionState;
 }

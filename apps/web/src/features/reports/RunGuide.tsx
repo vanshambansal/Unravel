@@ -1,10 +1,104 @@
 'use client';
 import { useState } from 'react';
-export function RunGuide({filename,initialOrigin}:{filename:string;initialOrigin:string}) {
-  const [origin,setOrigin]=useState(initialOrigin),[copied,setCopied]=useState('');
-  let valid=false; try {const url=new URL(origin);valid=['http:','https:'].includes(url.protocol)&&url.origin===origin;}catch{ /* Invalid origins are explained beside the field. */ }
-  const config=`import { defineConfig } from '@playwright/test';\n\nexport default defineConfig({\n  testDir: './tests',\n  use: { baseURL: ${JSON.stringify(origin)} },\n});\n`;
-  const command=`npx playwright test tests/${filename} --config=playwright.unravel.config.ts`;
-  async function copy(value:string,label:string){try{await navigator.clipboard.writeText(value);setCopied(`${label} copied`);}catch{setCopied('Copy failed. Select the text to copy it.');}}
-  return <section className="plan-run-guide ui-settings-group" aria-label="Run the downloaded test"><header className="generator-section-heading"><div><h3>Your file is ready. Run it in your website project.</h3><p>The download is TypeScript source code, not a video. Unravel has not run it against your website.</p></div></header><div className="plan-run-body"><ol><li><strong>Put the file in your website's tests folder.</strong><code>tests/{filename}</code></li><li><strong>Install Playwright if your project does not already use it.</strong><code>npm install --save-dev @playwright/test</code><code>npx playwright install chromium</code></li><li><strong>Choose the website and configure the test.</strong><label>Website to test<input aria-label="Website to test" value={origin} onChange={event=>setOrigin(event.target.value.trim())}/></label>{!valid&&<p role="alert">Use an HTTP(S) origin without credentials, path, query or fragment.</p>}<p>Keep your existing Playwright setup if you have one. Otherwise save this example as playwright.unravel.config.ts in the website project root.</p><pre><code>{config}</code></pre><button className="product-button secondary" disabled={!valid} onClick={()=>void copy(config,'Configuration')}>Copy configuration</button></li><li><strong>Start the website, then run the test.</strong><code>{command}</code><button className="product-button secondary" disabled={!valid} onClick={()=>void copy(command,'Run command')}>Copy run command</button><p>Playwright reports the result in your terminal. A reproduction can pass while the bug is still present; a regression checks your confirmed expectation.</p></li></ol><p role="status">{copied}</p><details><summary>Sign-in, browser state and supported limits</summary><p>Use synthetic values. Configure authentication or other prerequisites in your own Playwright setup. Passwords and private input were not captured. Structural element paths can change when your markup changes. Visual correctness and complex controls need additional review.</p></details></div></section>;
+export function RunGuide({ filename, initialOrigin }: { filename: string; initialOrigin: string }) {
+  const [origin, setOrigin] = useState(initialOrigin),
+    [copied, setCopied] = useState('');
+  let valid = false;
+  try {
+    const url = new URL(origin);
+    valid = ['http:', 'https:'].includes(url.protocol) && url.origin === origin;
+  } catch {
+    /* Invalid origins are explained beside the field. */
+  }
+  const config = `import { defineConfig } from '@playwright/test';\n\nexport default defineConfig({\n  testDir: './tests',\n  use: { baseURL: ${JSON.stringify(origin)} },\n});\n`;
+  const command = `npx playwright test tests/${filename} --config=playwright.unravel.config.ts`;
+  async function copy(value: string, label: string) {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(`${label} copied`);
+    } catch {
+      setCopied('Copy failed. Select the text to copy it.');
+    }
+  }
+  return (
+    <section className="plan-run-guide ui-settings-group" aria-label="Run the downloaded test">
+      <header className="generator-section-heading">
+        <div>
+          <h3>Your file is ready. Run it in your website project.</h3>
+          <p>
+            The download is TypeScript source code, not a video. Unravel has not run it against your
+            website.
+          </p>
+        </div>
+      </header>
+      <div className="plan-run-body">
+        <ol>
+          <li>
+            <strong>Put the file in your website's tests folder.</strong>
+            <code>tests/{filename}</code>
+          </li>
+          <li>
+            <strong>Install Playwright if your project does not already use it.</strong>
+            <code>npm install --save-dev @playwright/test</code>
+            <code>npx playwright install chromium</code>
+          </li>
+          <li>
+            <strong>Choose the website and configure the test.</strong>
+            <label>
+              Website to test
+              <input
+                aria-label="Website to test"
+                value={origin}
+                onChange={(event) => setOrigin(event.target.value.trim())}
+              />
+            </label>
+            {!valid && (
+              <p role="alert">
+                Use an HTTP(S) origin without credentials, path, query or fragment.
+              </p>
+            )}
+            <p>
+              Keep your existing Playwright setup if you have one. Otherwise save this example as
+              playwright.unravel.config.ts in the website project root.
+            </p>
+            <pre>
+              <code>{config}</code>
+            </pre>
+            <button
+              className="product-button secondary"
+              disabled={!valid}
+              onClick={() => void copy(config, 'Configuration')}
+            >
+              Copy configuration
+            </button>
+          </li>
+          <li>
+            <strong>Start the website, then run the test.</strong>
+            <code>{command}</code>
+            <button
+              className="product-button secondary"
+              disabled={!valid}
+              onClick={() => void copy(command, 'Run command')}
+            >
+              Copy run command
+            </button>
+            <p>
+              Playwright reports the result in your terminal. A reproduction can pass while the bug
+              is still present; a regression checks your confirmed expectation.
+            </p>
+          </li>
+        </ol>
+        <p role="status">{copied}</p>
+        <details>
+          <summary>Sign-in, browser state and supported limits</summary>
+          <p>
+            Use synthetic values. Configure authentication or other prerequisites in your own
+            Playwright setup. Passwords and private input were not captured. Structural element
+            paths can change when your markup changes. Visual correctness and complex controls need
+            additional review.
+          </p>
+        </details>
+      </div>
+    </section>
+  );
 }

@@ -1,0 +1,13 @@
+# Retained references, experiments and local tooling are not formatting targets.
+prototypes/
+design/
+.agent/
+.agents/
+.claude/
+.codex/
+.gemini/
+.opencode/
+.impeccable/
+pnpm-lock.yaml
+**/pnpm-lock.yaml
+apps/web/next-env.d.ts

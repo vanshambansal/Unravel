@@ -6,9 +6,24 @@ export default function ReportsSkeleton() {
     <PageContent>
       <PageHeader
         title="Bug reports"
-        description={<span className="ui-skeleton" style={{ display: 'inline-block', width: 180, height: 16 }} />}
-        context={<span className="ui-skeleton" style={{ display: 'inline-block', width: 90, height: 14 }} />}
-        actions={<span className="ui-skeleton" style={{ display: 'inline-block', width: 100, height: 38, borderRadius: 8 }} />}
+        description={
+          <span
+            className="ui-skeleton"
+            style={{ display: 'inline-block', width: 180, height: 16 }}
+          />
+        }
+        context={
+          <span
+            className="ui-skeleton"
+            style={{ display: 'inline-block', width: 90, height: 14 }}
+          />
+        }
+        actions={
+          <span
+            className="ui-skeleton"
+            style={{ display: 'inline-block', width: 100, height: 38, borderRadius: 8 }}
+          />
+        }
       />
       <div className="report-search-container" aria-hidden="true" style={{ pointerEvents: 'none' }}>
         <div className="report-search-bar">
@@ -23,7 +38,10 @@ export default function ReportsSkeleton() {
         </header>
         <ul>
           {[1, 2, 3].map((idx) => (
-            <li key={idx} style={{ borderTop: idx > 1 ? '1px solid rgba(255,255,255,0.06)' : undefined }}>
+            <li
+              key={idx}
+              style={{ borderTop: idx > 1 ? '1px solid rgba(255,255,255,0.06)' : undefined }}
+            >
               <div className="ui-resource-row" style={{ pointerEvents: 'none' }}>
                 <div className="ui-resource-identity" style={{ display: 'grid', gap: 6 }}>
                   <div className="ui-skeleton" style={{ width: 260, height: 18 }} />
@@ -40,4 +58,3 @@ export default function ReportsSkeleton() {
     </PageContent>
   );
 }
-

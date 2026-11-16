@@ -1,95 +1,630 @@
-@font-face{font-family:'Unravel Product Inter';src:url('/landing/fonts/inter-regular.ttf') format('truetype');font-weight:400;font-display:swap}
-@font-face{font-family:'Unravel Product Manrope';src:url('/landing/fonts/manrope-semibold.ttf') format('truetype');font-weight:600;font-display:swap}
-@font-face{font-family:'Unravel Product Mono';src:url('/landing/fonts/plex-mono-regular.ttf') format('truetype');font-weight:400;font-display:swap}
-.unravel-workspace{--product-bg:#07080a;--product-surface:rgba(16,18,24,0.68);--product-raised:rgba(255,255,255,0.05);--product-border:rgba(255,255,255,0.08);--product-text:#f3f2ee;--product-muted:#a6aab3;--product-crimson:#ff4d61;min-height:100svh;background:var(--product-bg);color:var(--product-text);font-family:'Unravel Product Inter',Arial,sans-serif;font-size:16px;line-height:1.6;color-scheme:dark}
-.unravel-workspace *{box-sizing:border-box}
-.unravel-workspace :is(h1,h2,h3,p){margin:0}
-.unravel-workspace :is(h1,h2,h3){font-family:'Unravel Product Manrope',Arial,sans-serif;font-weight:600;line-height:1.25;letter-spacing:-.025em;overflow-wrap:anywhere}
-.unravel-workspace h1{font-size:36px;line-height:44px}
-.unravel-workspace h2{font-size:30px}
-.unravel-workspace h3{font-size:18px}
-.unravel-workspace p{color:var(--product-muted)}
-.unravel-workspace a{color:inherit;text-decoration:none}
-.unravel-workspace button{font:inherit;cursor:pointer}
-.unravel-workspace :is(a,button,input):focus-visible{outline:2px solid #ff8087;outline-offset:4px}
-.unravel-workspace .product-brand{font:600 26px/1.2 'Unravel Product Manrope',Arial,sans-serif;letter-spacing:-1px;display:inline-block;width:max-content}
-.unravel-workspace .product-eyebrow{font:400 12px/1.6 'Unravel Product Mono',monospace;letter-spacing:.025em}
-.unravel-workspace .accent{color:var(--product-crimson)}
-.unravel-workspace .product-small{font-size:13px;line-height:1.6}
-.unravel-workspace .product-text-link{font:inherit;font-size:13px;line-height:20px;text-decoration:none;background:transparent;border:0;padding:6px 10px;border-radius:6px;color:rgba(255,255,255,0.50);transition:color .14s ease,background .14s ease}
-.unravel-workspace .product-text-link:hover{color:#ffffff;background:rgba(255,255,255,0.05)}
-.unravel-workspace .product-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 18px;border:1px solid rgba(255,255,255,0.22);border-radius:8px;background:#ffffff;color:#0a0a0c;font-size:13px;font-weight:500;line-height:20px;letter-spacing:-.01em;white-space:nowrap;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.2),0 0 0 1px rgba(255,255,255,0.08);transition:background-color .14s ease,color .14s ease,border-color .14s ease,transform .14s cubic-bezier(.16,1,.3,1),box-shadow .14s ease}
-.unravel-workspace .product-button:hover{background:#f0f0f0;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.12)}
-.unravel-workspace .product-button:active{transform:translateY(0);background:#e4e4e4}
-.unravel-workspace .product-button.secondary{background:rgba(255,255,255,0.04);color:#ededed;border:1px solid rgba(255,255,255,0.08);box-shadow:inset 0 1px 0 0 rgba(255,255,255,0.05)}
-.unravel-workspace .product-button.secondary:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.16);color:#ffffff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.25)}
-.unravel-workspace .product-button.secondary:active{transform:translateY(0);background:rgba(255,255,255,0.05)}
-.unravel-workspace .product-button:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
-.unravel-workspace .product-account{margin-top:auto;display:flex;align-items:center;gap:12px;font-size:13px;min-width:0}
-.unravel-workspace .product-account>div{display:grid;gap:4px}
-.unravel-workspace .product-account button{text-align:left;width:max-content}
-.unravel-workspace .product-page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:64px}
-.unravel-workspace .product-page-heading>div{display:grid;gap:12px;min-width:0}
-.unravel-workspace .product-page-heading .product-button{flex-shrink:0}
-.unravel-workspace .product-panel{padding:32px;background:var(--product-surface);border:1px solid var(--product-border);border-radius:8px;display:grid;gap:24px;min-width:0}
-.unravel-workspace .product-empty h2{font-size:36px;line-height:44px}
-.unravel-workspace .product-empty>.product-button{justify-self:start}
-.unravel-workspace .product-privacy{margin-top:64px}
-.unravel-workspace .product-workflow{list-style:none;padding:28px 0 0;margin:0;border-top:1px solid var(--product-border);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
-.unravel-workspace .product-workflow li{display:flex;align-items:flex-start;gap:12px;min-width:0;position:relative}
-.unravel-workspace .product-workflow li:not(:last-child)::after{content:'→';color:var(--product-muted);position:absolute;right:0;top:6px}
-.unravel-workspace .workflow-symbol{width:36px;height:36px;flex-shrink:0;border:1px solid #ef4b5340;background:#ef4b530a;color:#ff858b;border-radius:8px;display:grid;place-items:center;font:12px 'Unravel Product Mono',monospace}
-.unravel-workspace .product-workflow h3{font-size:20px;margin:5px 0 12px;line-height:1.2}
-.unravel-workspace .product-workflow p{font-size:13px;max-width:230px;padding-right:12px}
-.unravel-workspace .product-form-layout{display:grid;grid-template-columns:minmax(0,640px) minmax(220px,1fr);gap:64px;align-items:start}
-.unravel-workspace .product-form-aside{display:grid;gap:20px;padding-top:24px;max-width:320px}
-.unravel-workspace .product-form-aside h2{font-size:24px;line-height:32px}
-.unravel-workspace .product-field{display:grid;gap:8px;min-width:0}
-.unravel-workspace .product-field label{font-size:14px;color:var(--product-text)}
-.unravel-workspace .product-field input{width:100%;min-height:48px;border:1px solid var(--product-border);border-radius:8px;padding:12px;color:var(--product-text);background:var(--product-raised);font:inherit;line-height:24px}
-.unravel-workspace .product-field input::placeholder{color:#8d929d}
-.unravel-workspace .product-field input[aria-invalid=true]{border-color:#ff8087}
-.unravel-workspace .product-field-error{color:#ff9ca2;font-size:14px;overflow-wrap:anywhere}
-.unravel-workspace .origin-preview{padding:12px 16px;border-left:2px solid var(--product-crimson);background:var(--product-raised);font-size:13px;overflow-wrap:anywhere}
-.unravel-workspace .origin-preview strong{color:var(--product-text);font-weight:400}
-.unravel-workspace code{font-family:'Unravel Product Mono',monospace;font-size:.85em;overflow-wrap:anywhere}
-.unravel-workspace .product-actions{display:flex;flex-wrap:wrap;gap:12px}
-.unravel-workspace .product-notice{padding:20px;border:1px solid var(--product-border);border-radius:8px;display:grid;gap:12px;background:var(--product-raised);min-width:0}
-.unravel-workspace .project-list{list-style:none;padding:0;margin:0;display:grid;gap:16px}
-.unravel-workspace .project-card{display:flex;align-items:center;gap:20px;padding:24px 28px;border:1px solid var(--product-border);border-radius:8px;background:var(--product-surface)}
-.unravel-workspace .project-card:hover{border-color:var(--product-muted)}
-.unravel-workspace .project-card>div{flex:1;min-width:0}
-.unravel-workspace .project-card h2{font-size:22px;margin-bottom:6px}
-.unravel-workspace .project-card p{font-size:14px;overflow-wrap:anywhere}
-.unravel-workspace .project-card>.product-small{flex-shrink:0}
-.unravel-workspace .project-monogram{width:44px;height:44px;flex-shrink:0;border:1px solid #ef4b5340;border-radius:10px;background:#ef4b5310;color:#ff858b;display:grid;place-items:center;font:600 20px 'Unravel Product Manrope',Arial,sans-serif}
-.unravel-workspace .project-details{display:grid;gap:16px;margin:0}
-.unravel-workspace .project-details div{display:grid;grid-template-columns:180px minmax(0,1fr);gap:16px}
-.unravel-workspace .project-details dt{font-size:14px;color:var(--product-muted)}
-.unravel-workspace .project-details dd{margin:0;overflow-wrap:anywhere}
-.unravel-workspace .product-skip{position:fixed;top:-100px;left:24px;background:var(--product-text);color:var(--product-bg);padding:12px 20px;z-index:100}
-.unravel-workspace .product-skip:focus{top:16px}
-@media(max-width:1150px){.unravel-workspace .product-form-layout{grid-template-columns:minmax(0,1fr);gap:24px}.unravel-workspace .product-form-aside{max-width:640px}.unravel-workspace .product-workflow{gap:20px}.unravel-workspace .product-workflow li{flex-direction:column}}
-@media(max-width:760px){.unravel-workspace .product-account{width:100%;margin:0}.unravel-workspace .product-account>div{display:flex;align-items:center;gap:16px}.unravel-workspace .product-page-heading{flex-direction:column;gap:24px;margin-bottom:32px}.unravel-workspace .product-page-heading h1{font-size:32px;line-height:40px}.unravel-workspace .product-panel{padding:24px}.unravel-workspace .product-empty h2{font-size:26px;line-height:34px}.unravel-workspace .product-workflow{grid-template-columns:1fr;gap:24px}.unravel-workspace .product-workflow li{flex-direction:row}.unravel-workspace .product-workflow li:not(:last-child)::after{content:none}.unravel-workspace .product-empty>.product-button{width:100%}.unravel-workspace .product-privacy{margin-top:32px}.unravel-workspace .project-card{flex-wrap:wrap;padding:20px}.unravel-workspace .project-card>.product-small{margin-left:64px}.unravel-workspace .project-details div{grid-template-columns:1fr;gap:4px}}
-@media(prefers-reduced-motion:reduce){.unravel-workspace *{transition:none!important;scroll-behavior:auto!important}}
-.unravel-workspace .report-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:24px;margin:24px 0;align-items:start}
-.unravel-workspace .report-grid .product-panel{padding:20px;min-width:0;display:grid;gap:16px}
-.unravel-workspace .report-grid h2{font-size:22px}
-.unravel-workspace .report-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.unravel-workspace .report-player{height:440px;width:100%;background:#f4f4f4;border-radius:6px;overflow:hidden}
-.unravel-workspace .report-player iframe{width:100%;height:100%;border:0;display:block}
-.unravel-workspace .report-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.unravel-workspace .report-controls output{font:12px 'Unravel Product Mono',monospace;color:var(--product-muted)}
-.unravel-workspace .report-replay input[type=range]{width:100%;accent-color:var(--product-crimson)}
-.unravel-workspace .report-timeline ol{list-style:none;padding:0;margin:0;max-height:500px;overflow:auto;display:grid;gap:8px}
-.unravel-workspace .report-timeline li button{display:grid;grid-template-columns:1fr auto;gap:6px;text-align:left;width:100%;border:1px solid var(--product-border);border-radius:6px;padding:12px;background:var(--product-raised);color:var(--product-text);font-size:13px;overflow-wrap:anywhere}
-.unravel-workspace .report-timeline li button>span:last-child{grid-column:1/-1}
-.unravel-workspace .report-timeline li button.selected{border-color:var(--product-crimson)}
-.unravel-workspace .report-event-kind,.unravel-workspace .report-timeline time{color:var(--product-muted);font:11px 'Unravel Product Mono',monospace}
-.unravel-workspace .report-event-details pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.6;margin:12px 0 0}
-.unravel-workspace .report-description{white-space:pre-wrap;margin-bottom:24px;overflow-wrap:anywhere}
-.unravel-workspace .report-list{margin-top:16px}
-.unravel-workspace .report-retention{margin-top:24px}
-.unravel-workspace .danger{background:#a62f39;color:white;border-color:#e46b73}
-@media(max-width:1150px){.unravel-workspace .report-grid{grid-template-columns:minmax(0,1fr)}.unravel-workspace .report-player{height:400px}}
-@media(max-width:600px){.unravel-workspace .report-player{height:330px}.unravel-workspace .report-grid .product-panel{padding:16px}.unravel-workspace .report-policy{font-size:13px}}
+@font-face {
+  font-family: 'Unravel Product Inter';
+  src: url('/landing/fonts/inter-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Unravel Product Manrope';
+  src: url('/landing/fonts/manrope-semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Unravel Product Mono';
+  src: url('/landing/fonts/plex-mono-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+.unravel-workspace {
+  --product-bg: #07080a;
+  --product-surface: rgba(16, 18, 24, 0.68);
+  --product-raised: rgba(255, 255, 255, 0.05);
+  --product-border: rgba(255, 255, 255, 0.08);
+  --product-text: #f3f2ee;
+  --product-muted: #a6aab3;
+  --product-crimson: #ff4d61;
+  min-height: 100svh;
+  background: var(--product-bg);
+  color: var(--product-text);
+  font-family: 'Unravel Product Inter', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color-scheme: dark;
+}
+.unravel-workspace * {
+  box-sizing: border-box;
+}
+.unravel-workspace :is(h1, h2, h3, p) {
+  margin: 0;
+}
+.unravel-workspace :is(h1, h2, h3) {
+  font-family: 'Unravel Product Manrope', Arial, sans-serif;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.unravel-workspace h1 {
+  font-size: 36px;
+  line-height: 44px;
+}
+.unravel-workspace h2 {
+  font-size: 30px;
+}
+.unravel-workspace h3 {
+  font-size: 18px;
+}
+.unravel-workspace p {
+  color: var(--product-muted);
+}
+.unravel-workspace a {
+  color: inherit;
+  text-decoration: none;
+}
+.unravel-workspace button {
+  font: inherit;
+  cursor: pointer;
+}
+.unravel-workspace :is(a, button, input):focus-visible {
+  outline: 2px solid #ff8087;
+  outline-offset: 4px;
+}
+.unravel-workspace .product-brand {
+  font:
+    600 26px/1.2 'Unravel Product Manrope',
+    Arial,
+    sans-serif;
+  letter-spacing: -1px;
+  display: inline-block;
+  width: max-content;
+}
+.unravel-workspace .product-eyebrow {
+  font:
+    400 12px/1.6 'Unravel Product Mono',
+    monospace;
+  letter-spacing: 0.025em;
+}
+.unravel-workspace .accent {
+  color: var(--product-crimson);
+}
+.unravel-workspace .product-small {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.unravel-workspace .product-text-link {
+  font: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  transition:
+    color 0.14s ease,
+    background 0.14s ease;
+}
+.unravel-workspace .product-text-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+.unravel-workspace .product-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0a0a0c;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-align: center;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease,
+    border-color 0.14s ease,
+    transform 0.14s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.14s ease;
+}
+.unravel-workspace .product-button:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.unravel-workspace .product-button:active {
+  transform: translateY(0);
+  background: #e4e4e4;
+}
+.unravel-workspace .product-button.secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ededed;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+.unravel-workspace .product-button.secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+.unravel-workspace .product-button.secondary:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.05);
+}
+.unravel-workspace .product-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+.unravel-workspace .product-account {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  min-width: 0;
+}
+.unravel-workspace .product-account > div {
+  display: grid;
+  gap: 4px;
+}
+.unravel-workspace .product-account button {
+  text-align: left;
+  width: max-content;
+}
+.unravel-workspace .product-page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 64px;
+}
+.unravel-workspace .product-page-heading > div {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.unravel-workspace .product-page-heading .product-button {
+  flex-shrink: 0;
+}
+.unravel-workspace .product-panel {
+  padding: 32px;
+  background: var(--product-surface);
+  border: 1px solid var(--product-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.unravel-workspace .product-empty h2 {
+  font-size: 36px;
+  line-height: 44px;
+}
+.unravel-workspace .product-empty > .product-button {
+  justify-self: start;
+}
+.unravel-workspace .product-privacy {
+  margin-top: 64px;
+}
+.unravel-workspace .product-workflow {
+  list-style: none;
+  padding: 28px 0 0;
+  margin: 0;
+  border-top: 1px solid var(--product-border);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+.unravel-workspace .product-workflow li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  position: relative;
+}
+.unravel-workspace .product-workflow li:not(:last-child)::after {
+  content: '→';
+  color: var(--product-muted);
+  position: absolute;
+  right: 0;
+  top: 6px;
+}
+.unravel-workspace .workflow-symbol {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: 1px solid #ef4b5340;
+  background: #ef4b530a;
+  color: #ff858b;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font:
+    12px 'Unravel Product Mono',
+    monospace;
+}
+.unravel-workspace .product-workflow h3 {
+  font-size: 20px;
+  margin: 5px 0 12px;
+  line-height: 1.2;
+}
+.unravel-workspace .product-workflow p {
+  font-size: 13px;
+  max-width: 230px;
+  padding-right: 12px;
+}
+.unravel-workspace .product-form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 640px) minmax(220px, 1fr);
+  gap: 64px;
+  align-items: start;
+}
+.unravel-workspace .product-form-aside {
+  display: grid;
+  gap: 20px;
+  padding-top: 24px;
+  max-width: 320px;
+}
+.unravel-workspace .product-form-aside h2 {
+  font-size: 24px;
+  line-height: 32px;
+}
+.unravel-workspace .product-field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.unravel-workspace .product-field label {
+  font-size: 14px;
+  color: var(--product-text);
+}
+.unravel-workspace .product-field input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--product-border);
+  border-radius: 8px;
+  padding: 12px;
+  color: var(--product-text);
+  background: var(--product-raised);
+  font: inherit;
+  line-height: 24px;
+}
+.unravel-workspace .product-field input::placeholder {
+  color: #8d929d;
+}
+.unravel-workspace .product-field input[aria-invalid='true'] {
+  border-color: #ff8087;
+}
+.unravel-workspace .product-field-error {
+  color: #ff9ca2;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.unravel-workspace .origin-preview {
+  padding: 12px 16px;
+  border-left: 2px solid var(--product-crimson);
+  background: var(--product-raised);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.unravel-workspace .origin-preview strong {
+  color: var(--product-text);
+  font-weight: 400;
+}
+.unravel-workspace code {
+  font-family: 'Unravel Product Mono', monospace;
+  font-size: 0.85em;
+  overflow-wrap: anywhere;
+}
+.unravel-workspace .product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.unravel-workspace .product-notice {
+  padding: 20px;
+  border: 1px solid var(--product-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  background: var(--product-raised);
+  min-width: 0;
+}
+.unravel-workspace .project-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+.unravel-workspace .project-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  border: 1px solid var(--product-border);
+  border-radius: 8px;
+  background: var(--product-surface);
+}
+.unravel-workspace .project-card:hover {
+  border-color: var(--product-muted);
+}
+.unravel-workspace .project-card > div {
+  flex: 1;
+  min-width: 0;
+}
+.unravel-workspace .project-card h2 {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+.unravel-workspace .project-card p {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.unravel-workspace .project-card > .product-small {
+  flex-shrink: 0;
+}
+.unravel-workspace .project-monogram {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 1px solid #ef4b5340;
+  border-radius: 10px;
+  background: #ef4b5310;
+  color: #ff858b;
+  display: grid;
+  place-items: center;
+  font:
+    600 20px 'Unravel Product Manrope',
+    Arial,
+    sans-serif;
+}
+.unravel-workspace .project-details {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+}
+.unravel-workspace .project-details div {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 16px;
+}
+.unravel-workspace .project-details dt {
+  font-size: 14px;
+  color: var(--product-muted);
+}
+.unravel-workspace .project-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.unravel-workspace .product-skip {
+  position: fixed;
+  top: -100px;
+  left: 24px;
+  background: var(--product-text);
+  color: var(--product-bg);
+  padding: 12px 20px;
+  z-index: 100;
+}
+.unravel-workspace .product-skip:focus {
+  top: 16px;
+}
+@media (max-width: 1150px) {
+  .unravel-workspace .product-form-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .unravel-workspace .product-form-aside {
+    max-width: 640px;
+  }
+  .unravel-workspace .product-workflow {
+    gap: 20px;
+  }
+  .unravel-workspace .product-workflow li {
+    flex-direction: column;
+  }
+}
+@media (max-width: 760px) {
+  .unravel-workspace .product-account {
+    width: 100%;
+    margin: 0;
+  }
+  .unravel-workspace .product-account > div {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .unravel-workspace .product-page-heading {
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  .unravel-workspace .product-page-heading h1 {
+    font-size: 32px;
+    line-height: 40px;
+  }
+  .unravel-workspace .product-panel {
+    padding: 24px;
+  }
+  .unravel-workspace .product-empty h2 {
+    font-size: 26px;
+    line-height: 34px;
+  }
+  .unravel-workspace .product-workflow {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .unravel-workspace .product-workflow li {
+    flex-direction: row;
+  }
+  .unravel-workspace .product-workflow li:not(:last-child)::after {
+    content: none;
+  }
+  .unravel-workspace .product-empty > .product-button {
+    width: 100%;
+  }
+  .unravel-workspace .product-privacy {
+    margin-top: 32px;
+  }
+  .unravel-workspace .project-card {
+    flex-wrap: wrap;
+    padding: 20px;
+  }
+  .unravel-workspace .project-card > .product-small {
+    margin-left: 64px;
+  }
+  .unravel-workspace .project-details div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .unravel-workspace * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+.unravel-workspace .report-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+  gap: 24px;
+  margin: 24px 0;
+  align-items: start;
+}
+.unravel-workspace .report-grid .product-panel {
+  padding: 20px;
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+.unravel-workspace .report-grid h2 {
+  font-size: 22px;
+}
+.unravel-workspace .report-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.unravel-workspace .report-player {
+  height: 440px;
+  width: 100%;
+  background: #f4f4f4;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.unravel-workspace .report-player iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.unravel-workspace .report-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.unravel-workspace .report-controls output {
+  font:
+    12px 'Unravel Product Mono',
+    monospace;
+  color: var(--product-muted);
+}
+.unravel-workspace .report-replay input[type='range'] {
+  width: 100%;
+  accent-color: var(--product-crimson);
+}
+.unravel-workspace .report-timeline ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 500px;
+  overflow: auto;
+  display: grid;
+  gap: 8px;
+}
+.unravel-workspace .report-timeline li button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  text-align: left;
+  width: 100%;
+  border: 1px solid var(--product-border);
+  border-radius: 6px;
+  padding: 12px;
+  background: var(--product-raised);
+  color: var(--product-text);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.unravel-workspace .report-timeline li button > span:last-child {
+  grid-column: 1/-1;
+}
+.unravel-workspace .report-timeline li button.selected {
+  border-color: var(--product-crimson);
+}
+.unravel-workspace .report-event-kind,
+.unravel-workspace .report-timeline time {
+  color: var(--product-muted);
+  font:
+    11px 'Unravel Product Mono',
+    monospace;
+}
+.unravel-workspace .report-event-details pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 12px 0 0;
+}
+.unravel-workspace .report-description {
+  white-space: pre-wrap;
+  margin-bottom: 24px;
+  overflow-wrap: anywhere;
+}
+.unravel-workspace .report-list {
+  margin-top: 16px;
+}
+.unravel-workspace .report-retention {
+  margin-top: 24px;
+}
+.unravel-workspace .danger {
+  background: #a62f39;
+  color: white;
+  border-color: #e46b73;
+}
+@media (max-width: 1150px) {
+  .unravel-workspace .report-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .unravel-workspace .report-player {
+    height: 400px;
+  }
+}
+@media (max-width: 600px) {
+  .unravel-workspace .report-player {
+    height: 330px;
+  }
+  .unravel-workspace .report-grid .product-panel {
+    padding: 16px;
+  }
+  .unravel-workspace .report-policy {
+    font-size: 13px;
+  }
+}

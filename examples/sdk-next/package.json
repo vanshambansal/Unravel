@@ -7,7 +7,7 @@
     "build": "next build"
   },
   "dependencies": {
-    "@unravel/sdk": "file:D:/documents/Unravel/.cache/sdk-distribution/unravel-sdk-0.1.0.tgz",
+    "@vansham/unravel-sdk": "0.1.0",
     "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1"

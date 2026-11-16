@@ -1,5 +1,6 @@
 {
-  "sourceHash": "aa091a42c942fc350eb87d5343486835d6854d31af7818c5105bff9a9c1ab181",
+  "sourceHashVersion": 2,
+  "sourceHash": "70ed51361422124badc17908744f2649eb334087c68a3be380edd88e5871292a",
   "sources": [
     "apps/web/src/features/landing/motion/scene.ts",
     "apps/web/src/features/landing/motion/asset-scene.ts",
@@ -15,17 +16,17 @@
   ],
   "assets": {
     "scene-start-desktop.png": {
-      "sha256": "1cc756def2405977a5b6296a90fa64e22f603bdf69621c46bd4ab5869abffafd",
+      "sha256": "301da470789ceffbf859eb0a58e3e16c91bb81eff56af52d70172ab6098a66e3",
       "width": 1440,
       "height": 900
     },
     "scene-hero-desktop.png": {
-      "sha256": "402a81a6e6a887218ee0e3a110d26ed93143edb71ef09bea26483614230defcc",
+      "sha256": "266e17babe51d0111d75c113c9392ad6aa7f1a89d59bd48761af943dde4fd5dd",
       "width": 1440,
       "height": 900
     },
     "scene-start-mobile.png": {
-      "sha256": "774d53b5e2a8a3cb1ed0afa30d60fcd07801b820f2fbd40c265a1d7efa1fbd47",
+      "sha256": "4b4ee398b2809e6633b9e4e188ca5394bcbe7af5f2f3aea10caa21be110500ee",
       "width": 390,
       "height": 844
     },

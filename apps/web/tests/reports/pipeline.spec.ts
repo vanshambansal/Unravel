@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { clerk, clerkSetup } from '@clerk/testing/playwright';
 import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
-import type { Recorder } from '@unravel/sdk';
+import type { Recorder } from '@vansham/unravel-sdk';
 declare global { interface Window { fixtureRecorder: Recorder } }
 
 test.beforeAll(async () => {
@@ -45,7 +45,7 @@ test('record → response-loss retry → private persisted replay → seek → o
       expect(route.request().headers().cookie).toBeUndefined();
       const response = await route.fetch(); expect(response.status()).toBe(201); lost = true; await route.abort('failed');
     });
-    await page.locator('#report-submit').click(); await expect(page.locator('#submission-status')).toContainText('Retry');
+    await page.locator('#report-submit').click(); await expect(page.locator('#submission-status')).toContainText(/retry/i);
     await page.locator('#report-submit').click(); await expect(page.locator('#submission-status')).toContainText('Report saved:');
     const receipt = await page.evaluate(() => window.fixtureRecorder.getSubmissionStatus());
     const reportId = receipt.reportId; expect(reportId).toMatch(/^[0-9a-f-]{36}$/);

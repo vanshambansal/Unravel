@@ -136,97 +136,191 @@ void main() {
   fragColor = vec4(min(color, vec3(alpha)), alpha) * mask;
 }`;
 
-
 export async function initializeHeroRays(canvas: HTMLCanvasElement, cancelled = () => false) {
-  const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, depth: false, antialias: false, preserveDrawingBuffer: true });
+  const gl = canvas.getContext('webgl2', {
+    alpha: true,
+    premultipliedAlpha: true,
+    depth: false,
+    antialias: false,
+    preserveDrawingBuffer: true,
+  });
   if (!gl) return undefined;
   const compile = (kind: number, source: string) => {
-    const shader = gl.createShader(kind)!; gl.shaderSource(shader, source); gl.compileShader(shader);
+    const shader = gl.createShader(kind)!;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
     return shader;
   };
-  const vertex = compile(gl.VERTEX_SHADER, VERTEX), fragment = compile(gl.FRAGMENT_SHADER, FRAGMENT);
-  if (!vertex || !fragment) { if (vertex) gl.deleteShader(vertex); if (fragment) gl.deleteShader(fragment); return undefined; }
-  const program = gl.createProgram()!; gl.attachShader(program, vertex); gl.attachShader(program, fragment); gl.linkProgram(program);
-  gl.deleteShader(vertex); gl.deleteShader(fragment);
+  const vertex = compile(gl.VERTEX_SHADER, VERTEX),
+    fragment = compile(gl.FRAGMENT_SHADER, FRAGMENT);
+  if (!vertex || !fragment) {
+    if (vertex) gl.deleteShader(vertex);
+    if (fragment) gl.deleteShader(fragment);
+    return undefined;
+  }
+  const program = gl.createProgram()!;
+  gl.attachShader(program, vertex);
+  gl.attachShader(program, fragment);
+  gl.linkProgram(program);
+  gl.deleteShader(vertex);
+  gl.deleteShader(fragment);
   // A synchronous status query forces driver compilation onto the main thread.
   // Link status below still validates both shaders after parallel work completes.
   const parallel = gl.getExtension('KHR_parallel_shader_compile');
   if (parallel) {
-    while (!gl.isContextLost() && !gl.getProgramParameter(program, parallel.COMPLETION_STATUS_KHR)) {
-      if (cancelled()) { gl.deleteProgram(program); return undefined; }
-      await new Promise(resolve => setTimeout(resolve, 10));
+    while (
+      !gl.isContextLost() &&
+      !gl.getProgramParameter(program, parallel.COMPLETION_STATUS_KHR)
+    ) {
+      if (cancelled()) {
+        gl.deleteProgram(program);
+        return undefined;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 10));
     }
   }
-  if (gl.isContextLost()) { gl.deleteProgram(program); return undefined; }
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { gl.deleteProgram(program); return undefined; }
+  if (gl.isContextLost()) {
+    gl.deleteProgram(program);
+    return undefined;
+  }
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    gl.deleteProgram(program);
+    return undefined;
+  }
   const uniforms: Record<string, WebGLUniformLocation | null> = {};
   for (let i = 0; i < gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS); i++) {
-    const info = gl.getActiveUniform(program, i)!; uniforms[info.name] = gl.getUniformLocation(program, info.name);
+    const info = gl.getActiveUniform(program, i)!;
+    uniforms[info.name] = gl.getUniformLocation(program, info.name);
   }
   const vao = gl.createVertexArray();
-  let time = 0, disposed = false, opening = true;
+  let time = 0,
+    disposed = false,
+    opening = true;
   const motion = new RayMotion();
-  let aspect = 1, needsPaint = true, paintedAim = Number.NaN, paintedFocus = Number.NaN;
-  let cssWidth = 1, cssHeight = 1;
+  let aspect = 1,
+    needsPaint = true,
+    paintedAim = Number.NaN,
+    paintedFocus = Number.NaN;
+  let cssWidth = 1,
+    cssHeight = 1;
   let clip = { left: 0, right: 1e6, bottom: 1e6 };
   // The shader's colors and shape settings are constant during a frame sequence.
   gl.useProgram(program);
-  const constants = { uBlend: .55, uDensity: 5, uSharpness: .35, uGlow: .85, uSaturation: 1, uDust: 0, uOpacity: .8, uReveal: 1, uLight: 0, uSway: 0 };
+  const constants = {
+    uBlend: 0.55,
+    uDensity: 5,
+    uSharpness: 0.35,
+    uGlow: 0.85,
+    uSaturation: 1,
+    uDust: 0,
+    uOpacity: 0.8,
+    uReveal: 1,
+    uLight: 0,
+    uSway: 0,
+  };
   for (const [name, value] of Object.entries(constants)) gl.uniform1f(uniforms[name], value);
-  gl.uniform3f(uniforms.uColorA, .73, .79, .85); gl.uniform3f(uniforms.uColorB, .92, .94, .96);
+  gl.uniform3f(uniforms.uColorA, 0.73, 0.79, 0.85);
+  gl.uniform3f(uniforms.uColorB, 0.92, 0.94, 0.96);
   gl.uniform3f(uniforms.uFrame, 0, 0, 0);
   const updateShape = () => {
     needsPaint = true;
     gl.useProgram(program);
-    gl.uniform3f(uniforms.uColorA, ...(opening ? [.73,.79,.85] : [.94,.54,.61]) as [number,number,number]);
-    gl.uniform3f(uniforms.uColorB, ...(opening ? [.92,.94,.96] : [.86,.89,.94]) as [number,number,number]);
+    gl.uniform3f(
+      uniforms.uColorA,
+      ...((opening ? [0.73, 0.79, 0.85] : [0.94, 0.54, 0.61]) as [number, number, number]),
+    );
+    gl.uniform3f(
+      uniforms.uColorB,
+      ...((opening ? [0.92, 0.94, 0.96] : [0.86, 0.89, 0.94]) as [number, number, number]),
+    );
     gl.uniform1f(uniforms.uIntensity, opening ? 2.2 : 1.8);
-    gl.uniform1f(uniforms.uSpread, opening ? .28 : .45);
+    gl.uniform1f(uniforms.uSpread, opening ? 0.28 : 0.45);
     gl.uniform1f(uniforms.uFalloff, opening ? 1.2 : 1.6);
     const rasterAspect = canvas.width / canvas.height;
-    gl.uniform3f(uniforms.uSource, opening ? -.28 * rasterAspect : rasterAspect * .5 + .1, opening ? .7 : .62, opening ? -Math.PI / 2 : -2.48);
+    gl.uniform3f(
+      uniforms.uSource,
+      opening ? -0.28 * rasterAspect : rasterAspect * 0.5 + 0.1,
+      opening ? 0.7 : 0.62,
+      opening ? -Math.PI / 2 : -2.48,
+    );
     gl.uniform2f(uniforms.uResolution, canvas.width, canvas.height);
     gl.uniform1f(uniforms.uOpening, opening ? 1 : 0);
-    gl.uniform3f(uniforms.uMaskRect, clip.left / cssWidth, clip.right / cssWidth, clip.bottom / cssHeight);
+    gl.uniform3f(
+      uniforms.uMaskRect,
+      clip.left / cssWidth,
+      clip.right / cssWidth,
+      clip.bottom / cssHeight,
+    );
     gl.uniform2f(uniforms.uMaskFade, 70 / cssWidth, 70 / cssHeight);
     gl.viewport(0, 0, canvas.width, canvas.height);
   };
   const size = () => {
     const rect = canvas.getBoundingClientRect();
-    cssWidth = Math.max(1, rect.width); cssHeight = Math.max(1, rect.height);
+    cssWidth = Math.max(1, rect.width);
+    cssHeight = Math.max(1, rect.height);
     aspect = rect.width / Math.max(1, rect.height);
     const ratio = Math.min(devicePixelRatio, 1, Math.sqrt(1300000 / (rect.width * rect.height)));
-    const w = Math.max(1, Math.round(rect.width * ratio)), h = Math.max(1, Math.round(rect.height * ratio));
-    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    const w = Math.max(1, Math.round(rect.width * ratio)),
+      h = Math.max(1, Math.round(rect.height * ratio));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
     updateShape();
   };
   size();
   const resizeObserver = new ResizeObserver(size);
   resizeObserver.observe(canvas);
   return {
-    clip(left: number, right: number, bottom: number) { clip = { left, right, bottom }; updateShape(); },
-    opening(value: boolean) { if (opening !== value) { opening = value; motion.point(0, 0, false); updateShape(); } },
+    clip(left: number, right: number, bottom: number) {
+      clip = { left, right, bottom };
+      updateShape();
+    },
+    opening(value: boolean) {
+      if (opening !== value) {
+        opening = value;
+        motion.point(0, 0, false);
+        updateShape();
+      }
+    },
     pointer(x: number, y: number, inside: boolean) {
-      const qx = (x - .5) * aspect, qy = .5 - y;
-      const sourceX = opening ? -.28 * aspect : aspect * .5 + .1;
-      let angle = Math.atan2(qy - (opening ? .7 : .62), qx - sourceX) - (opening ? -Math.PI / 2 : -2.48);
-      angle = ((angle + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
-      motion.point(Math.max(-.45, Math.min(.45, angle)), 0, inside);
+      const qx = (x - 0.5) * aspect,
+        qy = 0.5 - y;
+      const sourceX = opening ? -0.28 * aspect : aspect * 0.5 + 0.1;
+      let angle =
+        Math.atan2(qy - (opening ? 0.7 : 0.62), qx - sourceX) - (opening ? -Math.PI / 2 : -2.48);
+      angle = ((((angle + Math.PI) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) - Math.PI;
+      motion.point(Math.max(-0.45, Math.min(0.45, angle)), 0, inside);
     },
     render(delta: number, paused: boolean) {
       if (disposed || gl.isContextLost()) return;
-      const dt = paused ? 0 : Math.min(.05, delta);
-      time += dt; motion.update(dt);
-      const aim = opening ? 0 : motion.x, focus = opening ? 0 : motion.focus;
-      if (!needsPaint && Math.abs(aim - paintedAim) < .0001 && Math.abs(focus - paintedFocus) < .0001) return;
-      needsPaint = false; paintedAim = aim; paintedFocus = focus;
-      gl.useProgram(program); gl.bindVertexArray(vao);
+      const dt = paused ? 0 : Math.min(0.05, delta);
+      time += dt;
+      motion.update(dt);
+      const aim = opening ? 0 : motion.x,
+        focus = opening ? 0 : motion.focus;
+      if (
+        !needsPaint &&
+        Math.abs(aim - paintedAim) < 0.0001 &&
+        Math.abs(focus - paintedFocus) < 0.0001
+      )
+        return;
+      needsPaint = false;
+      paintedAim = aim;
+      paintedFocus = focus;
+      gl.useProgram(program);
+      gl.bindVertexArray(vao);
       gl.uniform1f(uniforms.uTime, 0);
       gl.uniform1f(uniforms.uAim, aim);
-      gl.uniform3f(uniforms.uFocus, 0, .1125, focus * 1.4);
+      gl.uniform3f(uniforms.uFocus, 0, 0.1125, focus * 1.4);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
     metrics: () => ({ time, aim: motion.x, focus: motion.focus, opening }),
-    dispose() { disposed = true; resizeObserver.disconnect(); gl.deleteVertexArray(vao); gl.deleteProgram(program); },
+    dispose() {
+      disposed = true;
+      resizeObserver.disconnect();
+      gl.deleteVertexArray(vao);
+      gl.deleteProgram(program);
+    },
   };
 }

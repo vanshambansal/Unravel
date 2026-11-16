@@ -10,10 +10,14 @@ export async function GET(request: Request, context: { params: Promise<{ project
     return await timedPrivateRead(async (owner, db) => {
       await projectServices(db).get(owner, projectId);
       let query;
-      try { query = reportQuery(Object.fromEntries(new URL(request.url).searchParams)); }
-      catch (error) { throw new ApplicationError(400, (error as Error).message); }
+      try {
+        query = reportQuery(Object.fromEntries(new URL(request.url).searchParams));
+      } catch (error) {
+        throw new ApplicationError(400, (error as Error).message);
+      }
       return reportServices(db).list(owner, projectId, query);
     });
+  } catch (error) {
+    return errorResponse(error);
   }
-  catch (error) { return errorResponse(error); }
 }

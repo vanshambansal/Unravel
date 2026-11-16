@@ -8,9 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@unravel/sdk':
-        specifier: file:D:/documents/Unravel/.cache/sdk-distribution/unravel-sdk-0.1.0.tgz
-        version: file:../../.cache/sdk-distribution/unravel-sdk-0.1.0.tgz
+      '@vansham/unravel-sdk':
+        specifier: 0.1.0
+        version: 0.1.0
       next:
         specifier: 16.4.6
         version: 16.4.6(@types/node@22.18.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -270,9 +270,8 @@ packages:
   '@types/react@19.3.0':
     resolution: {integrity: sha512-N0rFCuH9YoxG9/m61l9MfpJKfmLOVU0em7ipIz6TRgSSkvReLB9vL85GB+yr8Bs5leqpvg96JSwF4ZS1s4viQg==}
 
-  '@unravel/sdk@file:../../.cache/sdk-distribution/unravel-sdk-0.1.0.tgz':
-    resolution: {integrity: sha512-2Cjb9pxAoKe36pFQ1N1whXxZ6PAGh52RORyAnvqzmzrtqpmGi4fLKDsTvUIlrkEPPEBmFys3Fht1rsSHEF5fmA==, tarball: file:../../.cache/sdk-distribution/unravel-sdk-0.1.0.tgz}
-    version: 0.1.0
+  '@vansham/unravel-sdk@0.1.0':
+    resolution: {integrity: sha512-LjvlOzw/Sz1EMB/lJZ4LFp74DGdR29HX2JPvgN/xei6IZIT9d9lfacJNdZTXRP4arBG2Q7qO2ngv6XTDDsYh3g==}
 
   baseline-browser-mapping@2.11.37:
     resolution: {integrity: sha512-QYph+vfurmaxhNwi9FprfmtkT5cx2Keg8FzZ0vnjO8ukscIybVyZGMFwdllKGlTI6qyU8ck43OM9UXh+IFJihQ==}
@@ -538,7 +537,7 @@ snapshots:
     dependencies:
       csstype: 3.2.3
 
-  '@unravel/sdk@file:../../.cache/sdk-distribution/unravel-sdk-0.1.0.tgz':
+  '@vansham/unravel-sdk@0.1.0':
     dependencies:
       zod: 4.6.7
 

@@ -12,71 +12,137 @@ export async function loadArchitecture() {
   const materials = new Set<THREE.Material>();
   const textures = new Set<THREE.Texture>();
   const root = results[0].status === 'fulfilled' ? results[0].value.scene : undefined;
-  if (root) root.traverse(node => {
-    if (!(node instanceof THREE.Mesh)) return;
-    geometries.add(node.geometry);
-    for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
-      materials.add(material);
-      for (const value of Object.values(material)) if (value instanceof THREE.Texture) textures.add(value);
-    }
-  });
-  for (const result of results.slice(1)) if (result.status === 'fulfilled' && result.value instanceof THREE.Texture) textures.add(result.value);
+  if (root)
+    root.traverse((node) => {
+      if (!(node instanceof THREE.Mesh)) return;
+      geometries.add(node.geometry);
+      for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
+        materials.add(material);
+        for (const value of Object.values(material))
+          if (value instanceof THREE.Texture) textures.add(value);
+      }
+    });
+  for (const result of results.slice(1))
+    if (result.status === 'fulfilled' && result.value instanceof THREE.Texture)
+      textures.add(result.value);
   const dispose = () => {
-    geometries.forEach(value => value.dispose()); materials.forEach(value => value.dispose());
-    textures.forEach(value => { value.dispose(); if (value.image instanceof ImageBitmap) value.image.close(); });
+    geometries.forEach((value) => value.dispose());
+    materials.forEach((value) => value.dispose());
+    textures.forEach((value) => {
+      value.dispose();
+      if (value.image instanceof ImageBitmap) value.image.close();
+    });
   };
-  if (results.some(result => result.status === 'rejected')) { dispose(); throw new Error('Architectural asset loading failed'); }
-  const light = results[1].status === 'fulfilled' ? results[1].value as THREE.Texture : undefined;
-  const ao = results[2].status === 'fulfilled' ? results[2].value as THREE.Texture : undefined;
-  if (!root || !light || !ao) { dispose(); throw new Error('Incomplete architectural assets'); }
-  light.flipY = ao.flipY = false; light.channel = ao.channel = 1;
-  light.colorSpace = THREE.LinearSRGBColorSpace; ao.colorSpace = THREE.NoColorSpace;
+  if (results.some((result) => result.status === 'rejected')) {
+    dispose();
+    throw new Error('Architectural asset loading failed');
+  }
+  const light = results[1].status === 'fulfilled' ? (results[1].value as THREE.Texture) : undefined;
+  const ao = results[2].status === 'fulfilled' ? (results[2].value as THREE.Texture) : undefined;
+  if (!root || !light || !ao) {
+    dispose();
+    throw new Error('Incomplete architectural assets');
+  }
+  light.flipY = ao.flipY = false;
+  light.channel = ao.channel = 1;
+  light.colorSpace = THREE.LinearSRGBColorSpace;
+  ao.colorSpace = THREE.NoColorSpace;
   const edges: THREE.MeshStandardMaterial[] = [];
   let floor: THREE.MeshStandardMaterial | undefined;
   root.updateMatrixWorld(true);
-  root.traverse(node => {
+  root.traverse((node) => {
     if (!(node instanceof THREE.Mesh)) return;
     // Narrow authored strip boxes undersample at distance. Correct only this named
     // emitter mesh, keeping walls, UVs and genuinely occluded surfaces unchanged.
-    if (node.material instanceof THREE.MeshStandardMaterial && node.material.name.includes('edge emitter')) {
+    if (
+      node.material instanceof THREE.MeshStandardMaterial &&
+      node.material.name.includes('edge emitter')
+    ) {
       const positions = node.geometry.getAttribute('position') as THREE.BufferAttribute;
       const groups = new Map<number, { indices: number[]; bounds: THREE.Box3 }>();
-      const point = new THREE.Vector3(), inverse = node.matrixWorld.clone().invert();
+      const point = new THREE.Vector3(),
+        inverse = node.matrixWorld.clone().invert();
       for (let i = 0; i < positions.count; i++) {
         point.fromBufferAttribute(positions, i).applyMatrix4(node.matrixWorld);
         const key = Math.round(point.z * 2);
         if (!groups.has(key)) groups.set(key, { indices: [], bounds: new THREE.Box3() });
-        const group = groups.get(key)!; group.indices.push(i); group.bounds.expandByPoint(point);
+        const group = groups.get(key)!;
+        group.indices.push(i);
+        group.bounds.expandByPoint(point);
       }
       for (const { indices, bounds } of groups.values()) {
-        const size = bounds.getSize(new THREE.Vector3()), center = bounds.getCenter(new THREE.Vector3());
-        if (size.x >= .16 || size.z > .2 || size.y < 2) continue;
-        const width = .12, depth = size.z, right = bounds.max.x;
+        const size = bounds.getSize(new THREE.Vector3()),
+          center = bounds.getCenter(new THREE.Vector3());
+        if (size.x >= 0.16 || size.z > 0.2 || size.y < 2) continue;
+        // Leave a physical gap from the coplanar wall edge; depth bias alone shimmers.
+        const width = 0.16,
+          depth = size.z,
+          right = bounds.max.x - 0.018;
         for (const i of indices) {
           point.fromBufferAttribute(positions, i).applyMatrix4(node.matrixWorld);
-          point.x = right - width + (point.x - bounds.min.x) / size.x * width;
-          point.z = center.z + (point.z - center.z) / size.z * depth;
-          point.applyMatrix4(inverse); positions.setXYZ(i, point.x, point.y, point.z);
+          point.x = right - width + ((point.x - bounds.min.x) / size.x) * width;
+          point.z = center.z + ((point.z - center.z) / size.z) * depth;
+          point.applyMatrix4(inverse);
+          positions.setXYZ(i, point.x, point.y, point.z);
         }
       }
-      positions.needsUpdate = true; node.geometry.computeBoundingBox(); node.geometry.computeBoundingSphere();
+      positions.needsUpdate = true;
+      node.geometry.computeBoundingBox();
+      node.geometry.computeBoundingSphere();
+    }
+    if (
+      node.material instanceof THREE.MeshStandardMaterial &&
+      node.material.name.includes('Cold ceiling')
+    ) {
+      const positions = node.geometry.getAttribute('position') as THREE.BufferAttribute;
+      const point = new THREE.Vector3(),
+        inverse = node.matrixWorld.clone().invert();
+      const indices: number[] = [],
+        bounds = new THREE.Box3();
+      for (let i = 0; i < positions.count; i++) {
+        point.fromBufferAttribute(positions, i).applyMatrix4(node.matrixWorld);
+        // Only the doorway rim, not the ceiling aperture sharing this material.
+        if (point.x > -1 && point.z > 1) {
+          indices.push(i);
+          bounds.expandByPoint(point);
+        }
+      }
+      const width = bounds.max.x - bounds.min.x;
+      if (width > 0 && width < 0.1)
+        for (const i of indices) {
+          point.fromBufferAttribute(positions, i).applyMatrix4(node.matrixWorld);
+          point.x = bounds.min.x + ((point.x - bounds.min.x) / width) * 0.065;
+          point.z += 0.012;
+          point.applyMatrix4(inverse);
+          positions.setXYZ(i, point.x, point.y, point.z);
+        }
+      positions.needsUpdate = true;
+      node.geometry.computeBoundingBox();
+      node.geometry.computeBoundingSphere();
     }
     node.receiveShadow = true;
     for (const mat of Array.isArray(node.material) ? node.material : [node.material]) {
       if (!(mat instanceof THREE.MeshStandardMaterial)) continue;
-      mat.lightMap = light; mat.lightMapIntensity = 1.5;
-      mat.aoMap = ao; mat.aoMapIntensity = .55;
-      mat.envMapIntensity = .6; mat.side = THREE.FrontSide;
+      mat.lightMap = light;
+      mat.lightMapIntensity = 1.5;
+      mat.aoMap = ao;
+      mat.aoMapIntensity = 0.55;
+      mat.envMapIntensity = 0.6;
+      mat.side = THREE.FrontSide;
       if (mat.name.includes('Cold ceiling')) {
-        mat.emissiveIntensity = .55;
-        mat.polygonOffset = true; mat.polygonOffsetFactor = -1; mat.polygonOffsetUnits = -2;
+        mat.emissiveIntensity = 0.55;
+        mat.polygonOffset = true;
+        mat.polygonOffsetFactor = -1;
+        mat.polygonOffsetUnits = -2;
       }
       if (mat.name.includes('Recessed crimson')) mat.emissiveIntensity = 1.6;
       node.castShadow = !mat.name.includes('basalt');
       if (mat.name.includes('basalt')) floor = mat;
       if (mat.name.includes('edge emitter')) {
         // Separate flush emitters from the wall in the depth buffer as the camera moves.
-        mat.polygonOffset = true; mat.polygonOffsetFactor = -1; mat.polygonOffsetUnits = -2;
+        mat.polygonOffset = true;
+        mat.polygonOffsetFactor = -1;
+        mat.polygonOffsetUnits = -2;
         edges.push(mat);
       }
       mat.needsUpdate = true;

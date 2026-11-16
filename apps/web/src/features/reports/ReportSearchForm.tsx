@@ -12,26 +12,42 @@ export function ReportSearchForm({ base, query }: { base: string; query: ReportQ
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const editVersion = useRef(0);
-  const searchIntent = useRef<{ q: string; status: ReportQuery['status']; version: number } | null>(null);
+  const searchIntent = useRef<{ q: string; status: ReportQuery['status']; version: number } | null>(
+    null,
+  );
   const inputId = useId();
   const statusId = useId();
 
   // A pending search must not undo a later link click or Back navigation.
   useEffect(() => {
-    const cancel = () => { if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current); debounceTimerRef.current = null; searchIntent.current = null; };
+    const cancel = () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+      searchIntent.current = null;
+    };
     const onNavigate = (event: MouseEvent) => {
       if (event.target instanceof Element && event.target.closest('a[href]')) cancel();
     };
     document.addEventListener('click', onNavigate, true);
     window.addEventListener('popstate', cancel);
-    return () => { cancel(); document.removeEventListener('click', onNavigate, true); window.removeEventListener('popstate', cancel); };
+    return () => {
+      cancel();
+      document.removeEventListener('click', onNavigate, true);
+      window.removeEventListener('popstate', cancel);
+    };
   }, []);
 
   // Keep newer typing intact when an earlier server response arrives.
   // External navigation clears the pending intent and restores URL-owned state.
   useEffect(() => {
     const pending = searchIntent.current;
-    if (pending && (pending.version !== editVersion.current || pending.q !== query.q || pending.status !== query.status)) return;
+    if (
+      pending &&
+      (pending.version !== editVersion.current ||
+        pending.q !== query.q ||
+        pending.status !== query.status)
+    )
+      return;
     searchIntent.current = null;
     setSearchValue(query.q);
     setStatusValue(query.status);
@@ -41,7 +57,11 @@ export function ReportSearchForm({ base, query }: { base: string; query: ReportQ
   useEffect(() => {
     function handleGlobalKeyDown(event: KeyboardEvent) {
       if (
-        event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !event.isComposing &&
+        event.key === '/' &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey &&
+        !event.isComposing &&
         !['INPUT', 'TEXTAREA', 'SELECT'].includes((event.target as HTMLElement)?.tagName) &&
         !(event.target as HTMLElement)?.isContentEditable
       ) {
@@ -155,7 +175,16 @@ export function ReportSearchForm({ base, query }: { base: string; query: ReportQ
       >
         <div className="report-search-input-wrapper">
           <span className="report-search-icon" aria-hidden="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -186,7 +215,16 @@ export function ReportSearchForm({ base, query }: { base: string; query: ReportQ
                 title="Clear search query (Esc)"
                 aria-label="Clear search query"
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
@@ -222,7 +260,16 @@ export function ReportSearchForm({ base, query }: { base: string; query: ReportQ
               <option value="resolved">Resolved</option>
             </select>
             <span className="report-search-select-arrow" aria-hidden="true">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <polyline points="6 9 12 15 18 9" />
               </svg>
             </span>
@@ -258,7 +305,9 @@ export function ReportSearchForm({ base, query }: { base: string; query: ReportQ
           {query.status !== 'all' && (
             <span className="report-search-chip">
               <span className="report-search-chip-key">Status:</span>
-              <span className="report-search-chip-val">{query.status === 'open' ? 'Open' : 'Resolved'}</span>
+              <span className="report-search-chip-val">
+                {query.status === 'open' ? 'Open' : 'Resolved'}
+              </span>
               <button
                 type="button"
                 className="report-search-chip-remove"
@@ -269,11 +318,7 @@ export function ReportSearchForm({ base, query }: { base: string; query: ReportQ
               </button>
             </span>
           )}
-          <button
-            type="button"
-            className="report-search-clear-all"
-            onClick={handleClearAll}
-          >
+          <button type="button" className="report-search-clear-all" onClick={handleClearAll}>
             Clear all
           </button>
         </div>

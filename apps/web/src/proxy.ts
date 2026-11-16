@@ -5,7 +5,15 @@ import { clerkKeysHaveValidFormat } from './features/authentication/configuratio
 const authenticate = clerkMiddleware();
 export default function proxy(request: NextRequest, event: NextFetchEvent) {
   // Missing configuration never enables a keyless/claimable app or bypasses services.
-  if (!clerkKeysHaveValidFormat(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY, process.env.CLERK_SECRET_KEY)) return NextResponse.next();
+  if (
+    !clerkKeysHaveValidFormat(
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+      process.env.CLERK_SECRET_KEY,
+    )
+  )
+    return NextResponse.next();
   return authenticate(request, event);
 }
-export const config = { matcher: ['/app(.*)', '/sign-in(.*)', '/sign-up(.*)', '/api/projects(.*)'] };
+export const config = {
+  matcher: ['/app(.*)', '/sign-in(.*)', '/sign-up(.*)', '/api/projects(.*)', '/api/session'],
+};

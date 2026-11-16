@@ -1,2 +1,2 @@
-import type {LandingExample} from './story-example';
-export function mountApprovedStory(root:HTMLElement,example:LandingExample):()=>void;
+import type { LandingExample } from './story-example';
+export function mountApprovedStory(root: HTMLElement, example: LandingExample): () => void;

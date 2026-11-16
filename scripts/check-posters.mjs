@@ -5,7 +5,14 @@ const artwork = 'apps/web/public/landing/artwork/';
 const sources = ['scene.ts','asset-scene.ts','architecture.ts','framing.ts','choreography.ts'].map(name => motion + name);
 sources.push('apps/web/src/features/landing/SceneCapture.tsx', 'apps/web/package.json', 'pnpm-lock.yaml', ...['atrium.glb','indirect-light.png','ambient-occlusion.png'].map(name => 'apps/web/public/landing/architecture/' + name));
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
-const sourceHash = hash(Buffer.concat(await Promise.all(sources.map(path => readFile(path)))));
+// Git checkouts may use CRLF on Windows and LF in CI. Text line endings do not
+// change a rendered frame; binary model/texture bytes must remain exact.
+const sourceHash = hash(Buffer.concat(await Promise.all(sources.map(async path => {
+  const bytes = await readFile(path);
+  return /\.(?:ts|tsx|json|yaml)$/.test(path)
+    ? Buffer.from(bytes.toString('utf8').replaceAll('\r\n', '\n'))
+    : bytes;
+}))));
 const names = ['scene-start-desktop.png','scene-hero-desktop.png','scene-start-mobile.png','scene-hero-mobile.png'];
 const assets = Object.fromEntries(await Promise.all(names.map(async name => {
   const bytes = await readFile(artwork + name);
@@ -14,7 +21,7 @@ const assets = Object.fromEntries(await Promise.all(names.map(async name => {
 })));
 const path = artwork + 'scene-posters.json';
 if (process.argv.includes('--stamp')) {
-  await writeFile(path, JSON.stringify({ sourceHash, sources, assets, ambientTime: 0, capturedWith: 'Next.js /motion-capture; Chromium; DPR1; desktop 1440x900 and mobile 390x844' }, null, 2) + '\n');
+  await writeFile(path, JSON.stringify({ sourceHashVersion: 2, sourceHash, sources, assets, ambientTime: 0, capturedWith: 'Next.js /motion-capture; Chromium; DPR1; desktop 1440x900 and mobile 390x844' }, null, 2) + '\n');
   console.log('Poster manifest stamped after capture.');
 } else {
   const manifest = JSON.parse(await readFile(path, 'utf8'));

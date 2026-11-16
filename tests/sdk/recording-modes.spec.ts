@@ -3,6 +3,53 @@ import type {Recorder,RecorderOptions} from '../../packages/sdk/src/types';
 import {validateSubmission} from '../../apps/web/src/server/reports/validation';
 const projectId='12345678-1234-4234-8234-123456789012';
 
+for(const mode of ['masked-values','full'] as const)test(`${mode}: diagnostics and native disclosure structure remain readable`,async({page})=>{
+ await page.goto('/?debug=1');
+ await page.waitForFunction(()=>!!(window as unknown as {UnravelSDK?:unknown}).UnravelSDK);
+ const recording=await page.evaluate(async({mode,projectId})=>{
+  const host=window as unknown as {fixtureRecorder:Recorder;UnravelSDK:{initialize(options:RecorderOptions):Recorder}};
+  host.fixtureRecorder.destroy();
+  const section=document.createElement('section');section.id='native-structure';
+  section.innerHTML='<details open><summary>Public disclosure</summary><p>Visible disclosure content</p></details><dialog open><p>Visible dialog content</p></dialog>';
+  document.body.append(section);
+  const recorder=host.UnravelSDK.initialize({projectId,privacy:{mode}});
+  await recorder.start();
+  await fetch('/api/questions?secret=QUERY_SENTINEL',{method:'POST'});
+  window.dispatchEvent(new ErrorEvent('error',{message:'Synthetic diagnostic message',error:new Error('Synthetic diagnostic message'),filename:location.origin+'/app.js?secret=QUERY_SENTINEL',lineno:12,colno:4}));
+  await new Promise(resolve=>setTimeout(resolve,30));
+  const recording=recorder.stop()!;recorder.destroy();section.remove();return recording;
+ },{mode,projectId});
+ expect(recording.events.find(e=>e.kind==='network'&&e.url?.path==='/api/questions')).toBeTruthy();
+ const error=recording.events.find(e=>e.kind==='error');
+ expect(error?.kind==='error'&&error.message).toBe('Synthetic diagnostic message');
+ expect(error?.kind==='error'&&error.file?.path).toBe('/app.js');
+ const raw=JSON.stringify(recording);expect(raw).not.toContain('QUERY_SENTINEL');
+ expect(raw).toContain('"tagName":"dialog"');expect(raw).toContain('"open":""');expect(raw).toContain('"rr_open_mode":"non-modal"');
+ if(mode==='full')expect(raw).toContain('Visible disclosure content');
+ expect(()=>validateSubmission({version:1,title:'Native structure',description:'',recording})).not.toThrow();
+});
+
+test('retry has a discard exit and widget copy contains no encoding artifacts',async({page})=>{
+ await page.goto(`/?projectId=${projectId}&applicationOrigin=${encodeURIComponent('http://127.0.0.1:4183')}`);
+ await page.route(`**/api/ingest/${projectId}`,route=>route.abort());
+ await page.getByRole('button',{name:'Report a bug',exact:true}).click();
+ await page.getByRole('button',{name:'Start recording',exact:true}).click();
+ await page.getByRole('button',{name:'Stop recording',exact:true}).click();
+ await page.getByText('Add details (optional)',{exact:true}).click();
+ await expect(page.getByText('What happened / expected? - optional',{exact:true})).toBeVisible();
+ await page.getByRole('textbox',{name:'Report title',exact:true}).fill('Synthetic retry recovery');
+ await page.getByRole('button',{name:'Send bug report',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Retry submission',exact:true})).toBeVisible();
+ const copy=await page.locator('[data-unravel-widget]').evaluate(el=>el.shadowRoot!.textContent!);
+ expect(copy).not.toMatch(/[\u00c2\u00c3\ufffd]|\u00e2\u20ac/);
+ await page.getByRole('button',{name:'Discard recording',exact:true}).click();
+ await page.getByRole('button',{name:'Keep this report',exact:true}).click();
+ await expect(page.getByRole('button',{name:'Retry submission',exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'Discard recording',exact:true}).click();
+ await page.getByRole('button',{name:'Discard unsent report',exact:true}).click();
+ await expect(page.getByRole('radio',{name:/Mask entered values/})).toBeChecked();
+});
+
 test('masked capture leaves the live website untouched and records labelled inputs at action time',async({page})=>{
  await page.goto('/?debug=1');
  await page.waitForFunction(()=>!!(window as unknown as {UnravelSDK?:unknown}).UnravelSDK);

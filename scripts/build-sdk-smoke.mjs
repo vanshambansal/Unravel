@@ -6,5 +6,5 @@ await build({ entryPoints: ['tests/sdk/react-smoke.tsx'], outfile: '.cache/sdk-r
   react: appRequire.resolve('react'),
   'react/jsx-runtime': appRequire.resolve('react/jsx-runtime'),
   'react-dom/client': appRequire.resolve('react-dom/client'),
-  '@unravel/sdk': fileURLToPath(new URL('../packages/sdk/dist/index.js', import.meta.url)),
+  '@vansham/unravel-sdk': fileURLToPath(new URL('../packages/sdk/dist/index.js', import.meta.url)),
 } });
