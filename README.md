@@ -21,6 +21,8 @@ Open **http://localhost:3000**. The development command also starts the separate
 
 Follow [development setup](docs/SETUP.md) for credentials, migrations, local production mode and tests.
 
+To understand the implementation, read the [project knowledge handbook](docs/knowledge/README.md): architecture, database, SDK, replay, test generation and interview preparation. The [portable project briefing](docs/knowledge/project-context.md) gives a self-contained overview.
+
 ## Try it
 
 Open **/demo**, sign in and prepare your own recording project. Choose React or Next.js, start the reporter, reproduce an intentional failure and submit it. Inspect your private replay/timeline, review the reproduction plan and export Playwright.
@@ -39,7 +41,7 @@ See the [SDK API and integration](packages/sdk/README.md) and [independent React
 - `packages`: recording SDK, shared schemas and deterministic test generation.
 - `examples`, `fixtures`: independent integrations and controlled test websites.
 - `tests`, `scripts`: automated checks, builds and maintenance tools.
-- `docs`: [architecture](docs/ARCHITECTURE.md) and [setup](docs/SETUP.md).
+- `docs`: [architecture](docs/ARCHITECTURE.md), [setup](docs/SETUP.md) and the [knowledge handbook](docs/knowledge/README.md).
 
 Replay reconstructs a supported DOM/CSS subset; it is not video or universal visual fidelity. Masked mode hides field values; explicit full mode can include sensitive entered values. Developers must review locators and confirm intended assertions; exporting does not execute or certify a test.
 

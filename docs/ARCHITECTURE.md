@@ -2,6 +2,8 @@
 
 Unravel records an explicitly started browser interaction, stores a private report, reconstructs its replay and generates a developer-reviewed Playwright test.
 
+For a guided explanation of the stack, schema and important implementation paths, start with the [knowledge handbook](knowledge/README.md). This page is the short system overview; [SETUP.md](SETUP.md) owns operational instructions.
+
 ```mermaid
 flowchart LR
   Site[React or Next.js website] --> SDK[Browser SDK]
@@ -16,17 +18,17 @@ flowchart LR
 
 ## Responsibilities
 
-| Location | Responsibility |
-| --- | --- |
-| `apps/web/src/app` | Landing, authentication, dashboard, demos and HTTP endpoints. |
-| `apps/web/src/features` | Feature UI and browser-side behavior. |
-| `apps/web/src/server` | Authentication, validation, services, repositories and database schema. |
-| `apps/web/drizzle` | Committed SQL migrations and Drizzle metadata. |
-| `packages/sdk` | Framework-independent recorder, privacy, diagnostics and reporting widget. |
-| `packages/contracts` | Versioned runtime schemas shared by SDK and server. |
-| `packages/test-plan` | Action normalization, editable plan validation and Playwright generation. |
-| `examples` and `fixtures` | Independent installations and controlled test applications. |
-| `tests`, `apps/web/tests`, `scripts` | Automated checks and reproducible maintenance tools. |
+| Location                             | Responsibility                                                             |
+| ------------------------------------ | -------------------------------------------------------------------------- |
+| `apps/web/src/app`                   | Landing, authentication, dashboard, demos and HTTP endpoints.              |
+| `apps/web/src/features`              | Feature UI and browser-side behavior.                                      |
+| `apps/web/src/server`                | Authentication, validation, services, repositories and database schema.    |
+| `apps/web/drizzle`                   | Committed SQL migrations and Drizzle metadata.                             |
+| `packages/sdk`                       | Framework-independent recorder, privacy, diagnostics and reporting widget. |
+| `packages/contracts`                 | Versioned runtime schemas shared by SDK and server.                        |
+| `packages/test-plan`                 | Action normalization, editable plan validation and Playwright generation.  |
+| `examples` and `fixtures`            | Independent installations and controlled test applications.                |
+| `tests`, `apps/web/tests`, `scripts` | Automated checks and reproducible maintenance tools.                       |
 
 The backend is part of Next.js; there is no separate Express application or cloud test runner. Clerk identifies developers. Every private project/report operation checks ownership in the server/repository layer.
 
