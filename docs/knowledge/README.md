@@ -2,7 +2,7 @@
 
 A handbook for reading the code, explaining the design and preparing for a project interview. Start with the problem, then follow one report through the system. You do not need to memorize every file.
 
-**Hosted portfolio scope:** the main app and isolated player are deployed. In-app React/Next demos now use workspace SDK authenticated same-origin delivery, restricted to signed-in project owners; general anonymous intake stays disabled. Older published-SDK verification results below describe their original environment. Independent examples still use npm 0.1.0. See [current demo setup](../SETUP.md#record-your-first-report).
+**Hosted portfolio scope:** the main app and isolated player are deployed. In-app React/Next demos now use workspace SDK authenticated same-origin delivery, restricted to signed-in project owners; registered external websites can also submit without visitor login through the public preview endpoint. Older published-SDK verification results below describe their original environment. Independent examples still use npm 0.1.0. See [current demo setup](../SETUP.md#record-your-first-report).
 
 ## Choose a reading path
 

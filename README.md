@@ -10,7 +10,7 @@ Unravel connects browser bug reporting, session replay and Playwright test gener
 
 _Cinematic scene artwork included with the application._
 
-**Portfolio deployment:** [Open Unravel](https://unravel-eight-beta.vercel.app). Sign in to use your own demo project. The isolated [replay viewer](https://unravel-replay.vercel.app) is embedded automatically. General anonymous SDK intake remains disabled; the current release focuses on signed-in demos. `@vansham/unravel-sdk@0.1.0` is published on npm; the hosted demos use the workspace SDK's authenticated delivery option.
+**Public preview:** [Open Unravel](https://unravel-eight-beta.vercel.app). Sign in to create a project and register your website, then install `@vansham/unravel-sdk@0.1.0` there. Visitors can submit recordings without an Unravel account. The isolated [replay viewer](https://unravel-replay.vercel.app) is embedded automatically. Built-in demos additionally support signed-in, owner-only delivery through the workspace SDK.
 
 ## Why Unravel?
 
@@ -154,6 +154,7 @@ export function UnravelReporter() {
     const widget = mountWidget({
       projectId: 'YOUR_PUBLIC_PROJECT_ID',
       applicationOrigin: 'http://localhost:3000',
+      limits: { maxBytes: 3_000_000 },
     });
     return () => widget.destroy();
   }, []);
@@ -164,6 +165,8 @@ export function UnravelReporter() {
 React: render `<UnravelReporter />` in your root application. Next.js: save it in a client component file and render it from `app/layout.tsx`. `applicationOrigin` points to Unravel, not the recorded website. Mounting does not start capture; visitors choose Start and need no Unravel account.
 
 Read the [SDK API, privacy policy and limits](packages/sdk/README.md) and [independent React/Next examples](examples/README.md).
+
+To use the hosted preview, set `applicationOrigin` to `https://unravel-eight-beta.vercel.app` and register your own website's exact origin in its dashboard. Keep the 3 MB capture budget shown above for hosting headroom. Public preview limitations include development Clerk identities, provisional quotas and no advanced bot protection; this is not a production service guarantee.
 
 ## Repository structure
 
@@ -202,7 +205,7 @@ For a local production-mode preview, follow [build/startup instructions](docs/SE
 - Both modes exclude hidden inputs, blocked sections, SDK UI, network bodies/headers/cookies and URL queries/fragments. Bounded diagnostic messages and URL paths remain visible. Use synthetic demo data.
 - Replay is a restricted DOM/CSS reconstruction, not video or universal visual fidelity. External resources, canvas, Shadow DOM, complex controls and full-document navigation have limitations.
 - Generation is deterministic, without LLM inference of business intent. Developers review locators and expected results; exporting does not run or certify a test.
-- Configured local workflows, credential-free clean-checkout checks and the signed-in hosted demo have passed their scoped checks. Separate fresh-service acceptance and unrestricted public intake remain outside this portfolio release. See [dated verification scope](docs/knowledge/engineering-decisions.md#what-has-actually-been-verified).
+- Independent npm React/Next consumers have submitted to the hosted service without visitor login in both privacy modes; replay, diagnostics, retry and actual reproduction exports passed scoped checks. Fresh-service acceptance and broader production hardening remain separate. See [dated verification scope](docs/knowledge/engineering-decisions.md#what-has-actually-been-verified).
 
 Public hosting also requires separate HTTPS origins, production Clerk/database settings, signed account-deletion webhook verification, actual intake protection and retention/privacy decisions. Acknowledgement flags do not implement those controls. See [deployment boundaries](docs/SETUP.md).
 

@@ -79,7 +79,7 @@ This separation keeps HTTP parsing out of SQL, SQL out of React presentation and
 
 ## In-app demo versus external SDK integration
 
-Hosted portfolio update: both in-app demos now use the workspace SDK's explicit authenticated same-origin delivery. The separate `/api/demo/ingest/{projectId}` endpoint requires sign-in and ownership. Independent examples still exercise npm 0.1.0. General anonymous intake remains disabled on the hosted portfolio; earlier published-demo verification describes the prior configuration.
+Hosted portfolio update: both in-app demos now use the workspace SDK's explicit authenticated same-origin delivery. The separate `/api/demo/ingest/{projectId}` endpoint requires sign-in and ownership. Independent examples still exercise npm 0.1.0. Registered external websites can now use anonymous intake on the hosted preview; earlier published-demo verification describes the prior configuration.
 
 The Next demo renders an ordinary route. The React demo serves a separate React document built from source, without the Next client runtime in that document. They share scenario components and use the workspace SDK for authenticated delivery. A small same-origin authentication frame maintains their Clerk session. Independent example packages install the actual npm package outside the workspace.
 

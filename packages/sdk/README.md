@@ -2,7 +2,7 @@
 
 A framework-independent reporting widget with explicit recording, DOM replay evidence, semantic actions, JavaScript errors and fetch/XHR metadata. React and Next.js use the same package.
 
-**Release status:** published on npm as `@vansham/unravel-sdk@0.1.0` under MIT. A running Unravel service is required. The hosted portfolio currently accepts signed-in in-app demos only; general anonymous intake stays disabled. Independent npm consumers can use their own configured Unravel service.
+**Release status:** published on npm as `@vansham/unravel-sdk@0.1.0` under MIT. Use your own configured Unravel service or the [hosted public preview](https://unravel-eight-beta.vercel.app). Register your website's origin and public project ID; its visitors need no Unravel account. The preview has documented quota, capture-size and production-hardening limits.
 
 ## Installation
 
@@ -28,6 +28,7 @@ export function UnravelReporter() {
     const widget = mountWidget({
       projectId: 'YOUR_PUBLIC_PROJECT_ID',
       applicationOrigin: 'https://YOUR_UNRAVEL_ORIGIN',
+      limits: { maxBytes: 3_000_000 },
     });
     return () => widget.destroy();
   }, []);
@@ -48,7 +49,7 @@ Both modes include bounded error messages and URL paths, which can contain priva
 
 ## API and recovery
 
-The repository's in-app portfolio demos now use the workspace SDK with an explicit authenticated, same-origin submission option. That option is not part of published npm 0.1.0. Independent examples continue using npm; general external intake remains disabled on the portfolio deployment. See [portfolio setup](../../docs/SETUP.md#record-your-first-report).
+The repository's in-app portfolio demos use the workspace SDK with an explicit authenticated, same-origin submission option. That option is not part of published npm 0.1.0. Independent examples use npm and the separate anonymous intake endpoint, now enabled on the hosted preview. See [portfolio setup](../../docs/SETUP.md#record-your-first-report).
 
 `mountWidget(options)` returns `open()`, `close()` and idempotent `destroy()`. Mount once per document; close/minimize does not discard a recording. Teardown releases owned instrumentation. Retry submits the same frozen report to avoid duplicates after a lost response; local discard cannot undo a report already delivered.
 

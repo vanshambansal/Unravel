@@ -79,6 +79,8 @@ Standalone replay-host settings have their own [environment template](../scripts
 
 ## Verification
 
+External SDK preview intake uses `PUBLIC_INGESTION_ENABLED=true` plus canonical HTTPS `APP_ORIGIN` and isolated `REPLAY_ORIGIN`. It retains registered-origin checks, quotas, storage limits and validation; visitors do not need dashboard authentication. The stricter `release:check` still reports broader production gaps (live Clerk, webhook, edge protection and retention declarations); its failure does not by itself mean preview intake is disabled. `previewIntakeEnabled` reports the separate preview configuration state. Do not set acknowledgement flags merely to silence that checklist.
+
 Credential-free checks:
 
 ```sh

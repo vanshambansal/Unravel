@@ -29,6 +29,7 @@ export function UnravelReporter() {
     const widget = mountWidget({
       projectId: '${projectId}',
       applicationOrigin: ${JSON.stringify(origin || 'YOUR_UNRAVEL_ORIGIN')},
+      limits: { maxBytes: 3_000_000 },
     });
     return () => widget.destroy();
   }, []);

@@ -103,7 +103,7 @@ In [server/reports/index.ts](../../apps/web/src/server/reports/index.ts), follow
 
 ## 6. Journey two: record and submit a bug
 
-For the hosted portfolio demos, `DemoRecorder` now opts into workspace SDK authenticated delivery. Its request uses `/api/demo/ingest/{projectId}`, where Clerk authentication, project ownership and exact current-origin checks precede the normal validation/storage pipeline. Anonymous `/api/ingest/{projectId}` remains disabled on the portfolio host. Independent npm integration examples still use the published SDK and general intake path described below.
+For the hosted portfolio demos, `DemoRecorder` now opts into workspace SDK authenticated delivery. Its request uses `/api/demo/ingest/{projectId}`, where Clerk authentication, project ownership and exact current-origin checks precede the normal validation/storage pipeline. Anonymous `/api/ingest/{projectId}` is separately enabled for registered websites on the hosted preview. Independent npm integration examples still use the published SDK and general intake path described below.
 
 The SDK code lives in [packages/sdk/src](../../packages/sdk/src), independently of the main application's UI.
 
