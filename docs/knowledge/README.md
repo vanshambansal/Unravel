@@ -10,6 +10,8 @@ A handbook for reading the code, explaining the design and preparing for a proje
 
 **Explain the project elsewhere:** copy [project-context.md](project-context.md). It is self-contained; another person or AI does not need our internal conversations. Its final paragraph gives a useful instruction for continuing the discussion without inventing features.
 
+**Walk through the repository:** read the [code tour](code-tour.md). It starts with the GitHub folders, explains the major routes/files and follows three working journeys through the code.
+
 | Read                                                        | What you should understand afterward                                        |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------- |
 | [Project briefing](project-context.md)                      | What exists, who uses it, what it promises and what it does not.            |

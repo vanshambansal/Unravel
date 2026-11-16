@@ -194,4 +194,6 @@ Use synthetic data in your own demo project, record the intentional failure, sub
 
 ## Final rehearsal
 
+For an interview where you share your editor, use the [five-minute code walkthrough](code-tour.md#9-a-five-minute-code-walkthrough).
+
 Pick any answer and ask: **Why this approach? Where is the code? What happens on failure? What did I actually verify?** A strong explanation connects those four questions. If you cannot do that yet, return to the relevant chapter and run the supported workflow yourself using [SETUP.md](../SETUP.md).

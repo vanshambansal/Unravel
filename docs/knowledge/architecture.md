@@ -56,6 +56,8 @@ No Redis, message queue, object-storage service, LLM or separate Express backend
 
 ## Repository map: important boundaries
 
+For a step-by-step explanation of these folders, major route files and request paths, follow the [code tour](code-tour.md).
+
 | Location                                                | What to find                                                         |
 | ------------------------------------------------------- | -------------------------------------------------------------------- |
 | [app routes](../../apps/web/src/app)                    | Pages/layouts and thin HTTP handlers.                                |
