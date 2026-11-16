@@ -1,5 +1,5 @@
 import nextEnv from '../apps/web/node_modules/@next/env/dist/index.js';
-import { releaseIssues } from '../apps/web/src/server/release.ts';
+import { releaseIssues, intakeIssues } from '../apps/web/src/server/release.ts';
 nextEnv.loadEnvConfig('apps/web', true, { info() {}, error() {} });
 const issues = releaseIssues(process.env);
 console.log(
@@ -7,6 +7,8 @@ console.log(
     {
       ready: issues.length === 0 && process.env.PUBLIC_INGESTION_ENABLED === 'true',
       configurationReady: issues.length === 0,
+      previewIntakeEnabled:
+        process.env.PUBLIC_INGESTION_ENABLED === 'true' && intakeIssues(process.env).length === 0,
       publicIngestionEnabled: process.env.PUBLIC_INGESTION_ENABLED === 'true',
       issues,
       note: 'Configuration preflight only. Does not prove provider settings, edge enforcement, TLS, retention review or deployment behavior.',

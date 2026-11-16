@@ -9,6 +9,7 @@ export function UnravelReporter() {
     const widget = mountWidget({
       projectId,
       applicationOrigin,
+      limits: { maxBytes: 3_000_000 },
     });
     return () => widget.destroy();
   }, []);

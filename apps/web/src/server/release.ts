@@ -1,7 +1,8 @@
 import { validReplayOrigin } from '../features/reports/replay-origin.ts';
 type Environment = Record<string, string | undefined>;
 export const loopback = (host: string) => ['localhost', '127.0.0.1', '[::1]'].includes(host);
-export function releaseIssues(env: Environment) {
+/** Runtime requirements for the bounded external-SDK preview. */
+export function intakeIssues(env: Environment) {
   const issues: string[] = [];
   let app: URL | undefined;
   try {
@@ -17,6 +18,12 @@ export function releaseIssues(env: Environment) {
     !env.REPLAY_ORIGIN?.startsWith('https:')
   )
     issues.push('REPLAY_ORIGIN must be an isolated HTTPS origin on a different hostname.');
+  return issues;
+}
+
+/** Broader production checklist; it must not silently disable the SDK preview. */
+export function releaseIssues(env: Environment) {
+  const issues = intakeIssues(env);
   if (env.EDGE_INGESTION_PROTECTED !== 'true')
     issues.push(
       'Confirm deployment edge request-size, rate, concurrency and timeout controls with EDGE_INGESTION_PROTECTED=true.',
@@ -45,6 +52,6 @@ export function ingestionAllowed(url: string, env: Environment = process.env) {
   return (
     env.PUBLIC_INGESTION_ENABLED === 'true' &&
     url.startsWith(`${env.APP_ORIGIN}/`) &&
-    releaseIssues(env).length === 0
+    intakeIssues(env).length === 0
   );
 }

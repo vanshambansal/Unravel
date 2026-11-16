@@ -7,7 +7,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 type Context = { params: Promise<{ projectId: string }> };
 
-// This endpoint intentionally fails closed outside loopback. CORS is not authentication.
+// Public intake requires explicit opt-in and valid hosted origins. CORS is not authentication.
 function local(request: Request) {
   const configured = process.env.APP_ORIGIN;
   const canonical =
@@ -19,7 +19,7 @@ function local(request: Request) {
   if (!ingestionAllowed(canonical))
     throw new ApplicationError(
       503,
-      'Report ingestion is disabled until the release configuration and security review are complete.',
+      'External report submission is disabled or its application/replay origins are not configured.',
     );
 }
 const cors = (origin: string) => ({
