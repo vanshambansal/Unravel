@@ -3,6 +3,7 @@
 !.env.example
 
 # Future generated artifacts
+.vercel/
 node_modules/
 .pnpm-store/
 .next/
