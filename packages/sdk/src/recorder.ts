@@ -9,6 +9,7 @@ import {
 } from '@unravel/contracts';
 import { createPrivacy } from './privacy';
 import { createReplaySanitizer } from './replay';
+import { observePresentation } from './presentation-observer';
 import { instrumentNetwork } from './network';
 import { instrumentEvents } from './events';
 import { createSubmission } from './submission';
@@ -68,6 +69,7 @@ export function initialize(options: RecorderOptions): Recorder {
     bytes = 0,
     filtered = 0;
   const encoder = new TextEncoder();
+  let presentation: ReturnType<typeof observePresentation> | undefined;
   const at = () => Math.max(0, Math.round(performance.now() - started));
   const status = (): RecorderStatus => ({
     state,
@@ -126,6 +128,7 @@ export function initialize(options: RecorderOptions): Recorder {
       return;
     }
     if (replay) {
+      presentation?.note(event as ReplayEvent);
       result.replay.push(event as ReplayEvent);
       if ((event as ReplayEvent).type === 2) result.hasFullSnapshot = true;
     } else result.events.push(event as SemanticEvent);
@@ -210,6 +213,20 @@ export function initialize(options: RecorderOptions): Recorder {
           if (state !== 'recording') return;
           own(instrumentNetwork(privacy, at, semantic));
           const sanitize = createReplaySanitizer(privacy, (id) => record.mirror.getNode(id));
+          presentation = observePresentation(privacy, record.mirror, (attributes) => {
+            append(
+              {
+                type: 3,
+                timestamp: result!.startedAt + at(),
+                data: { source: 0, attributes, texts: [], adds: [], removes: [] },
+              },
+              true,
+            );
+          });
+          own(() => {
+            presentation?.destroy();
+            presentation = undefined;
+          });
           const stop = record({
             emit(event) {
               if (state !== 'recording') return;

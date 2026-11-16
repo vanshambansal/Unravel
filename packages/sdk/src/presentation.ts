@@ -20,6 +20,8 @@ export function capturePresentation(element: Element | null): string | null {
   const declarations: string[] = [];
   for (const property of PRESENTATION_PROPERTIES) {
     let value = computed.getPropertyValue(property).trim();
+    if (property === 'opacity' && Number.isFinite(Number(value)))
+      value = String(Math.round(Number(value) * 100000) / 100000);
     if (property === 'width' || property === 'height') {
       const sizing = typed?.get(property)?.toString();
       if (sizing && (sizing === 'auto' || /^\d+(?:\.\d+)?%$/.test(sizing))) value = sizing;

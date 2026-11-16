@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import type { mountWidget } from '../../packages/sdk/src/widget';
+import type { mountWidget } from '../../packages/sdk/dist/index';
 
 test('authenticated demo delivery is explicit, same-origin, and keeps session cookies', async ({
   page,

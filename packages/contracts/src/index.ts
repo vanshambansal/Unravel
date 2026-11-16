@@ -92,6 +92,8 @@ export const PRESENTATION_PROPERTIES = [
   'flex-grow',
   'flex-shrink',
   'opacity',
+  'transform',
+  'transform-origin',
   'z-index',
 ] as const;
 export function presentationValueAllowed(property: string, value: string): boolean {
@@ -142,6 +144,20 @@ export function presentationValueAllowed(property: string, value: string): boole
   if (property === 'font-weight') return /^(?:normal|bold|[1-9]\d{0,2}|1000)$/.test(value);
   if (['flex-grow', 'flex-shrink'].includes(property)) return /^\d{1,3}(?:\.\d{1,4})?$/.test(value);
   if (property === 'opacity') return /^(?:0(?:\.\d{1,5})?|1(?:\.0{1,5})?)$/.test(value);
+  if (property === 'transform-origin') return lengths.test(value);
+  if (property === 'transform') {
+    if (value === 'none') return true;
+    const match = /^(matrix|matrix3d)\(([-+\d.eE,\s]+)\)$/.exec(value);
+    if (!match) return false;
+    const parts = match[2].split(',').map((part) => part.trim());
+    if (!parts.every((part) => /^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(part)))
+      return false;
+    const values = parts.map(Number);
+    return (
+      values.length === (match[1] === 'matrix' ? 6 : 16) &&
+      values.every((n) => Number.isFinite(n) && Math.abs(n) <= 1e6)
+    );
+  }
   return property === 'z-index' && /^(?:auto|-?\d{1,4})$/.test(value);
 }
 export function sanitizePresentation(input: unknown): string | null {

@@ -1,6 +1,6 @@
 {
   "name": "@vansham/unravel-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Explicit browser bug recording, diagnostics and reporting widget for Unravel",
   "license": "MIT",
   "repository": {

@@ -4,6 +4,8 @@ A framework-independent reporting widget with explicit recording, DOM replay evi
 
 **Release status:** published on npm as `@vansham/unravel-sdk@0.1.0` under MIT. Use your own configured Unravel service or the [hosted public preview](https://unravel-eight-beta.vercel.app). Register your website's origin and public project ID; its visitors need no Unravel account. The preview has documented quota, capture-size and production-hardening limits.
 
+Source candidate **0.1.1** adds bounded animation and dynamic-presentation capture. It is undergoing verification and is not yet the published npm release. Existing 0.1.0 integrations need a package update after publication; old recordings cannot recover final styles that were never captured.
+
 ## Installation
 
 In your website project:
