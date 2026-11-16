@@ -8,7 +8,7 @@ Normal commands are in the root README. These scripts are reproducible maintenan
 | Build independent demos and SDK fixtures | `build-browser-demo.mjs`, `build-standard-sites.mjs`, `build-sdk-smoke.mjs` |
 | SDK distribution and registry verification | `pack-sdk.mjs`, `check-sdk-package.mjs`, `prepare-sdk-consumer.mjs`, `verify-sdk-registry.mjs` |
 | Code formatting and release checks | `format.mjs`, `release-check.mjs` |
-| Renderer assets and retained reference | `capture-posters.mjs`, `check-posters.mjs`, `check-reference.mjs`, `compare-reference.mjs` |
+| Runtime renderer assets | `capture-posters.mjs`, `check-posters.mjs` |
 | Exported test and isolation proof | `verify-generated.mjs`, `verify-standard-generated.mjs`, `verify-plan-adapters.mjs`, `verify-replay-https.mjs` |
 | Optional local measurement | `profile-*.mjs`, `measure-sdk.mjs` |
 | Browser installation | `install-browser.mjs` |

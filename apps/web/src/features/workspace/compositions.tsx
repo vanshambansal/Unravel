@@ -17,7 +17,7 @@ export function PanelHeading({ title, status }: { title: string; status?: ReactN
   );
 }
 
-/** Page compositions, not business logic. See docs/INTERNAL_UI.md before adding a new page. */
+/** Page compositions, not business logic. Keep feature state and server operations outside this layer. */
 export function PageContent({
   children,
   width = 'wide',

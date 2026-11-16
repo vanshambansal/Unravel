@@ -36,6 +36,11 @@ const files = [
   'apps/web/next.config.ts',
   'apps/web/playwright.demo.config.ts',
   'apps/web/tests/demo/demo.spec.ts',
+  'tests/e2e/clone-smoke.spec.ts',
+  'apps/web/scripts/database.mjs',
+  'examples/sdk-react/configuration.mjs',
+  'examples/sdk-react/build.mjs',
+  'examples/sdk-react/server.mjs',
 ];
 async function collect(directory) {
   for (const item of await readdir(resolve(root, directory), { withFileTypes: true })) {

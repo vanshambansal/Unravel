@@ -65,7 +65,12 @@ export function QuestionDesk() {
         </button>
       </details>
       <p data-unravel-safe-text>
-        <a data-unravel-safe-text href="http://localhost:3000/app" target="_blank" rel="noreferrer">
+        <a
+          data-unravel-safe-text
+          href={`${process.env.UNRAVEL_APPLICATION_ORIGIN || 'http://localhost:3000'}/app`}
+          target="_blank"
+          rel="noreferrer"
+        >
           Open Unravel workspace
         </a>
       </p>

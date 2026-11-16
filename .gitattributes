@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.png -text
+*.jpg -text
+*.webp -text
+*.glb -text
+*.blend -text
+*.ttf -text
+*.woff2 -text

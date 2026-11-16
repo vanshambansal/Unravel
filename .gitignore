@@ -34,3 +34,11 @@ playwright/.auth/
 /.gemini/
 /.opencode/
 /.codex/
+
+# Private working context and retained migration/design references
+/.local/
+AGENTS.md
+/skills-lock.json
+/design/
+/prototypes/
+/apps/web/PRODUCT.md

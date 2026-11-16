@@ -3,9 +3,12 @@ import { mountWidget } from '@vansham/unravel-sdk';
 
 export function UnravelReporter() {
   useEffect(() => {
+    const projectId = process.env.UNRAVEL_PROJECT_ID;
+    const applicationOrigin = process.env.UNRAVEL_APPLICATION_ORIGIN;
+    if (!projectId || !applicationOrigin) return;
     const widget = mountWidget({
-      projectId: '13fc2e43-866c-437a-bd19-e7509f208986',
-      applicationOrigin: 'http://localhost:3033',
+      projectId,
+      applicationOrigin,
     });
     return () => widget.destroy();
   }, []);

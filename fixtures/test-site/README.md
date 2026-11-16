@@ -1,6 +1,6 @@
 # Local Unravel test website
 
-A minimal, framework-free integration target with the real local Unravel SDK. It is not the Unravel application or the complete recording-to-test product. Explicit submission, persistence and masked replay are verified locally; see SDK.md and REPORTS.md for operation and limitations, and PROJECT_STATUS.md for actual outcomes.
+A minimal, framework-free integration target with the real local Unravel SDK. It is not the Unravel application or the complete recording-to-test product. For application configuration and supported boundaries, see [setup](../../docs/SETUP.md) and the [SDK README](../../packages/sdk/README.md).
 
 From the repository root, after installing the pinned workspace dependencies:
 
@@ -23,7 +23,7 @@ Open the URL printed by the server (the example configuration uses <http://127.0
 - Enter a dummy private value. It is excluded from submission and blocked from recording, including after changing its type to text. Browser password display alone is not recording privacy protection.
 - Expand the diagnostic check and click **Trigger test error** to produce an intentional uncaught JavaScript error, independently of HTTP failures.
 
-The question endpoint does not save or log submitted questions and intentionally returns HTTP 500; its success branch awaits the later fixture fix. This is separate from the working Unravel bug-report submission, which persists a report in the configured application. Safe synthetic question/category/feedback content, known fixture paths and the exact intentional error message are opted in; other text/values are masked. Read [SDK privacy and limitations](../../docs/SDK.md) before changing opt-ins. The browser suite separately verifies plain React and Next.js integration; this website remains vanilla.
+The question endpoint does not save or log submitted questions and intentionally returns HTTP 500; its success branch awaits the later fixture fix. This is separate from the working Unravel bug-report submission, which persists a report in the configured application. Safe synthetic question/category/feedback content, known fixture paths and the exact intentional error message are opted in; other text/values are masked. Read [SDK privacy and limitations](../../packages/sdk/README.md) before changing opt-ins. The browser suite separately verifies plain React and Next.js integration; this website remains vanilla.
 
 ## Verification
 

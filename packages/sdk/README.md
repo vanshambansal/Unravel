@@ -50,7 +50,7 @@ Both modes include bounded error messages and URL paths, which can contain priva
 
 `mountWidget(options)` returns `open()`, `close()` and idempotent `destroy()`. Mount once per document; close/minimize does not discard a recording. Teardown releases owned instrumentation. Retry submits the same frozen report to avoid duplicates after a lost response; local discard cannot undo a report already delivered.
 
-The lower-level `initialize(options)` API offers `start()`, `stop()`, `getRecording()`, `getStatus()`, `submit()`, `getSubmissionStatus()` and `destroy()`. Choose `privacy.mode: 'masked-values' | 'full'` explicitly to use the visitor-mode policy. Omitting it retains legacy selector-based masking. See the repository SDK documentation for advanced options.
+The lower-level `initialize(options)` API offers `start()`, `stop()`, `getRecording()`, `getStatus()`, `submit()`, `getSubmissionStatus()` and `destroy()`. Choose `privacy.mode: 'masked-values' | 'full'` explicitly to use the visitor-mode policy. Omitting it retains legacy selector-based masking. See [recorder options](src/types.ts) for advanced options.
 
 Defaults: 120 seconds, 5,000 combined events and approximately 5 MB recording data. The complete upload has a separate 5 MB cap. A limit stops capture visibly. HTTPS or a secure loopback context is required.
 

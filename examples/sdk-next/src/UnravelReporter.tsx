@@ -5,9 +5,12 @@ import { mountWidget } from '@vansham/unravel-sdk';
 
 export function UnravelReporter() {
   useEffect(() => {
+    const projectId = process.env.NEXT_PUBLIC_UNRAVEL_PROJECT_ID;
+    const applicationOrigin = process.env.NEXT_PUBLIC_UNRAVEL_APPLICATION_ORIGIN;
+    if (!projectId || !applicationOrigin) return;
     const widget = mountWidget({
-      projectId: 'd2810c9a-75b6-43bd-a9da-30d83d826415',
-      applicationOrigin: 'http://localhost:3000',
+      projectId,
+      applicationOrigin,
     });
     return () => widget.destroy();
   }, []);

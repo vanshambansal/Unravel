@@ -35,4 +35,3 @@ jobs:
       - run: corepack pnpm test:sdk
         env:
           SDK_BROWSER: all
-      - run: corepack pnpm reference:check

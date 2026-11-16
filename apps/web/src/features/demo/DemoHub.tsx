@@ -8,20 +8,24 @@ type DemoProject = { id: string; name: string; origin: string };
 /** Reuse an owner-authorized project for this origin; never expose a shared report inbox. */
 export function DemoHub() {
   const [project, setProject] = useState<DemoProject | null>(null);
-  const [state, setState] = useState<'loading' | 'signed-out' | 'idle' | 'creating' | 'error'>(
-    'loading',
-  );
+  const [state, setState] = useState<
+    'loading' | 'unconfigured' | 'signed-out' | 'idle' | 'creating' | 'error'
+  >('loading');
   const [message, setMessage] = useState('');
   useEffect(() => {
     const controller = new AbortController();
     void fetch('/api/projects', { signal: controller.signal })
       .then(async (response) => {
+        const data = await response.json();
+        if (response.status === 503 && data.error === 'Developer sign-in is not configured yet.') {
+          setState('unconfigured');
+          return;
+        }
         if (response.status === 401) {
           setState('signed-out');
           return;
         }
         if (!response.ok) throw Error('Could not check your demo project. Reload to try again.');
-        const data = await response.json();
         setProject(
           data.projects.find((item: DemoProject) => item.origin === location.origin) ?? null,
         );
@@ -81,6 +85,12 @@ export function DemoHub() {
         </div>
         <div className="demo-connect-action">
           {state === 'loading' && <p role="status">Checking your project…</p>}
+          {state === 'unconfigured' && (
+            <p role="status">
+              Saving reports needs your own Clerk and PostgreSQL configuration. You can explore both
+              examples.
+            </p>
+          )}
           {state === 'signed-out' && (
             <Link className="demo-button" href="/sign-in?redirect_url=%2Fdemo">
               Sign in to save reports
