@@ -198,7 +198,7 @@ for (const host of ['react', 'next'] as const)
             sdkDistribution:
               process.env.STANDARD_PACKED_CONSUMER === 'true'
                 ? process.env.STANDARD_SDK_REGISTRY === 'true'
-                  ? 'npm registry @vansham/unravel-sdk@0.1.0'
+                  ? 'npm registry @vansham/unravel-sdk@0.1.1'
                   : 'independently installed local tarball'
                 : host === 'react' && process.env.SDK_ENTRY_OVERRIDE
                   ? 'npm-installed local tarball'

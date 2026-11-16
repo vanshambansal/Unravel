@@ -2,16 +2,16 @@
 
 A framework-independent reporting widget with explicit recording, DOM replay evidence, semantic actions, JavaScript errors and fetch/XHR metadata. React and Next.js use the same package.
 
-**Release status:** published on npm as `@vansham/unravel-sdk@0.1.0` under MIT. Use your own configured Unravel service or the [hosted public preview](https://unravel-eight-beta.vercel.app). Register your website's origin and public project ID; its visitors need no Unravel account. The preview has documented quota, capture-size and production-hardening limits.
+**Release status:** published on npm as `@vansham/unravel-sdk@0.1.1` under MIT. Use your own configured Unravel service or the [hosted public preview](https://unravel-eight-beta.vercel.app). Register your website's origin and public project ID; its visitors need no Unravel account. The preview has documented quota, capture-size and production-hardening limits.
 
-Source candidate **0.1.1** adds bounded animation and dynamic-presentation capture. It is undergoing verification and is not yet the published npm release. Existing 0.1.0 integrations need a package update after publication; old recordings cannot recover final styles that were never captured.
+Version **0.1.1** adds bounded animation and dynamic-presentation capture. Upgrade older integrations and redeploy the consuming website to receive it; old recordings cannot recover final styles that were never captured.
 
 ## Installation
 
 In your website project:
 
 ```sh
-npm install @vansham/unravel-sdk@0.1.0
+npm install @vansham/unravel-sdk@0.1.1
 ```
 
 For SDK development, `corepack pnpm sdk:pack` in the Unravel repository also creates a hash-suffixed archive that can be installed by its printed path.
@@ -51,7 +51,7 @@ Both modes include bounded error messages and URL paths, which can contain priva
 
 ## API and recovery
 
-The repository's in-app portfolio demos use the workspace SDK with an explicit authenticated, same-origin submission option. That option is not part of published npm 0.1.0. Independent examples use npm and the separate anonymous intake endpoint, now enabled on the hosted preview. See [portfolio setup](../../docs/SETUP.md#record-your-first-report).
+The repository's in-app portfolio demos use the workspace SDK with an explicit authenticated, same-origin submission option. External integrations use the default cookie-free delivery and the separate anonymous intake endpoint, enabled on the hosted preview. See [portfolio setup](../../docs/SETUP.md#record-your-first-report).
 
 `mountWidget(options)` returns `open()`, `close()` and idempotent `destroy()`. Mount once per document; close/minimize does not discard a recording. Teardown releases owned instrumentation. Retry submits the same frozen report to avoid duplicates after a lost response; local discard cannot undo a report already delivered.
 

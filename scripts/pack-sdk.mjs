@@ -17,12 +17,11 @@ for (const name of ['sdk']) {
   for (const file of ['README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.txt']) {
     await copyFile(resolve(source, file), resolve(stage, file));
   }
-  // Registry documentation belongs in the public-ready archive; the source
-  // checkout/site retain their truthful unpublished/local-install guidance.
+  // Keep registry installation instructions aligned with this archive's version.
   const readme = await readFile(resolve(source, 'README.md'), 'utf8');
   const releaseReadme = readme.replace(
     /\*\*Release status:\*\*[\s\S]*?(?=Register your website)/,
-    `## Installation\n\n\`\`\`sh\nnpm install ${pkg.name}\n\`\`\`\n\n`,
+    `## Installation\n\n\`\`\`sh\nnpm install ${pkg.name}@${pkg.version}\n\`\`\`\n\n`,
   );
   if (releaseReadme === readme)
     throw Error('Review SDK README installation structure before packing.');

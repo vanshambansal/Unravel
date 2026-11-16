@@ -20,7 +20,7 @@ export function SdkSetup({
       if (copyTimer.current) clearTimeout(copyTimer.current);
     };
   }, []);
-  const install = 'npm install @vansham/unravel-sdk@0.1.0';
+  const install = 'npm install @vansham/unravel-sdk@0.1.1';
   const code = `${framework === 'Next.js' ? "'use client';\n\n" : ''}import { useEffect } from 'react';
 import { mountWidget } from '@vansham/unravel-sdk';
 

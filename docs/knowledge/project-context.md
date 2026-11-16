@@ -2,7 +2,7 @@
 
 Reviewed against repository source on 2026-11-16. This is a briefing you can copy into a conversation or prompt. It describes the current project, not a future product specification.
 
-Deployment update: the main dashboard and separate replay viewer are hosted on Vercel. The current release targets signed-in portfolio demos: in-app React/Next use a workspace SDK option that submits with same-origin credentials to an owner-checked demo endpoint. Registered external sites can also submit anonymously using npm 0.1.0 through the bounded public preview endpoint. npm 0.1.0 and independent examples are unchanged. Hosted uploads/replay responses have a 4 MB envelope limit and demos capture up to 3 MB. Earlier verification/deployment descriptions below retain their original scope; the hosted recording/replay/reproduction workflow has passed its scoped checks.
+Deployment update: the main dashboard and separate replay viewer are hosted on Vercel. The current release supports built-in portfolio demos and independent SDK integrations. In-app React/Next use a workspace SDK option that submits with same-origin credentials to an owner-checked demo endpoint. Registered external sites submit anonymously using npm 0.1.1 through the bounded public preview endpoint. Independent examples pin the current published SDK. Hosted uploads/replay responses have a 4 MB envelope limit and demos capture up to 3 MB. Earlier verification/deployment descriptions below retain their original scope; the hosted recording/replay/reproduction workflow has passed its scoped checks.
 
 ## Problem and users
 
@@ -14,7 +14,7 @@ There are two roles. A developer signs in, registers a website/project and insta
 
 The project includes a cinematic landing, authenticated project/report workspace, a standalone browser SDK with a floating widget, two recording modes, bounded DOM replay, readable actions, JavaScript errors and fetch/XHR metadata. Reports persist in PostgreSQL and are owner-protected. Submission supports unchanged retry after a lost response. Developers can review/edit a versioned test plan and download Playwright reproduction or regression tests.
 
-The npm package is **@vansham/unravel-sdk@0.1.0**, published under MIT. The package can be imported safely during server rendering, but mounting and recording require a browser lifecycle. React and Next.js integrations mount it once in an effect and destroy it on cleanup. Importing or mounting it does not silently start capture.
+The npm package is **@vansham/unravel-sdk@0.1.1**, published under MIT. The package can be imported safely during server rendering, but mounting and recording require a browser lifecycle. React and Next.js integrations mount it once in an effect and destroy it on cleanup. Importing or mounting it does not silently start capture.
 
 ## Stack and organization
 

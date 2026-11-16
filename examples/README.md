@@ -1,6 +1,6 @@
 # Independent SDK examples
 
-Both examples install published `@vansham/unravel-sdk@0.1.0` from npm. They have independent package manifests/lockfiles; install from each example directory using `--ignore-workspace`. No local SDK archive or prebuilt output is required.
+Both examples install published `@vansham/unravel-sdk@0.1.1` from npm. They have independent package manifests/lockfiles; install from each example directory using `--ignore-workspace`. No local SDK archive or prebuilt output is required.
 
 You can also register these origins in the [hosted preview](https://unravel-eight-beta.vercel.app), set the example's application-origin variable to that address and submit without a visitor login. Both reporters use a 3 MB capture budget for hosted size limits. Developer sign-in is only needed to manage projects and investigate saved reports.
 

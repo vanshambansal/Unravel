@@ -84,9 +84,9 @@ Presentation capture is also bounded: it samples allowed computed style values r
 
 A page can insert a heading at `opacity: 0`, then fade it into view using CSS. The DOM tree does not necessarily change during that fade. Recording only DOM mutations can therefore preserve the invisible starting state, even though navigation and the heading itself were captured.
 
-The source patch for SDK 0.1.1 adds a [presentation observer](../../packages/sdk/src/presentation-observer.ts). While recording, it checks active animations and queues elements affected by DOM, interaction, viewport and supported preference changes. Every 125 ms it reads at most 60 elements and emits changed, allowed styles through the existing replay stream. It also revisits ancestors when content grows, because some browsers expose fixed pixel dimensions. Stop removes the observer, timer and listeners.
+SDK 0.1.1 adds a [presentation observer](../../packages/sdk/src/presentation-observer.ts). While recording, it checks active animations and queues elements affected by DOM, interaction, viewport and supported preference changes. Every 125 ms it reads at most 60 elements and emits changed, allowed styles through the existing replay stream. It also revisits ancestors when content grows, because some browsers expose fixed pixel dimensions. Stop removes the observer, timer and listeners.
 
-This preserves the separate replay origin and disabled scripts. It does not execute captured animations or copy arbitrary CSS. It is bounded visual sampling, not frame-perfect video: very short effects, unsupported resources, canvas and complex rendering can still differ. The patch needs a compatible server validator and a published SDK update before existing integrations receive it. Old recordings cannot recover visual updates that were never captured.
+This preserves the separate replay origin and disabled scripts. It does not execute captured animations or copy arbitrary CSS. It is bounded visual sampling, not frame-perfect video: very short effects, unsupported resources, canvas and complex rendering can still differ. Existing integrations must upgrade the SDK and redeploy their website to receive this behavior; self-hosted services must also use the compatible server validator. Old recordings cannot recover visual updates that were never captured.
 
 ## Limits and delivery
 

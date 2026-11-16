@@ -53,7 +53,7 @@ Without credentials, landing and example interactions remain available. Authenti
 
 For the owner-authenticated portfolio demo, set `PORTFOLIO_DEMO_ENABLED=true` and `APP_ORIGIN` to your exact application origin (for example `http://localhost:3000`). Keep `PUBLIC_INGESTION_ENABLED=false`. Both in-app demos use the workspace SDK's explicit same-origin delivery option; only signed-in owners can submit to their own current-origin project through `/api/demo/ingest/{projectId}`. This does not enable anonymous external SDK submissions. General public intake retains its separate release requirements.
 
-Hosted demo capture is limited to 3 MB; Vercel intake envelopes and replay responses are bounded to 4 MB. Existing larger evidence is retained for local viewing. The npm 0.1.0 SDK and independent integration examples are unchanged; they do not have the workspace-only authenticated-demo option.
+Hosted demo capture is limited to 3 MB; Vercel intake envelopes and replay responses are bounded to 4 MB. Existing larger evidence is retained for local viewing. Independent React and Next.js examples install npm SDK 0.1.1 and use default anonymous delivery. Built-in demos explicitly opt into authenticated same-origin delivery.
 
 A small same-origin `/demo/session` frame runs Clerk session renewal for both demo documents. Its checked ready message lets the recorder wait for session initialization; it never sends tokens in messages. The standalone React document remains independent of the Next runtime, while authentication renewal is handled separately. Missing credentials still allow browse-only exploration.
 

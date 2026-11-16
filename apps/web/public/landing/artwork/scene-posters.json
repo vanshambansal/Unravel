@@ -1,6 +1,7 @@
 {
   "sourceHashVersion": 2,
-  "sourceHash": "70ed51361422124badc17908744f2649eb334087c68a3be380edd88e5871292a",
+  "sourceReview": "2026-11-17: SDK-only package and lockfile update. Renderer sources, rendering dependencies and poster image bytes unchanged; existing captures retained.",
+  "sourceHash": "18b2b649231926502385474f860f6ee68487aaa4eb9e02f5f03e8160cd847e80",
   "sources": [
     "apps/web/src/features/landing/motion/scene.ts",
     "apps/web/src/features/landing/motion/asset-scene.ts",

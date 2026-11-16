@@ -10,7 +10,7 @@ Unravel helps turn a browser bug report into reproducible evidence. A visitor ex
 
 ### 2. How would you explain it in two minutes?
 
-Start with the problem: a screenshot and “it broke” often omit the sequence and failed request. Walk through a synthetic question submission returning HTTP 500, capture, private storage, isolated replay, reviewed steps and an expected success assertion. End with the unchanged-test fail-before/pass-after proof and the limits: supported DOM replay, human review and public deployment still pending. Use the [architecture diagram](architecture.md#the-system-at-a-glance) rather than listing every dependency.
+Start with the problem: a screenshot and “it broke” often omit the sequence and failed request. Walk through a synthetic question submission returning HTTP 500, capture, private storage, isolated replay, reviewed steps and an expected success assertion. End with the unchanged-test fail-before/pass-after proof and the limits: supported DOM replay, human review and a bounded public preview rather than universal site compatibility. Use the [architecture diagram](architecture.md#the-system-at-a-glance) rather than listing every dependency.
 
 ### 3. Who uses it, and do visitors need an account?
 
@@ -46,7 +46,7 @@ The SDK, contracts and test-plan generator have separate responsibilities and ca
 
 ### 10. Are the React and Next.js demos actually different integrations?
 
-Yes. The Next demo is an ordinary application route; the React demo serves an independently built React document with no Next runtime. Both use a published-package alias and the same scenario UI. External examples separately exercise npm installation and environment configuration. See [demo boundaries](architecture.md).
+Yes. The Next demo is an ordinary application route; the React demo serves an independently built React document with no Next runtime. Both use the workspace SDK for authenticated delivery and the same scenario UI. External examples separately exercise npm installation and environment configuration. See [demo boundaries](architecture.md).
 
 ### 11. Trace one report through the application.
 

@@ -10,7 +10,7 @@ Unravel connects browser bug reporting, session replay and Playwright test gener
 
 _Cinematic scene artwork included with the application._
 
-**Public preview:** [Open Unravel](https://unravel-eight-beta.vercel.app). Sign in to create a project and register your website, then install `@vansham/unravel-sdk@0.1.0` there. Visitors can submit recordings without an Unravel account. The isolated [replay viewer](https://unravel-replay.vercel.app) is embedded automatically. Built-in demos additionally support signed-in, owner-only delivery through the workspace SDK.
+**Public preview:** [Open Unravel](https://unravel-eight-beta.vercel.app). Sign in to create a project and register your website, then install `@vansham/unravel-sdk@0.1.1` there. Visitors can submit recordings without an Unravel account. The isolated [replay viewer](https://unravel-replay.vercel.app) is embedded automatically. Built-in demos additionally support signed-in, owner-only delivery through the workspace SDK.
 
 ## Why Unravel?
 
@@ -139,7 +139,7 @@ A useful regression demonstration runs the same reviewed test against the buggy 
 In another React or Next.js project:
 
 ```sh
-npm install @vansham/unravel-sdk@0.1.0
+npm install @vansham/unravel-sdk@0.1.1
 ```
 
 Register the website's exact origin in your running Unravel instance and copy its public project ID. Mount this component once:
